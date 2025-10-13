@@ -1,0 +1,10 @@
+columns:
+    name:
+        label: name
+        type: text
+    unit:
+        label: unit
+        type: text
+    quantity:
+        label: quantity
+        type: number

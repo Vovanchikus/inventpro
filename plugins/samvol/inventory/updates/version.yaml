@@ -1,0 +1,14 @@
+1.0.1:
+    - 'Initialize plugin.'
+1.0.2:
+    - 'Created table samvol_inventory_products'
+    - builder_table_create_samvol_inventory_products.php
+1.0.3:
+    - 'Created table samvol_inventory_operations'
+    - builder_table_create_samvol_inventory_operations.php
+1.0.4:
+    - 'Created table samvol_inventory_operation_types'
+    - builder_table_create_samvol_inventory_operation_types.php
+1.0.5:
+    - 'Created table samvol_inventory_operation_products'
+    - builder_table_create_samvol_inventory_operation_products.php

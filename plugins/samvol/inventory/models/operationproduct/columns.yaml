@@ -1,0 +1,10 @@
+columns:
+    operation_id:
+        label: operation_id
+        type: number
+    product_id:
+        label: product_id
+        type: number
+    quantity:
+        label: quantity
+        type: text

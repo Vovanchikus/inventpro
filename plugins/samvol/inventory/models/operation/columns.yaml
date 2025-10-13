@@ -1,0 +1,13 @@
+columns:
+    type_id:
+        label: type_id
+        type: number
+    doc_name:
+        label: doc_name
+        type: text
+    doc_num:
+        label: doc_num
+        type: text
+    doc_date:
+        label: doc_date
+        type: text

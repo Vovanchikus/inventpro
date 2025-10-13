@@ -1,0 +1,5 @@
+fields:
+    name:
+        label: 'Имя типа операции'
+        span: auto
+        type: text

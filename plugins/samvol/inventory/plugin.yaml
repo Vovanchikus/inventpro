@@ -1,0 +1,26 @@
+plugin:
+    name: 'samvol.inventory::lang.plugin.name'
+    description: 'samvol.inventory::lang.plugin.description'
+    author: Samvol
+navigation:
+    inventory:
+        label: Инвентаризация
+        url: /
+        icon: icon-life-ring
+        sideMenu:
+            products:
+                label: Склад
+                url: /
+                icon: icon-sitemap
+            operations:
+                label: Операции
+                url: /
+                icon: icon-sitemap
+            operation_types:
+                label: 'Типы операций'
+                url: /
+                icon: icon-sitemap
+            operation_products:
+                label: 'История операций'
+                url: /
+                icon: icon-sitemap
