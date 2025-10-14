@@ -1,13 +1,14 @@
 columns:
-    type_id:
-        label: type_id
-        type: number
+    type_name:
+        label: Тип операции
+        relation: type
+        select: name
     doc_name:
-        label: doc_name
+        label: Название документа
         type: text
     doc_num:
-        label: doc_num
+        label: Номер документа
         type: text
     doc_date:
-        label: doc_date
+        label: Дата документа
         type: text

@@ -1,13 +1,6 @@
 fields:
-    operation_id:
-        label: 'Имя операции'
-        span: auto
-        type: text
-    product_id:
-        label: 'Наименование продукта'
-        span: auto
-        type: text
     quantity:
         label: Количество
-        span: auto
         type: number
+        span: left
+        required: true

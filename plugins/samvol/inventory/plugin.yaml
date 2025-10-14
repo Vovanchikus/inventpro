@@ -5,22 +5,22 @@ plugin:
 navigation:
     inventory:
         label: Инвентаризация
-        url: /
+        url: samvol/inventory/products
         icon: icon-life-ring
         sideMenu:
             products:
                 label: Склад
-                url: /
+                url: samvol/inventory/products
                 icon: icon-sitemap
             operations:
                 label: Операции
-                url: /
+                url: samvol/inventory/operations
                 icon: icon-sitemap
             operation_types:
                 label: 'Типы операций'
-                url: /
+                url: samvol/inventory/operationtypes
                 icon: icon-sitemap
             operation_products:
                 label: 'История операций'
-                url: /
+                url: samvol/inventory/operationproducts
                 icon: icon-sitemap

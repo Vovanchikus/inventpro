@@ -1,13 +1,9 @@
 fields:
     name:
-        label: 'Наименование товара'
+        label: "Наименование товара"
         span: auto
         type: text
     unit:
         label: Ед.измерения
         span: auto
         type: text
-    quantity:
-        label: Количество
-        span: auto
-        type: number

@@ -1,34 +1,21 @@
 <?php namespace Samvol\Inventory\Models;
 
-use Model;
+use Winter\Storm\Database\Pivot;
 
-/**
- * Model
- */
-class OperationProduct extends Model
+class OperationProduct extends Pivot
 {
     use \Winter\Storm\Database\Traits\Validation;
-    
-    /*
-     * Disable timestamps by default.
-     * Remove this line if timestamps are defined in the database table.
-     */
+
+    public $table = 'samvol_inventory_operation_products';
     public $timestamps = false;
 
+    protected $fillable = ['quantity'];
 
-    /**
-     * @var string The database table used by the model.
-     */
-    public $table = 'samvol_inventory_operation_products';
-
-    /**
-     * @var array Validation rules
-     */
-    public $rules = [
+    public $belongsTo = [
+        'product' => ['Samvol\Inventory\Models\Product'],
+        'operation' => ['Samvol\Inventory\Models\Operation'],
     ];
-    
-    /**
-     * @var array Attribute names to encode and decode using JSON.
-     */
-    public $jsonable = [];
+
+    public $rules = [];
+
 }

@@ -8,21 +8,26 @@ use Model;
 class Product extends Model
 {
     use \Winter\Storm\Database\Traits\Validation;
-    
 
-    /**
-     * @var string The database table used by the model.
-     */
     public $table = 'samvol_inventory_products';
 
-    /**
-     * @var array Validation rules
-     */
+    public $belongsToMany = [
+        'operations' => [
+            'Samvol\Inventory\Models\Operation',
+            'table' => 'samvol_inventory_operation_products',
+            'pivot' => ['quantity'],
+            'timestamp' => true
+        ]
+    ];
+
+    public function getQuantityAttribute()
+    {
+        return $this->operations()->sum('samvol_inventory_operation_products.quantity');
+    }
+
+
     public $rules = [
     ];
-    
-    /**
-     * @var array Attribute names to encode and decode using JSON.
-     */
+
     public $jsonable = [];
 }

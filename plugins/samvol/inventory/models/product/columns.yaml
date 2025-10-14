@@ -1,10 +1,10 @@
 columns:
     name:
-        label: name
+        label: Наименование
         type: text
     unit:
-        label: unit
+        label: Ед. измерения
         type: text
     quantity:
-        label: quantity
+        label: Остаток
         type: number
