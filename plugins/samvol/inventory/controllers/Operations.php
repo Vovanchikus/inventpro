@@ -102,4 +102,18 @@ class Operations extends Controller
         $pivotData['quantity'] = post('quantity') ?? 0;
         return $pivotData;
     }
+
+    public function formExtendFields($form)
+    {
+        $operation = $this->formGetModel();
+        if (!$operation || !$operation->exists)
+        {
+            $this->vars['infoMessage'] = 'Сначала сохраните операцию, что бы добавлять продукты';
+        }
+    }
+
+    public function formBeforeSave($model)
+    {
+        Log::info('Operation form POST', post());
+    }
 }

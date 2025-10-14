@@ -2,7 +2,7 @@ products:
     label: Товары
     view:
         list: $/samvol/inventory/models/product/columns.yaml
-        toolbarButtons: create|delete
+        toolbarButtons: delete
     manage:
         form: $/samvol/inventory/models/product/fields.yaml
         modelClass: Samvol\Inventory\Models\Product

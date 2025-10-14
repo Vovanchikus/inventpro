@@ -9,7 +9,10 @@ class Operation extends Model
     public $table = 'samvol_inventory_operations';
 
     public $belongsTo = [
-        'type' => 'Samvol\Inventory\Models\OperationType'
+        'type' => [
+            'Samvol\Inventory\Models\OperationType',
+            'key' => 'type_id'
+            ]
     ];
 
     public $belongsToMany = [
@@ -18,6 +21,7 @@ class Operation extends Model
             'table' => 'samvol_inventory_operation_products',
             'pivot' => ['quantity'],
             'pivotModel' => \Samvol\Inventory\Models\OperationProduct::class,
+            'timestamps' => true,
         ]
     ];
 
@@ -38,15 +42,12 @@ class Operation extends Model
         return $insertData;
     }
 
-    public function afterSave()
-    {
-        if ($this->product_ids) {
-            foreach ($this->product_ids as $id => $productId) {
-                $product = \Samvol\Inventory\Models\Product::find($productId);
-                $this->products()->attach($productId, ['quantity' => $product->quantity]);
-            }
-        }
-    }
+    protected $fillable = [
+        'type_id',
+        'doc_name',
+        'doc_num',
+        'doc_date'
+    ];
 
     public $rules = [];
 
