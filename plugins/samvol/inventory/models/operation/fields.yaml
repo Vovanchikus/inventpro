@@ -3,24 +3,15 @@ fields:
         label: "Тип операции"
         span: auto
         type: relation
-    doc_name:
-        label: "Имя документа"
-        span: auto
-        type: text
-    doc_num:
-        label: "Номер документа"
-        span: auto
-        type: number
-    doc_date:
-        label: "Дата документа"
-        mode: datetime
-        span: auto
-        type: datepicker
+
+    documents:
+        label: Документы
+        type: partial
+        path: $/samvol/inventory/controllers/operations/_add_documents.htm
 
     products_custom_buttons:
         type: partial
         path: $/samvol/inventory/controllers/operations/_custom_buttons.htm
-
     products:
         label: "Товары"
         type: partial

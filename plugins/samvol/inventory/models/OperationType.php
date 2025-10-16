@@ -18,7 +18,8 @@ class OperationType extends Model
     public $table = 'samvol_inventory_operation_types';
 
     public $hasMany = [
-        'operations' => 'Samvol\Inventory\Models\Operation'
+        'operations' => 'Samvol\Inventory\Models\Operation',
+        'products' => 'Samvol\Inventory\Models\OperationProduct'
     ];
 
     public $rules = [

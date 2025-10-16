@@ -24,3 +24,7 @@ navigation:
                 label: 'История операций'
                 url: samvol/inventory/operationproducts
                 icon: icon-sitemap
+            documents:
+                label: Документы
+                url: samvol/inventory/documents
+                icon: icon-sitemap

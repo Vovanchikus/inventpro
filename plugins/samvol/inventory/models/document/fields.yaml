@@ -1,0 +1,14 @@
+fields:
+    doc_name:
+        label: 'Имя документа'
+        span: auto
+        type: text
+    doc_num:
+        label: 'Номер документа'
+        span: auto
+        type: text
+    doc_date:
+        label: 'Дата документа'
+        mode: datetime
+        span: auto
+        type: datepicker

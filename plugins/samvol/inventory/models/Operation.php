@@ -25,6 +25,13 @@ class Operation extends Model
         ]
     ];
 
+    public $hasMany = [
+        'documents' => [
+            'Samvol\Inventory\Models\Document',
+            'key' => 'operation_id'
+        ]
+    ];
+
     public function beforeAttach($relationName, $attachedIdList, $insertData)
     {
         // Этот хук срабатывает при вызове attach() вручную

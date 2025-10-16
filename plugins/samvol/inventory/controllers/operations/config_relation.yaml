@@ -5,6 +5,7 @@ products:
         toolbarButtons: delete
     manage:
         form: $/samvol/inventory/models/product/fields.yaml
+        list: $/samvol/inventory/models/product/columns.yaml
         modelClass: Samvol\Inventory\Models\Product
     pivot:
         form:
@@ -12,3 +13,11 @@ products:
                 quantity:
                     label: Количество
                     type: number
+
+documents:
+    label: Документы
+    view:
+        list: $/samvol/inventory/models/document/columns.yaml
+        toolbarButtons: create|delete
+    manage:
+        form: $/samvol/inventory/models/document/fields.yaml

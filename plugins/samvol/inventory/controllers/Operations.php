@@ -26,7 +26,7 @@ class Operations extends Controller
     }
 
     /**
-     * Открывает modal с формой создания продукта с quantity
+     * Создание нового продукта с quantity
      */
     public function onLoadAddProductWithQuantity()
     {
@@ -38,12 +38,9 @@ class Operations extends Controller
         }
 
         $this->vars['operation'] = $operation;
-        return $this->makePartial('add_product_with_quantity'); // partial с формой
+        return $this->makePartial('add_product_with_quantity');
     }
 
-    /**
-     * Создание нового продукта и добавление в pivot с quantity
-     */
     public function onAddProductWithQuantity()
     {
         $operationId = post('_operation_id');
@@ -68,7 +65,60 @@ class Operations extends Controller
     }
 
     /**
-     * Для RelationController: после добавления существующего продукта можно обновить pivot
+     * 🔹 Открывает таблицу с существующими продуктами
+     */
+    public function onLoadSelectExistingProduct()
+    {
+        $operationId = post('_operation_id');
+        $operation = Operation::find($operationId);
+
+        if (!$operation) {
+            throw new ApplicationException('Операция не найдена');
+        }
+
+        $this->vars['operation'] = $operation;
+        $this->vars['products'] = Product::all();
+
+        return $this->makePartial('select_existing_product'); // partial с таблицей
+    }
+
+    /**
+     * 🔹 Добавление выбранных продуктов из таблицы
+     */
+    public function onSelectExistingProduct()
+    {
+        $operationId = post('_operation_id');
+        $operation = Operation::find($operationId);
+
+        if (!$operation) {
+            throw new ApplicationException('Операция не найдена');
+        }
+
+        $productsData = post('products', []);
+
+        if (empty($productsData)) {
+            throw new ApplicationException('Не выбраны продукты');
+        }
+
+        foreach ($productsData as $item) {
+            if (!isset($item['id'])) continue;
+
+            $productId = $item['id'];
+            $quantity = $item['quantity'] ?? 1;
+
+            $product = Product::find($productId);
+            if (!$product) continue;
+
+            $operation->products()->attach($product->id, ['quantity' => $quantity]);
+        }
+
+        return [
+            '#Form-field-Operation-products-group' => $this->relationRender('products')
+        ];
+    }
+
+    /**
+     * После добавления через RelationController — обновляем pivot
      */
     public function relationAfterAdd($relationName, $relationModel)
     {
@@ -92,9 +142,6 @@ class Operations extends Controller
         ]);
     }
 
-    /**
-     * Для RelationController: берем quantity из POST при добавлении в pivot
-     */
     public function relationExtendPivotData($relationName, $model, $pivotData)
     {
         if ($relationName !== 'products') return $pivotData;
@@ -106,9 +153,8 @@ class Operations extends Controller
     public function formExtendFields($form)
     {
         $operation = $this->formGetModel();
-        if (!$operation || !$operation->exists)
-        {
-            $this->vars['infoMessage'] = 'Сначала сохраните операцию, что бы добавлять продукты';
+        if (!$operation || !$operation->exists) {
+            $this->vars['infoMessage'] = 'Сначала сохраните операцию, чтобы добавлять продукты';
         }
     }
 

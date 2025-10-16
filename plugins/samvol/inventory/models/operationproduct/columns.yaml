@@ -1,10 +1,19 @@
 columns:
     operation_id:
-        label: operation_id
+        label: ID
         type: number
-    product_id:
-        label: product_id
-        type: number
+    operation_type:
+        label: Тип операции
+        type: text
+    document_name:
+        label: Имя документа
+        type: text
+    product_name:
+        label: Наименование продукта
+        type: text
+    product_unit:
+        label: Ед.измерения
+        type: text
     quantity:
-        label: quantity
+        label: К-во
         type: text

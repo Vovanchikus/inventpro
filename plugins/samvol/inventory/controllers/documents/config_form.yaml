@@ -1,0 +1,10 @@
+name: Documents
+form: $/samvol/inventory/models/document/fields.yaml
+modelClass: Samvol\Inventory\Models\Document
+defaultRedirect: samvol/inventory/documents
+create:
+    redirect: 'samvol/inventory/documents/update/:id'
+    redirectClose: samvol/inventory/documents
+update:
+    redirect: samvol/inventory/documents
+    redirectClose: samvol/inventory/documents
