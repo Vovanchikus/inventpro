@@ -13,7 +13,7 @@ class OperationProduct extends Pivot
 
     public $belongsTo = [
         'product' => ['Samvol\Inventory\Models\Product'],
-        'operation' => ['Samvol\Inventory\Models\Operation']
+        'operation' => ['Samvol\Inventory\Models\Operation'],
     ];
 
     public function getOperationTypeAttribute()
@@ -21,12 +21,18 @@ class OperationProduct extends Pivot
         return $this->operation && $this->operation->type ? $this->operation->type->name : '-';
     }
 
-    public function getDocumentNameAttribute()
-    {
-        $doc_name = $this->operation ? $this->operation->doc_name : '-';
-        $doc_num = $this->operation ? $this->operation->doc_num : '-';
 
-        return $doc_name . ' №' . $doc_num;
+    public function getFirstDocumentAttribute()
+    {
+        $first = $this->operation->documents()->orderBy('id', 'asc')->first();
+        $firstDate = $this->operation->documents()->orderBy('id', 'asc')->first();
+        if (!$first){
+            return 'Документ отсутствует';
+        } elseif (!$firstDate) {
+            return 'Дата не указана';
+        }
+        $date = \Carbon\Carbon::parse($first->doc_date)->format('d.m.Y');
+        return $first ? $first->doc_name . ' №' . $first->doc_num . ', ' . $date : '-';
     }
 
     public function getProductNameAttribute()

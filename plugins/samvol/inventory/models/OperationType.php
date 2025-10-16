@@ -19,7 +19,7 @@ class OperationType extends Model
 
     public $hasMany = [
         'operations' => 'Samvol\Inventory\Models\Operation',
-        'products' => 'Samvol\Inventory\Models\OperationProduct'
+        'products' => 'Samvol\Inventory\Models\OperationProduct',
     ];
 
     public $rules = [

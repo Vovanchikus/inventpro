@@ -3,12 +3,6 @@ columns:
         label: Тип операции
         relation: type
         select: name
-    doc_name:
-        label: Название документа
-        type: text
-    doc_num:
-        label: Номер документа
-        type: text
-    doc_date:
-        label: Дата документа
+    first_document:
+        label: Документ
         type: text

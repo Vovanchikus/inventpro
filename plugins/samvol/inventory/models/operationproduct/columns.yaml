@@ -5,7 +5,7 @@ columns:
     operation_type:
         label: Тип операции
         type: text
-    document_name:
+    first_document:
         label: Имя документа
         type: text
     product_name:

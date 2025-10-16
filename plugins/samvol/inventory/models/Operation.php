@@ -32,6 +32,19 @@ class Operation extends Model
         ]
     ];
 
+    public function getFirstDocumentAttribute()
+    {
+        $first = $this->documents()->orderBy('id', 'asc')->first();
+        $firstDate = $this->documents()->orderBy('id', 'asc')->first();
+        if (!$first){
+            return 'Документ отсутствует';
+        } elseif (!$firstDate) {
+            return 'Дата не указана';
+        }
+        $date = \Carbon\Carbon::parse($first->doc_date)->format('d.m.Y');
+        return $first ? $first->doc_name . ' №' . $first->doc_num . ', ' . $date : '-';
+    }
+
     public function beforeAttach($relationName, $attachedIdList, $insertData)
     {
         // Этот хук срабатывает при вызове attach() вручную
