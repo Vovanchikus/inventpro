@@ -6,5 +6,5 @@ columns:
         label: Ед. измерения
         type: text
     quantity:
-        label: Остаток
+        label: На складе
         type: number

@@ -1,6 +1,4 @@
 fields:
-    quantity:
+    pivot[quantity]:
         label: Количество
         type: number
-        span: left
-        required: true

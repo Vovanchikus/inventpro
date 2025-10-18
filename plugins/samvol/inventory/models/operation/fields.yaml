@@ -9,10 +9,7 @@ fields:
         type: partial
         path: $/samvol/inventory/controllers/operations/_add_documents.htm
 
-    products_custom_buttons:
-        type: partial
-        path: $/samvol/inventory/controllers/operations/_custom_buttons.htm
     products:
         label: "Товары"
         type: partial
-        path: products_list.htm
+        path: $/samvol/inventory/controllers/operations/_add_products.htm

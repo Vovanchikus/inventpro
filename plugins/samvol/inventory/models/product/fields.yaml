@@ -7,3 +7,6 @@ fields:
         label: Ед.измерения
         span: auto
         type: text
+    quantity:
+        label: На складе
+        type: number
