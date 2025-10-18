@@ -1,6 +1,7 @@
 <?php namespace Samvol\Inventory\Models;
 
 use Model;
+use DB;
 
 /**
  * Model
@@ -20,9 +21,21 @@ class Product extends Model
         ]
     ];
 
-    public function getQuantityAttribute()
+    public function getCalculatedQuantityAttribute()
     {
-        return $this->operations()->sum('samvol_inventory_operation_products.quantity');
+        $total = DB::table('samvol_inventory_operation_products as op')
+            ->join('samvol_inventory_operations as o', 'op.operation_id', '=', 'o.id')
+            ->join('samvol_inventory_operation_types as t', 'o.type_id', '=', 't.id')
+            ->where('op.product_id', $this->id)
+            ->sum(DB::raw("
+                CASE
+                    WHEN LOWER(t.name) = 'приход' THEN op.quantity
+                    ELSE -op.quantity
+                END
+            "));
+
+        // Чтобы не было отрицательного остатка
+        return max($total, 0);
     }
 
 

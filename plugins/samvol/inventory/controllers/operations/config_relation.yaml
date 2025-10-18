@@ -15,7 +15,19 @@ products:
         toolbarButtons: create|add|delete
     manage:
         list: $/samvol/inventory/models/product/columns.yaml
-        form: $/samvol/inventory/models/product/fields.yaml
+        form:
+            fields:
+                name:
+                    label: "Наименование товара"
+                    span: auto
+                    type: text
+                unit:
+                    label: Ед.измерения
+                    span: auto
+                    type: text
+                pivot[quantity]:
+                    label: К-во в операции
+                    type: number
     pivot:
         form: $/samvol/inventory/models/operationproduct/fields.yaml
 

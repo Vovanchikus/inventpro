@@ -5,6 +5,6 @@ columns:
     unit:
         label: Ед. измерения
         type: text
-    quantity:
+    calculated_quantity:
         label: На складе
         type: number
