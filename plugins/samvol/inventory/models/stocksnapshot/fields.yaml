@@ -1,0 +1,14 @@
+fields:
+    name:
+        label: 'Имя снимка'
+        span: auto
+        type: text
+    snapshot_date:
+        label: 'Дата снапшота'
+        mode: datetime
+        span: auto
+        type: datepicker
+    data:
+        label: 'Состояние склада'
+        span: auto
+        type: text

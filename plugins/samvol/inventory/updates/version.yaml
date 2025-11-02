@@ -33,3 +33,12 @@
 1.0.12:
     - 'Updated table samvol_inventory_operations'
     - builder_table_update_samvol_inventory_operations.php
+1.0.13:
+    - 'Created table samvol_inventory_stock_snapshots'
+    - builder_table_create_samvol_inventory_stock_snapshots.php
+1.0.14:
+    - 'Updated table samvol_inventory_stock_snapshots'
+    - builder_table_update_samvol_inventory_stock_snapshots.php
+1.0.15:
+    - 'Updated table samvol_inventory_stock_snapshots'
+    - builder_table_update_samvol_inventory_stock_snapshots_2.php

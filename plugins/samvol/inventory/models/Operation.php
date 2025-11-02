@@ -31,6 +31,7 @@ class Operation extends Model
             'pivot' => ['quantity'], // всегда положительное число
             'pivotModel' => \Samvol\Inventory\Models\OperationProduct::class,
             'timestamps' => true,
+            'detach' => true
         ]
     ];
 

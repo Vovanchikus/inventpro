@@ -1,0 +1,41 @@
+title = "Склад"
+url = "/warehouse"
+layout = "default"
+
+[warehouse]
+==
+
+<div class="warehouse-box table">
+
+  <div class="warehouse__item table-title">
+    <div class="warehouse__name">Наименование</div>
+    <div class="warehouse__number">Номенклатурный №</div>
+    <div class="warehouse__unit">Ед.измерения</div>
+    <div class="warehouse__price">Цена</div>
+    <div class="warehouse__quantity">Количество</div>
+    <div class="warehouse__sum">Сумма</div>
+  </div>
+
+  <div class="warehouse__item table-item">
+    <div class="warehouse__name">PSFR-H2X Одношарова термоусаджувана трубка 2:1 1,5мм, чорний</div>
+    <div class="warehouse__number">18120002623650299811</div>
+    <div class="warehouse__unit">метр</div>
+    <div class="warehouse__price">2,22</div>
+    <div class="warehouse__quantity">1</div>
+    <div class="warehouse__sum">2,22</div>
+  </div>
+
+  <div class="warehouse__item table-item">
+    <div class="warehouse__name">Автомобіль  АЦ 40 (131) 137 номерний знак 8647 Ч1</div>
+    <div class="warehouse__number">101492955</div>
+    <div class="warehouse__unit">шт</div>
+    <div class="warehouse__price">46 951,00</div>
+    <div class="warehouse__quantity">1</div>
+    <div class="warehouse__sum">46 951,00</div>
+  </div>
+
+  {% partial 'warehouse/warehouse-product' %}
+
+
+
+</div>

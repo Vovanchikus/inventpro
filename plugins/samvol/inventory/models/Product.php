@@ -12,6 +12,12 @@ class Product extends Model
 
     public $table = 'samvol_inventory_products';
 
+    protected $fillable = [
+        'name',
+        'quantity',
+        'unit'
+    ];
+
     public $belongsToMany = [
         'operations' => [
             'Samvol\Inventory\Models\Operation',

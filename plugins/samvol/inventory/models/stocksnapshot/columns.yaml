@@ -1,0 +1,7 @@
+columns:
+    name:
+        label: 'Имя снимка'
+        type: text
+    snapshot_date:
+        label: 'Дата снимка'
+        type: date

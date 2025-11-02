@@ -1,0 +1,112 @@
+@import vars
+@import _mixins
+
+@include font('Gilroy-Code', normal, 400, '../fonts/Gilroy/Gilroy-Regular.woff2')
+@include font('Gilroy-Code', normal, 500, '../fonts/Gilroy/Gilroy-Medium.woff2')
+@include font('Gilroy-Code', normal, 600, '../fonts/Gilroy/Gilroy-Semibold.woff2')
+@include font('Exo2-Code', normal, 400, '../fonts/Exo2/Exo2-Regular.woff2')
+@include font('Exo2-Code', normal, 500, '../fonts/Exo2/Exo2-Medium.woff2')
+@include font('Exo2-Code', normal, 600, '../fonts/Exo2/Exo2-SemiBold.woff2')
+// @include font('Gilroy', normal, 600, '../fonts/Gilroy/Gilroy-Semibold.woff', 'woff') Пример подключения другого формата
+
+::placeholder
+  color: $text-light
+
+::selection
+  background-color: $bg-brand
+  color: #fff
+
+input, textarea
+  outline: none
+  &:focus:required:invalid
+    border-color: $red-500
+  &:required:valid
+    border-color: $green-500
+
+html
+  min-height: 100%
+
+body
+  position: relative
+  font-family: $fontFamily
+  font-weight: 400
+  font-size: 1rem
+  line-height: 1rem
+  background-color: $bg-body
+  color: $text-body
+  min-width: 320px
+  min-height: 100%
+  overflow-x: hidden
+
+a
+  text-decoration: none
+  transition: $transition
+  &:hover
+    color: $text-brand
+
+.container
+  position: relative
+  display: grid
+  grid-template-areas: "header" "main" "footer"
+  grid-template-columns: 1fr
+  grid-template-rows: 64px auto 128px
+  gap: 48px 32px
+  max-width: 1180px
+  width: 100%
+  margin: 32px auto
+  padding: 0
+
+header
+  grid-area: header
+
+aside
+  grid-area: aside
+  align-self: start
+
+main
+  grid-area: main
+
+footer
+  grid-area: footer
+
+.logo
+  font-size: 18px
+  line-height: 18px
+  span
+    font-weight: 600
+
+.img-zoom
+  position: absolute
+  visibility: hidden
+  opacity: 0
+  width: 100%
+  height: 100%
+  background-color: hsl(0deg 0% 0% / 10%)
+  border-radius: $radius-sm
+  transition: all $transition
+
+  &__icon
+    display: inline-flex
+    justify-content: center
+    align-items: center
+    height: 100%
+    svg
+      box-shadow: 0 0 0 0px hsl(0deg 0% 100% / 13%)
+      transform: scale(0.7)
+      border-radius: 28px
+      transition: box-shadow .5s ease-out, transform .2s ease-out
+
+.dropdown
+  padding: 4px
+  background-color: $bg-box
+  border: 1px solid $border
+  border-radius: $radius-nm
+  box-shadow: $box-light-shadow
+
+.box--light
+  background-color: $bg-box
+  box-shadow: $box-light-shadow
+  border-radius: $radius-lg
+
+
+

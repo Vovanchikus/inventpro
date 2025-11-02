@@ -28,3 +28,7 @@ navigation:
                 label: Документы
                 url: samvol/inventory/documents
                 icon: icon-sitemap
+            stock_snaphots:
+                label: Снимки
+                url: samvol/inventory/stocksnapshots
+                icon: icon-sitemap

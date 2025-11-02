@@ -1,0 +1,39 @@
+{% for product in products %}
+
+  <div class="warehouse__item table-item">
+
+    <div class="warehouse__name">{{ product.name }}</div>
+
+    <div class="warehouse__number">
+      {% if product.number %}
+          {{ product.number }}
+      {% else %}
+        -
+      {% endif %}
+    </div>
+
+    <div class="warehouse__unit">шт</div>
+    <div class="warehouse__price">
+      {% if product.price %}
+          {{ product.price }}
+      {% else %}
+        -
+      {% endif %}
+    </div>
+    <div class="warehouse__quantity">
+      {% if product.calculatedQuantity %}
+          {{ product.calculatedQuantity }}
+      {% else %}
+        -
+      {% endif %}
+    </div>
+    <div class="warehouse__sum">
+      {% if product.summ %}
+          {{ product.summ }}
+      {% else %}
+        -
+      {% endif %}
+    </div>
+  </div>
+
+{% endfor %}

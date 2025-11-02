@@ -25,11 +25,5 @@ class Operations extends Controller
         BackendMenu::setContext('Samvol.Inventory', 'inventory', 'operations');
     }
 
-    public function formExtendFields($form)
-    {
-        $operation = $this->formGetModel();
-        if (!$operation || !$operation->exists) {
-            $this->vars['infoMessage'] = 'Сначала сохраните операцию, чтобы добавлять продукты';
-        }
-    }
+
 }

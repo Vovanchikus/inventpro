@@ -1,0 +1,86 @@
+:root {
+    --blue-400: rgb(217 51 57 / 32%);
+    --blue-500: #5b86ca;
+
+    --red-400: rgb(12 47 51 / 32%);
+    --red-500: #bd5e46;
+
+    --green-400: rgb(113 47 51 / 32%);
+    --green-500: #54bd46;
+
+    --neutral-100: #ffffff;
+    --neutral-200: #f5f5f5;
+    --neutral-300: #f5f6fa;
+    --neutral-400: #9a9b9d;
+    --neutral-500: #767779;
+    --neutral-600: #5f676a;
+
+    --text-title: var(--neutral-600);
+    --text-body: var(--neutral-500);
+    --text-subtitle: var(--neutral-400);
+    --text-light: var(--neutral-100);
+    --text-brand: var(--blue-500);
+    --text-success: var(--green-500);
+    --text-error: var(--red-500);
+    --text-info: var(--blue-400);
+
+    --bg-body: var(--neutral-200);
+    --bg-box: var(--neutral-100);
+    --bg-brand: var(--blue-500);
+    --bg-success: var(--green-400);
+    --bg-error: var(--red-400);
+    --bg-info: var(--blue-400);
+    --border: var(--neutral-300);
+
+    --radius-sm: 4px;
+    --radius-md: 6px;
+    --radius-nm: 8px;
+    --radius-lg: 12px;
+
+    --box-light-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.05);
+
+    --field-bg: var(--neutral-500);
+    --field-border-hover: var(--neutral-400);
+    --field-border-focus: var(--bg-brand);
+
+    --button-brand-bg-default: var(--bg-brand);
+    --button-brand-bg-hover: var(--violet-400);
+    --button-brand-bg-active: var(--violet-600);
+    --button-brand-text-default: var(--text-light);
+    --button-brand-text-hover: var(--text-light);
+    --button-brand-text-active: var(--text-light);
+    --button-brand-shadow-default: 0 4px 8px 0 hsl(240 54% 65% / 25%),
+        0 6px 20px 0 hsl(0 0% 0% / 15%);
+    --button-brand-shadow-hover: 0 6px 12px 0 hsl(240 54% 65% / 30%),
+        0 10px 25px 0 hsl(0 0% 0% / 20%);
+
+    --button-second-border-default: var(--border);
+    --button-second-bg-default: transparent;
+    --button-second-bg-hover: var(--neutral-300);
+    --button-second-bg-active: var(--neutral-500);
+    --button-second-text-default: var(--text-title);
+    --button-second-text-hover: var(--text-title);
+    --button-second-text-active: var(--text-title);
+
+    --label-brand-bg: var(--violet-200);
+    --label-brand-text: var(--violet-300);
+
+    --label-success-bg: var(--green-400);
+    --label-success-text: var(--green-500);
+
+    --label-error-bg: var(--red-400);
+    --label-error-text: var(--red-500);
+
+    --label-warning-bg: var(--yellow-400);
+    --label-warning-text: var(--yellow-500);
+
+    --label-info-bg: var(--blue-400);
+    --label-info-text: var(--blue-500);
+
+    --label-secondary-bg: var(--neutral-300);
+    --label-secondary-text: var(--text-subtitle);
+
+    --fontFamily: "Gilroy-Code", sans-serif;
+
+    --transition: 0.2s ease-out;
+}

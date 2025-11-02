@@ -1,0 +1,10 @@
+name: StockSnapshots
+form: $/samvol/inventory/models/stocksnapshot/fields.yaml
+modelClass: Samvol\Inventory\Models\StockSnapshot
+defaultRedirect: samvol/inventory/stocksnapshots
+create:
+    redirect: 'samvol/inventory/stocksnapshots/update/:id'
+    redirectClose: samvol/inventory/stocksnapshots
+update:
+    redirect: samvol/inventory/stocksnapshots
+    redirectClose: samvol/inventory/stocksnapshots

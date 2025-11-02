@@ -1,0 +1,63 @@
+@import '../core/vars'
+
+.button
+
+  &--md
+    display: flex
+    justify-content: center
+    align-items: center
+    font-size: 14px
+    font-weight: 500
+    line-height: 16px
+    padding: 10px 24px
+    border-radius: $radius-md
+    svg
+      margin-right: 8px
+
+  &--sm
+    display: flex
+    justify-content: center
+    align-items: center
+    font-size: 12px
+    line-height: 14px
+    font-weight: 500
+    padding: 8px 16px
+    border-radius: $radius-md
+    svg
+      margin-right: 8px
+
+  &--brand
+    color: $button-brand-text-default
+    background-color: $button-brand-bg-default
+    box-shadow: $button-brand-shadow-default
+    transition: all $transition
+    &:hover
+      color: $button-brand-text-hover
+      background-color: $button-brand-bg-hover
+      box-shadow: $button-brand-shadow-hover
+    &:active
+      color: $button-brand-text-active
+      background-color: $button-brand-bg-active
+      box-shadow: none
+      transform: scale(0.98)
+
+  &--second
+    color: $button-second-text-default
+    background-color: $button-second-bg-default
+    transition: all $transition
+    &:hover
+      color: $button-second-text-hover
+      background-color: $button-second-bg-hover
+    &:active
+      color: $button-second-text-active
+      background-color: $button-second-bg-active
+      transform: scale(0.98)
+
+.button--lg:has(svg)
+  padding: 16px 32px 16px 24px
+
+.button--md:has(svg)
+  padding: 14px 24px 14px 20px
+
+.button--sm:has(svg)
+  padding: 10px 24px 10px 20px

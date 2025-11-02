@@ -1,0 +1,41 @@
+description = "Основной макет Winter CMS"
+
+[importExcel]
+==
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <title>{{ this.page.title }}</title>
+    <meta name="description" content="{{ this.page.meta_description }}">
+    <meta name="title" content="{{ this.page.meta_title }}">
+    <meta name="author" content="Winter CMS">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Winter CMS">
+    <link rel="icon" type="image/png" href="{{ 'assets/img/winter.png'|theme }}">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <link rel="stylesheet" href="{{ 'assets/css/normalize.css'|theme }}?v={{ random(100000,999999) }}">
+    <link rel="stylesheet" href="{{ 'assets/css/variables.css'|theme }}?v={{ random(100000,999999) }}">
+    <link rel="stylesheet" href="{{ 'assets/css/style.css'|theme }}?v={{ random(100000,999999) }}">
+    <link rel="stylesheet" href="{{ 'assets/css/media.css'|theme }}?v={{ random(100000,999999) }}">
+    {% styles %}
+</head>
+<body>
+    <div class="container">
+
+        {% partial 'global/header' %}
+
+        <main>
+            {% page %}
+        </main>
+
+
+        <script src="{{ 'assets/js/scripts.js'|theme }}?v={{ random(100000,999999) }}"></script>
+        {% framework extras %}
+        {% snowboard all %}
+        {% scripts %}
+
+    </div>{# container #}
+
+</body>
+</html>

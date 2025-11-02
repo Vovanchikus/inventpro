@@ -1,0 +1,17 @@
+<header class="header">
+  <div class="header__logo">InventPro <span>Система инвентаризации</span></div>
+  <div class="header__search"></div>
+  <div class="header__button-box">
+
+    <a href="#!" class="button button--md button--brand">Новая операция</a>
+
+    <form method="POST" enctype="multipart/form-data" data-request="onImportExcel">
+      <input type="hidden" name="_operation_id" value="{{ importOperation.id }}">
+      <input type="file" name="excel_file" accept=".xlsx,.xls,.csv" required>
+      <button type="submit" class="button button--md button--second">Импорт</button>
+    </form>
+
+    <div data-request-flash></div>
+
+  </div>
+</header>
