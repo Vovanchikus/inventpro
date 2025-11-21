@@ -15,7 +15,10 @@ class Product extends Model
     protected $fillable = [
         'name',
         'quantity',
-        'unit'
+        'unit',
+        'inv_number',
+        'price',
+        'sum',
     ];
 
     public $belongsToMany = [
@@ -35,12 +38,11 @@ class Product extends Model
             ->where('op.product_id', $this->id)
             ->sum(DB::raw("
                 CASE
-                    WHEN LOWER(t.name) = 'приход' THEN op.quantity
+                    WHEN LOWER(t.name) IN ('приход', 'импорт') THEN op.quantity
                     ELSE -op.quantity
                 END
             "));
 
-        // Чтобы не было отрицательного остатка
         return max($total, 0);
     }
 

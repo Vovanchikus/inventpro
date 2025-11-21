@@ -1,12 +1,12 @@
 :root {
-    --blue-400: rgb(217 51 57 / 32%);
+    --blue-400: hsl(217 51 57 / 32%);
     --blue-500: #5b86ca;
 
-    --red-400: rgb(12 47 51 / 32%);
+    --red-400: hsl(12 47 51 / 32%);
     --red-500: #bd5e46;
 
-    --green-400: rgb(113 47 51 / 32%);
-    --green-500: #54bd46;
+    --green-400: hsl(113 47 51 / 32%);
+    --green-500: #48a53b;
 
     --neutral-100: #ffffff;
     --neutral-200: #f5f5f5;
@@ -14,15 +14,16 @@
     --neutral-400: #9a9b9d;
     --neutral-500: #767779;
     --neutral-600: #5f676a;
+    --neutral-900: #353566;
 
-    --text-title: var(--neutral-600);
+    --text-title: var(--neutral-900);
     --text-body: var(--neutral-500);
-    --text-subtitle: var(--neutral-400);
+    --text-subtitle: var(--neutral-600);
     --text-light: var(--neutral-100);
     --text-brand: var(--blue-500);
     --text-success: var(--green-500);
     --text-error: var(--red-500);
-    --text-info: var(--blue-400);
+    --text-info: var(--blue-500);
 
     --bg-body: var(--neutral-200);
     --bg-box: var(--neutral-100);

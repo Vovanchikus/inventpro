@@ -5,14 +5,21 @@
     <div class="warehouse__name">{{ product.name }}</div>
 
     <div class="warehouse__number">
-      {% if product.number %}
-          {{ product.number }}
+      {% if product.inv_number %}
+          {{ product.inv_number }}
       {% else %}
         -
       {% endif %}
     </div>
 
-    <div class="warehouse__unit">шт</div>
+    <div class="warehouse__unit">
+      {% if product.unit %}
+          {{ product.unit }}
+      {% else %}
+        -
+      {% endif %}
+    </div>
+
     <div class="warehouse__price">
       {% if product.price %}
           {{ product.price }}
@@ -28,8 +35,8 @@
       {% endif %}
     </div>
     <div class="warehouse__sum">
-      {% if product.summ %}
-          {{ product.summ }}
+      {% if product.sum %}
+          {{ product.sum }}
       {% else %}
         -
       {% endif %}

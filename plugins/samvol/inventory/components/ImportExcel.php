@@ -6,7 +6,7 @@ use Samvol\Inventory\Models\Operation;
 use Samvol\Inventory\Models\OperationType;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Input;
-use Flash;
+use Log;
 
 class ImportExcel extends ComponentBase
 {
@@ -14,95 +14,159 @@ class ImportExcel extends ComponentBase
     {
         return [
             'name' => 'Импорт Excel',
-            'description' => 'Импорт остатков на склад через Excel-файл'
+            'description' => 'Импорт остатков через Excel с проверкой и выводом результатов'
         ];
     }
 
-    /**
-     * Основная функция импорта
-     */
     public function onImportExcel()
-    {
-        $file = Input::file('excel_file');
-        if (!$file) {
-            Flash::error('Файл не загружен.');
-            return;
-        }
+{
+    Log::info("Начало импорта Excel", ['time' => now()]);
 
-        $path = $file->getRealPath();
-
-        try {
-            $spreadsheet = IOFactory::load($path);
-            $sheet = $spreadsheet->getActiveSheet();
-            $rows = $sheet->toArray();
-
-            if (empty($rows)) {
-                Flash::error('Файл пустой или не удалось прочитать данные.');
-                return;
-            }
-
-            // Пропускаем первую строку (заголовки)
-            unset($rows[0]);
-
-            // Создаём/получаем тип операции "Импорт"
-            $importType = OperationType::firstOrCreate(['name' => 'Импорт']);
-
-            // Создаём операцию импорта
-            $operation = Operation::firstOrCreate(
-                ['type_id' => $importType->id],
-                ['doc_date' => now()]
-            );
-
-            $differences = []; // массив для хранения несоответствий количества
-
-            foreach ($rows as $row) {
-                if (empty($row[0])) continue;
-
-                $name = trim($row[0]);
-                $excelQuantity = (float)($row[1] ?? 0);
-                $unit = $row[2] ?? 'шт';
-
-                // Находим продукт по имени
-                $product = Product::where('name', $name)->first();
-
-                if ($product) {
-                    // Продукт существует → проверяем суммарное количество через calculated_quantity
-                    $currentQuantity = $product->calculated_quantity;
-
-                    if ($currentQuantity != $excelQuantity) {
-                        // Несоответствие → сохраняем для отображения
-                        $differences[] = [
-                            'product' => $product->name,
-                            'excel_quantity' => $excelQuantity,
-                            'current_quantity' => $currentQuantity
-                        ];
-                    }
-
-                    // Обновляем unit продукта
-                    $product->unit = $unit;
-                    $product->save();
-                } else {
-                    // Продукта нет → создаём новый и добавляем в pivot операции с количеством
-                    $product = Product::create([
-                        'name' => $name,
-                        'unit' => $unit
-                    ]);
-
-                    $operation->products()->attach($product->id, ['quantity' => $excelQuantity]);
-                }
-            }
-
-            Flash::success('Импорт завершён. Новых продуктов добавлено: ' . count($rows) . '.');
-
-            // Если есть несоответствия, выводим уведомление (можно сделать partial для подробностей)
-            if (!empty($differences)) {
-                Flash::warning('Обнаружены несоответствия количества для существующих продуктов.');
-                // $this->vars['differences'] = $differences;
-                // можно сделать partial для отображения различий на фронте
-            }
-
-        } catch (\Exception $e) {
-            Flash::error('Ошибка при импорте: ' . $e->getMessage());
-        }
+    // Конвертация числовых значений из Excel
+    function parseExcelNumber($value) {
+        if (!$value) return 0;
+        $clean = preg_replace('/[\s\x{00A0}\x{202F}]+/u', '', $value);
+        $clean = str_replace(',', '.', $clean);
+        return floatval($clean);
     }
+
+    $file = Input::file('excel_file');
+    if (!$file) {
+        return [
+            'modalContent' => '<p style="color:red;">Файл не загружен.</p>',
+            'modalType'    => 'error',
+            'modalTitle'   => 'Нет файла'
+        ];
+    }
+
+    try {
+        $spreadsheet = IOFactory::load($file->getRealPath());
+        $rows = $spreadsheet->getActiveSheet()->toArray();
+
+        if (empty($rows)) {
+            return [
+                'modalContent' => '<p style="color:red;">Файл пустой.</p>',
+                'modalType'    => 'error',
+                'modalTitle'   => 'Пустой файл'
+            ];
+        }
+
+        unset($rows[0]); // пропускаем заголовок
+
+        $differences = [];
+        $newProducts = [];
+        $newCount = 0;
+
+        foreach ($rows as $row) {
+            if (empty($row[0])) continue;
+
+            $name       = trim($row[0]);
+            $unit       = trim($row[1] ?? 'шт');
+            $inv_number = trim($row[2] ?? '');
+            $price      = parseExcelNumber($row[3] ?? 0);
+            $quantity   = parseExcelNumber($row[4] ?? 0);
+            $sum        = parseExcelNumber($row[5] ?? 0);
+
+            // -----------------------------
+            // Поиск продукта без дубликатов
+            // -----------------------------
+            $product = null;
+            if (!empty($inv_number)) {
+                $product = Product::where('inv_number', $inv_number)->first();
+            }
+            if (!$product) {
+                $product = Product::where('name', $name)->where('unit', $unit)->first();
+            }
+
+            // -----------------------------
+            // Создание нового продукта
+            // -----------------------------
+            if (!$product) {
+                $product = Product::create([
+                    'name'       => $name,
+                    'unit'       => $unit,
+                    'inv_number' => $inv_number,
+                    'price'      => $price,
+                    'sum'        => $sum
+                ]);
+
+                $newProducts[] = [
+                    'product'  => $product,
+                    'quantity' => $quantity
+                ];
+                $newCount++;
+                continue;
+            }
+
+            // -----------------------------
+            // Проверка различий (без дублирования количества)
+            // -----------------------------
+            $currentQuantity = $product->calculated_quantity ?? 0;
+            $currentSum = $product->calculated_quantity * $product->price;
+
+            if ($currentQuantity != $quantity || $currentSum != $sum || $product->price != $price) {
+                $differences[] = [
+                    'name'             => $product->name,
+                    'inv_number'       => $product->inv_number,
+                    'current_quantity' => $currentQuantity,
+                    'excel_quantity'   => $quantity,
+                    'current_sum'      => $currentSum,
+                    'excel_sum'        => $sum,
+                    'price'            => $price,
+                    'unit'             => $unit
+                ];
+            }
+
+            // -----------------------------
+            // Обновление полей кроме quantity
+            // -----------------------------
+            $product->name       = $name;
+            $product->unit       = $unit;
+            $product->inv_number = $inv_number;
+            $product->price      = $price;
+            $product->sum        = $sum;
+            $product->save();
+        }
+
+        // -----------------------------
+        // Создаём операцию только если есть новые продукты
+        // -----------------------------
+        if (!empty($newProducts)) {
+            $importType = OperationType::firstOrCreate(['name' => 'Импорт']);
+            $operation = new Operation();
+            $operation->type_id = $importType->id;
+            $operation->save();
+
+            Log::info("Создана операция", ['operation_id' => $operation->id, 'type_id' => $importType->id, 'time' => now()]);
+
+            foreach ($newProducts as $item) {
+                $operation->products()->attach($item['product']->id, ['quantity' => $item['quantity']]);
+            }
+        }
+
+        // -----------------------------
+        // Формирование HTML результата
+        // -----------------------------
+        $html = $this->renderPartial('modals/modal_import_result', [
+            'differences' => $differences,
+            'newCount'    => $newCount
+        ]);
+
+        $modalType  = !empty($differences) ? 'warning' : 'success';
+        $modalTitle = !empty($differences) ? 'Есть различия с текущими данными:' : 'Импорт завершён';
+
+        return [
+            'modalContent' => $html,
+            'modalType'    => $modalType,
+            'modalTitle'   => $modalTitle
+        ];
+
+    } catch (\Exception $e) {
+        return [
+            'modalContent' => '<p style="color:red;">Ошибка: ' . $e->getMessage() . '</p>',
+            'modalType'    => 'error',
+            'modalTitle'   => 'Ошибка импорта'
+        ];
+    }
+}
 }

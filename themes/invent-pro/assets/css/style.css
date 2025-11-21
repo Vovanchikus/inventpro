@@ -183,6 +183,44 @@ footer {
   gap: 12px;
 }
 
+.bottom-bar {
+  position: fixed;
+  bottom: 50px;
+  left: calc(50% - 134px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 12px;
+  width: 268px;
+  height: 72px;
+  background-color: hsla(217, 51%, 57%, 0.24);
+  border-radius: 36px;
+  backdrop-filter: blur(8px);
+}
+.bottom-bar__list {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+.bottom-bar__item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.bottom-bar__link {
+  padding: 14px;
+  height: 52px;
+  color: var(--text-brand);
+  border: 1px solid transparent;
+  border-radius: 26px;
+}
+.bottom-bar__link:hover {
+  color: var(--text-light);
+  background-color: var(--bg-brand);
+  box-shadow: 0 4px 12px 0 var(--blue-400), inset 0 0px 2px 0 rgba(255, 255, 255, 0.56), inset 0 -1px 2px rgba(0, 0, 0, 0.16);
+}
+
 .warehouse-box {
   background-color: var(--bg-box);
   border-radius: var(--radius-lg);
@@ -210,6 +248,7 @@ footer {
   position: relative;
   font-size: 13px;
   font-weight: normal;
+  color: var(--text-body);
   border-bottom: 1px solid var(--border);
 }
 .warehouse__item.table-item::after {
@@ -254,6 +293,67 @@ footer {
 .warehouse__sum {
   grid-area: sum;
   justify-self: end;
+}
+
+.import {
+  border-top: 1px solid var(--border);
+  border-left: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+.import__item {
+  display: grid;
+  grid-template-areas: "name quantity quantity-excel";
+  grid-template-columns: 250px 127px 127px;
+  grid-template-rows: 62px auto;
+  align-items: center;
+  gap: 0px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-title);
+  padding: 0px 24px;
+}
+.import__item.table-item {
+  position: relative;
+  font-size: 13px;
+  font-weight: normal;
+  color: var(--text-body);
+  border-bottom: 1px solid var(--border);
+}
+.import__item.table-item::after {
+  content: "";
+  position: absolute;
+  left: 12px;
+  top: calc(50% - 11px);
+  opacity: 0;
+  width: 3px;
+  height: 22px;
+  background-color: var(--bg-brand);
+  border-radius: 3px;
+  transition: opacity var(--transition);
+}
+.import__item.table-item:hover::after {
+  opacity: 1;
+}
+.import__name {
+  grid-area: name;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.import__quantity {
+  grid-area: quantity;
+  justify-self: center;
+}
+.import__quantity-excel {
+  grid-area: quantity-excel;
+  justify-self: end;
+}
+.import__bottom {
+  margin-top: 32px;
 }
 
 .button--md {
@@ -324,4 +424,86 @@ footer {
 
 .button--sm:has(svg) {
   padding: 10px 24px 10px 20px;
+}
+
+.alert {
+  width: 100%;
+  font-size: 14px;
+  line-height: 1.45;
+  padding: 10px 16px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: var(--radius-nm);
+}
+.alert b {
+  font-weight: 600;
+}
+.alert--success {
+  color: var(--text-success);
+  background-color: var(--bg-success);
+}
+.alert--info {
+  color: var(--text-info);
+  background-color: var(--bg-info);
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.24);
+  backdrop-filter: blur(6px);
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  opacity: 0;
+  visibility: hidden;
+  z-index: 10;
+}
+.modal-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-window {
+  background: rgba(255, 255, 255, 0.9);
+  padding: 24px;
+  border-radius: var(--radius-lg);
+  max-width: 600px;
+  width: 90%;
+  position: relative;
+  top: 50px;
+  box-shadow: 0 0 16px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+  overflow: hidden;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.modal-header h2 {
+  font-size: 18px;
+  line-height: 1;
+  color: var(--text-title);
+}
+
+.modal-close {
+  cursor: pointer;
+  height: 24px;
+  color: var(--text-error);
+  opacity: 0.7;
+  transition: opacity var(--transition);
+}
+.modal-close:hover {
+  opacity: 1;
+}
+
+.modal-content {
+  margin-top: 32px;
+  max-height: 430px;
+  overflow-y: auto;
 }

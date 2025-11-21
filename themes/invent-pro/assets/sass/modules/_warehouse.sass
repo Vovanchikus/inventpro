@@ -26,6 +26,7 @@
       position: relative
       font-size: 13px
       font-weight: normal
+      color: $text-body
       border-bottom: 1px solid $border
       &::after
         content: ''
@@ -64,3 +65,59 @@
   &__sum
     grid-area: sum
     justify-self: end
+
+
+.import
+  border-top: 1px solid $border
+  border-left: 1px solid $border
+  border-right: 1px solid $border
+  border-radius: $radius-md
+  overflow: hidden
+  &__item
+    display: grid
+    grid-template-areas: "name quantity quantity-excel"
+    grid-template-columns: 250px 127px 127px
+    grid-template-rows: 62px auto
+    align-items: center
+    gap: 0px
+    font-size: 12px
+    font-weight: 600
+    color: $text-title
+    padding: 0px 24px
+    &.table-item
+      position: relative
+      font-size: 13px
+      font-weight: normal
+      color: $text-body
+      border-bottom: 1px solid $border
+      &::after
+        content: ''
+        position: absolute
+        left: 12px
+        top: calc( 50% - 11px )
+        opacity: 0
+        width: 3px
+        height: 22px
+        background-color: $bg-brand
+        border-radius: 3px
+        transition: opacity $transition
+      &:hover
+        &::after
+          opacity: 1
+
+  &__name
+    grid-area: name
+    display: -webkit-box
+    -webkit-line-clamp: 1
+    -webkit-box-orient: vertical
+    overflow: hidden
+    text-overflow: ellipsis
+  &__quantity
+    grid-area: quantity
+    justify-self: center
+  &__quantity-excel
+    grid-area: quantity-excel
+    justify-self: end
+
+  &__bottom
+    margin-top: 32px

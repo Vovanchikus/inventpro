@@ -1,0 +1,31 @@
+<div class="modal fade" id="importModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title">✅ Импорт завершён успешно</h5>
+                <button type="button" class="close" data-dismiss="modal">
+                    &times;
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Импорт завершён без несоответствий.</p>
+                <p><strong>Добавлено новых товаров:</strong> {{ newCount }}</p>
+            </div>
+            <div class="modal-footer">
+                <button
+                    type="button"
+                    class="btn btn-success"
+                    data-dismiss="modal"
+                >
+                    ОК
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $("#importModal").modal("show");
+    });
+</script>

@@ -1,0 +1,50 @@
+<div class="modal fade" id="importModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-warning">
+                <h5 class="modal-title">⚠ Несоответствия при импорте</h5>
+                <button type="button" class="close" data-dismiss="modal">
+                    &times;
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>
+                    Найдены следующие различия между Excel и текущими данными:
+                </p>
+                <table class="table table-bordered table-sm">
+                    <thead>
+                        <tr>
+                            <th>Название</th>
+                            <th>Количество в Excel</th>
+                            <th>Текущее количество</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in differences %}
+                        <tr>
+                            <td>{{ item.name }}</td>
+                            <td>{{ item.excel_quantity }}</td>
+                            <td>{{ item.current_quantity }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-dismiss="modal"
+                >
+                    Закрыть
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $("#importModal").modal("show");
+    });
+</script>

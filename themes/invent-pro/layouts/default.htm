@@ -12,12 +12,14 @@ description = "Основной макет Winter CMS"
     <meta name="author" content="Winter CMS">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="Winter CMS">
-    <link rel="icon" type="image/png" href="{{ 'assets/img/winter.png'|theme }}">
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    {# <link rel="icon" type="image/png" href="{{ 'assets/img/winter.png'|theme }}"> #}
+
+    <!-- Стили -->
     <link rel="stylesheet" href="{{ 'assets/css/normalize.css'|theme }}?v={{ random(100000,999999) }}">
     <link rel="stylesheet" href="{{ 'assets/css/variables.css'|theme }}?v={{ random(100000,999999) }}">
     <link rel="stylesheet" href="{{ 'assets/css/style.css'|theme }}?v={{ random(100000,999999) }}">
     <link rel="stylesheet" href="{{ 'assets/css/media.css'|theme }}?v={{ random(100000,999999) }}">
+
     {% styles %}
 </head>
 <body>
@@ -25,17 +27,25 @@ description = "Основной макет Winter CMS"
 
         {% partial 'global/header' %}
 
+        {% partial 'modals/modal' %}
+
         <main>
             {% page %}
         </main>
 
+        {% partial 'global/bottom-bar' %}
 
-        <script src="{{ 'assets/js/scripts.js'|theme }}?v={{ random(100000,999999) }}"></script>
+        <!-- Winter framework + Snowboard -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
         {% framework extras %}
         {% snowboard all %}
+
+        <!-- Мои скрипты -->
+        <script src="{{ 'assets/js/modal.js'|theme }}?v={{ random(100000,999999) }}"></script>
+        <script src="{{ 'assets/js/scripts.js'|theme }}?v={{ random(100000,999999) }}"></script>
+
         {% scripts %}
-
-    </div>{# container #}
-
+    </div>
 </body>
 </html>
