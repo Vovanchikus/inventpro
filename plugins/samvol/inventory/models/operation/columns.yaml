@@ -6,3 +6,6 @@ columns:
     first_document:
         label: Документ
         type: text
+    created_at:
+        label: Дата
+        type: datetime

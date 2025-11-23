@@ -38,8 +38,13 @@ class Product extends Model
             ->where('op.product_id', $this->id)
             ->sum(DB::raw("
                 CASE
-                    WHEN LOWER(t.name) IN ('приход', 'импорт') THEN op.quantity
-                    ELSE -op.quantity
+                    WHEN LOWER(t.name) = 'приход' THEN op.quantity
+                    WHEN LOWER(t.name) = 'передача' THEN -op.quantity
+                    WHEN LOWER(t.name) = 'списание' THEN -op.quantity
+                    WHEN LOWER(t.name) = 'импорт' THEN op.quantity
+                    WHEN LOWER(t.name) = 'импорт приход' THEN op.quantity
+                    WHEN LOWER(t.name) = 'импорт расход' THEN -op.quantity
+                    ELSE 0
                 END
             "));
 

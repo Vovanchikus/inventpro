@@ -1,40 +1,50 @@
 {% if differences|length %}
 <div class="import table">
     <div class="import__item table-title">
+        <div class="import__select">
+            <input type="checkbox" id="select-all-diffs" />
+        </div>
         <div class="import__name">Наименование</div>
         <div class="import__quantity">К-во на складе</div>
         <div class="import__quantity-excel">К-во в Excel</div>
     </div>
 
     {% for diff in differences %}
-    <div class="import__item table-item">
-        <div class="import__name">{% if diff.name %} {{ diff.name }} {% endif %}</div>
-        <div class="import__quantity">{% if diff.current_quantity %} {{ diff.current_quantity }} {% endif %}</div>
-        <div class="import__quantity-excel">{% if diff.excel_quantity  %} {{ diff.excel_quantity  }} {% endif %}</div>
-    </div>
+        <div class="import__item table-item">
+            <div class="import__select">
+                <input type="checkbox"
+                    class="diff-checkbox"
+                    checked
+                    value="{{ diff.inv_number }}"
+                    data-id="{{ diff.id }}"
+                    data-quantity="{{ diff.excel_quantity }}"
+                    data-price="{{ diff.price }}"
+                    data-sum="{{ diff.sum }}" />
+
+                <!-- Скрытые поля для передачи в updates -->
+                <input type="hidden" name="updates[{{ diff.id }}][inv_number]" value="{{ diff.inv_number }}">
+                <input type="hidden" name="updates[{{ diff.id }}][quantity]" value="{{ diff.excel_quantity }}">
+                <input type="hidden" name="updates[{{ diff.id }}][price]" value="{{ diff.price }}">
+                <input type="hidden" name="updates[{{ diff.id }}][sum]" value="{{ diff.sum }}">
+            </div>
+            <div class="import__name">{{ diff.name }}</div>
+            <div class="import__quantity">{{ diff.current_quantity }}</div>
+            <div class="import__quantity-excel">{{ diff.excel_quantity }}</div>
+        </div>
     {% endfor %}
 </div>
-{% endif %}
 
 <div class="import__bottom">
-    {% if differences|length == 0 and newCount == 0 %}
-        <div class="alert alert--info">
-            При импорте различий или новых продуктов не найдено! <br> Значит вы ничего не упустили.
-        </div>
-    {% elseif differences|length > 0 and newCount == 0 %}
-        <div class="alert alert--info">
-            Всего различий <b>{{ differences|length }}</b>
-        </div>
-    {% elseif differences|length == 0 and newCount > 0 %}
-        <div class="alert alert--success">
-            Всего импортировано <b>{{ newCount }}</b> товаров
-        </div>
-    {% elseif differences|length > 0 and newCount > 0 %}
-        <div class="alert alert--info">
-            Всего различий <b>{{ differences|length }}</b>
-        </div>
-        <div class="alert alert--success">
-            Всего импортировано <b>{{ newCount }}</b> товаров
-        </div>
-    {% endif %}
+    <div class="alert alert--info">
+        Всего различий <b>{{ differences|length }}</b>
+    </div>
+    <button type="button" class="button--md button--brand" id="apply-differences">
+        Применить выбранные изменения
+    </button>
 </div>
+
+{% else %}
+<div class="alert alert--success">
+    Различий нет. Новых продуктов: {{ newCount }}
+</div>
+{% endif %}

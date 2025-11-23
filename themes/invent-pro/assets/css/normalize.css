@@ -358,6 +358,7 @@ button {
     border: none;
     background: none;
     padding: 0;
+    cursor: pointer;
 }
 
 input[type="submit"] {

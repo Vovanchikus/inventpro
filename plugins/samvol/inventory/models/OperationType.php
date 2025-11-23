@@ -9,6 +9,8 @@ class OperationType extends Model
 {
     use \Winter\Storm\Database\Traits\Validation;
 
+    protected $fillable = ['name'];
+
     /*
      * Disable timestamps by default.
      * Remove this line if timestamps are defined in the database table.
