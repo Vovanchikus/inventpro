@@ -1,19 +1,68 @@
 document.addEventListener("DOMContentLoaded", () => {
     // =============================
-    // Элементы на странице
-    // =============================
-    const importInput = document.getElementById("importInput");
-    const importForm = document.getElementById("importForm");
-    const importButton = document.getElementById("importButton");
-    const btnAddOperation = document.getElementById("btnAddOperation");
-    const showToastButton = document.getElementById("showToastButton");
-
-    // =============================
     // Универсальный обработчик ответа с сервера
     // =============================
     function handleServerResponse(data) {
+        // --- Сбрасываем старые ошибки ---
+        document
+            .querySelectorAll(".error-field")
+            .forEach((el) => el.classList.remove("error-field"));
+        document
+            .querySelectorAll(".error-message")
+            .forEach((el) => el.remove());
+
+        // --- Подсветка только первой ошибки из validationErrors ---
+        if (data.validationErrors && data.validationErrors.length) {
+            const err = data.validationErrors[0]; // берём первую ошибку
+            let input = null;
+
+            // Тип операции
+            if (err.field === "type_id") {
+                toast(err.message, "error", 4000, "top-center");
+                return;
+            }
+
+            // Контрагент
+            if (err.field === "counteragent") {
+                input = document.querySelector('input[name="counteragent"]');
+            }
+
+            // Поля массивов типа name[0]
+            const match = err.field.match(/([^\[]+)\[(\d+)\]/);
+            if (match) {
+                const name = match[1];
+                const index = parseInt(match[2], 10);
+                const inputs = document.querySelectorAll(
+                    `input[name = "${name}[]"]`
+                );
+                if (inputs[index]) input = inputs[index];
+            }
+
+            // Простые поля
+            if (!input) {
+                input = document.querySelector(`input[name = "${err.field}"]`);
+            }
+
+            if (input) {
+                input.classList.add("error-field");
+
+                // Добавляем текст ошибки под полем
+                const errorDiv = document.createElement("div");
+                errorDiv.classList.add("error-message");
+                errorDiv.textContent = err.message;
+
+                if (input.closest(".form-floating")) {
+                    input.closest(".form-floating").appendChild(errorDiv);
+                } else {
+                    input.parentNode.appendChild(errorDiv);
+                }
+
+                // Фокус на поле
+                input.focus();
+            }
+        }
+
         // --- Модалка ---
-        // Если сервер прислал HTML контент модалки, показываем
         if (data.modalContent) {
             Modal.show(
                 data.modalContent,
@@ -23,23 +72,17 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         // --- Toast ---
-        // Если сервер прислал toast
         if (data.toast && data.toast.message) {
             const t = data.toast;
-            const message = t.message || "";
-            const type = t.type || "info";
-            const timeout = typeof t.timeout === "number" ? t.timeout : 4000;
-            const position = t.position || "bottom-right";
-
-            try {
-                toast(message, type, timeout, position);
-            } catch (e) {
-                console.warn("Функция toast не найдена", e);
-            }
+            toast(
+                t.message,
+                t.type || "info",
+                t.timeout || 4000,
+                t.position || "bottom-right"
+            );
         }
 
         // --- @js код ---
-        // Сервер может прислать произвольный JS для выполнения
         if (data["@js"]) {
             try {
                 new Function(data["@js"])();
@@ -50,59 +93,119 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // =============================
-    // Кнопка "Импорт" — открывает диалог выбора файла
+    // Автоснятие ошибки при вводе
     // =============================
-    importButton.addEventListener("click", () => {
-        importInput.click();
-    });
-
-    // =============================
-    // Авто-отправка формы при выборе файла
-    // =============================
-    importInput.addEventListener("change", () => {
-        if (importInput.files.length > 0) {
-            $(importForm).request("onImportExcel", {
-                success: handleServerResponse, // Используем универсальный обработчик
-                error: function (err) {
-                    console.error("Ошибка AJAX при импорте:", err);
-                    alert("Произошла ошибка при отправке файла");
-                },
+    const formInputsObserver = () => {
+        document
+            .querySelectorAll("#addOperationForm input")
+            .forEach((input) => {
+                input.removeEventListener("input", input._removeErrorClass);
+                input._removeErrorClass = () => {
+                    input.classList.remove("error-field");
+                    const errorDiv = input
+                        .closest(".form-floating")
+                        ?.querySelector(".error-message");
+                    if (errorDiv) errorDiv.remove();
+                };
+                input.addEventListener("input", input._removeErrorClass);
             });
-        }
-    });
+    };
+    formInputsObserver(); // применяем сразу
 
     // =============================
-    // Кнопка "Добавить операцию"
+    // Остальной твой JS остаётся без изменений
     // =============================
+    const importInput = document.getElementById("importInput");
+    const importForm = document.getElementById("importForm");
+    const importButton = document.getElementById("importButton");
+
+    if (importButton && importInput) {
+        importButton.addEventListener("click", () => importInput.click());
+    }
+
+    if (importInput && importForm) {
+        importInput.addEventListener("change", () => {
+            if (importInput.files.length > 0) {
+                $(importForm).request("onImportExcel", {
+                    success: handleServerResponse,
+                });
+            }
+        });
+    }
+
+    const btnAddOperation = document.getElementById("btnAddOperation");
     if (btnAddOperation) {
         btnAddOperation.addEventListener("click", () => {
             Modal.show(
-                `<p>Хочешь добавить операцию, братик?</p>`,
+                "<p>Хочешь добавить операцию, братик?</p>",
                 "info",
                 "Добавить операцию!"
             );
         });
     }
 
+    const showToastButton = document.getElementById("showToastButton");
     if (showToastButton) {
-        showToastButton.addEventListener("click", () => {
-            toast("Проверка Тоста", "error", 4000);
+        showToastButton.addEventListener("click", () =>
+            toast("Проверка Тоста", "error", 4000)
+        );
+    }
+
+    const documentsWrapper = document.getElementById(
+        "add-operation__documents-wrapper"
+    );
+    const addDocumentBtn = document.getElementById("add-document");
+    const removeDocumentBtn = document.getElementById("remove-document");
+
+    if (addDocumentBtn && documentsWrapper) {
+        addDocumentBtn.addEventListener("click", () => {
+            const first = documentsWrapper.querySelector(
+                ".add-operation__row--document"
+            );
+            const clone = first.cloneNode(true);
+            clone.querySelectorAll("input").forEach((i) => (i.value = ""));
+            documentsWrapper.appendChild(clone);
+            formInputsObserver();
         });
     }
 
-    // =============================
-    // Обработка кликов на странице
-    // =============================
-    document.addEventListener("click", function (event) {
-        // --- Выбор всех чекбоксов различий ---
-        if (event.target && event.target.id === "select-all-diffs") {
-            const checked = event.target.checked;
-            document
-                .querySelectorAll(".diff-checkbox")
-                .forEach((cb) => (cb.checked = checked));
-        }
+    if (removeDocumentBtn && documentsWrapper) {
+        removeDocumentBtn.addEventListener("click", () => {
+            const items = documentsWrapper.querySelectorAll(
+                ".add-operation__row--document"
+            );
+            if (items.length > 1) items[items.length - 1].remove();
+        });
+    }
 
-        // --- Применение выбранных различий ---
+    const productsWrapper = document.getElementById(
+        "add-operation__products-wrapper"
+    );
+    const addProductBtn = document.getElementById("add-product");
+    const removeProductBtn = document.getElementById("remove-product");
+
+    if (addProductBtn && productsWrapper) {
+        addProductBtn.addEventListener("click", () => {
+            const first = productsWrapper.querySelector(
+                ".add-operation__row--product"
+            );
+            const clone = first.cloneNode(true);
+            clone.querySelectorAll("input").forEach((i) => (i.value = ""));
+            productsWrapper.appendChild(clone);
+            formInputsObserver();
+        });
+    }
+
+    if (removeProductBtn && productsWrapper) {
+        removeProductBtn.addEventListener("click", () => {
+            const items = productsWrapper.querySelectorAll(
+                ".add-operation__row--product"
+            );
+            if (items.length > 1) items[items.length - 1].remove();
+        });
+    }
+
+    document.addEventListener("click", (event) => {
         if (event.target && event.target.id === "apply-differences") {
             const selected = Array.from(
                 document.querySelectorAll(".diff-checkbox:checked")
@@ -113,75 +216,20 @@ document.addEventListener("DOMContentLoaded", () => {
                 sum: parseFloat(cb.dataset.sum),
             }));
 
-            if (selected.length === 0) {
-                alert("Выберите хотя бы один продукт");
-                return;
-            }
-
-            console.log("Отправляем данные:", selected);
+            if (!selected.length) return alert("Выберите хотя бы один продукт");
 
             $.request("onApplyDifferences", {
                 data: { updates: selected },
-                success: handleServerResponse, // Универсальный обработчик
-                error: function (err) {
-                    console.error("Ошибка AJAX при применении различий:", err);
-                    alert("Произошла ошибка при отправке данных");
-                },
+                success: handleServerResponse,
             });
         }
     });
 
-    // Документы — добавить
-    const addDocumentBtn = document.getElementById("add-document");
-    const documentsWrapper = document.getElementById(
-        "add-operation__documents-wrapper"
-    );
-
-    addDocumentBtn.addEventListener("click", () => {
-        const first = documentsWrapper.querySelector(
-            ".add-operation__row--document"
-        );
-        const clone = first.cloneNode(true);
-        clone.querySelectorAll("input").forEach((i) => (i.value = ""));
-        documentsWrapper.appendChild(clone);
-    });
-
-    // Документы — удалить последний
-    const removeDocumentBtn = document.getElementById("remove-document");
-
-    removeDocumentBtn.addEventListener("click", () => {
-        const items = documentsWrapper.querySelectorAll(
-            ".add-operation__row--document"
-        );
-        if (items.length > 1) {
-            items[items.length - 1].remove();
+    $(document).on(
+        "ajaxSuccess",
+        "#addOperationForm",
+        function (event, context, data) {
+            handleServerResponse(data);
         }
-    });
-
-    // Продукты — добавить
-    const addProductBtn = document.getElementById("add-product");
-    const productsWrapper = document.getElementById(
-        "add-operation__products-wrapper"
     );
-
-    addProductBtn.addEventListener("click", () => {
-        const first = productsWrapper.querySelector(
-            ".add-operation__row--product"
-        );
-        const clone = first.cloneNode(true);
-        clone.querySelectorAll("input").forEach((i) => (i.value = ""));
-        productsWrapper.appendChild(clone);
-    });
-
-    // Продукты — удалить последний
-    const removeProductBtn = document.getElementById("remove-product");
-
-    removeProductBtn.addEventListener("click", () => {
-        const items = productsWrapper.querySelectorAll(
-            ".add-operation__row--product"
-        );
-        if (items.length > 1) {
-            items[items.length - 1].remove();
-        }
-    });
 });

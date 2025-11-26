@@ -10,7 +10,7 @@ layout = "default"
 
   <h2 class="add-operation__title">{{ this.page.title }}</h2>
 
-  <form data-request="onAddOperation" class="add-operation__content">
+  <form data-request="onAddOperation" data-request-flash class="add-operation__content" id ="addOperationForm">
 
     <div class="add-operation__type-box">
       {% for type in types|slice(0, 3) %}

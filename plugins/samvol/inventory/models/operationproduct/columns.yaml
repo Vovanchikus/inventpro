@@ -8,6 +8,9 @@ columns:
     first_document:
         label: Имя документа
         type: text
+    counteragent:
+        label: Контрагент
+        type: text
     product_name:
         label: Наименование продукта
         type: text

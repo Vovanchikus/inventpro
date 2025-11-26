@@ -2,8 +2,7 @@
 
 use Model;
 use DB;
-use Carbon\Carbon;
-use ValidationException;
+use Log;
 
 class Operation extends Model
 {
@@ -11,12 +10,7 @@ class Operation extends Model
 
     public $table = 'samvol_inventory_operations';
 
-    protected $fillable = [
-        'type_id',
-        'counteragent',
-    ];
-
-    public $rules = [];
+    protected $fillable = ['type_id'];
 
     public $belongsTo = [
         'type' => [
@@ -29,7 +23,7 @@ class Operation extends Model
         'products' => [
             'Samvol\Inventory\Models\Product',
             'table' => 'samvol_inventory_operation_products',
-            'pivot' => ['quantity'], // всегда положительное число
+            'pivot' => ['quantity','sum','counteragent'],
             'pivotModel' => \Samvol\Inventory\Models\OperationProduct::class,
             'timestamps' => true,
             'detach' => true
@@ -44,71 +38,67 @@ class Operation extends Model
     ];
 
     /**
-     * Первый документ операции
-     */
-    public function getFirstDocumentAttribute()
-    {
-        $first = $this->documents()->orderBy('id', 'asc')->first();
-        if (!$first) return 'Документ отсутствует';
-
-        $date = $first->doc_date ? Carbon::parse($first->doc_date)->format('d.m.Y') : 'Дата не указана';
-        return $first->doc_name . ' №' . $first->doc_num . ', ' . $date;
-    }
-
-    /**
-     * Перед сохранением проверяем расход: нельзя списывать больше, чем есть
+     * Проверка перед сохранением — нельзя списывать больше, чем есть
      */
     public function beforeSave()
     {
         if (!$this->type || !$this->products) return;
 
-        $isOutgoing = mb_strtolower(trim($this->type->name)) === 'расход';
-        if ($isOutgoing) {
-            foreach ($this->products as $product) {
-                $pivotQty = abs($product->pivot->quantity); // количество из формы
+        $isOutgoing = in_array(mb_strtolower(trim($this->type->name)), ['расход','передача']);
 
-                // остаток на складе без учета текущей операции
-                $currentQty = DB::table('samvol_inventory_operation_products as op')
-                    ->join('samvol_inventory_operations as o', 'op.operation_id', '=', 'o.id')
-                    ->join('samvol_inventory_operation_types as t', 'o.type_id', '=', 't.id')
-                    ->where('op.product_id', $product->id)
-                    ->where('o.id', '<>', $this->id) // исключаем текущую операцию
-                    ->sum(DB::raw("CASE WHEN LOWER(t.name) = 'приход' THEN op.quantity ELSE -op.quantity END"));
+        foreach ($this->products as $product) {
+            $pivotQty = abs($product->pivot->quantity);
 
-                if ($pivotQty > $currentQty) {
-                    throw new ValidationException([
-                        'products' => "Ошибка! Нельзя списать {$pivotQty} ед. товара «{$product->name}». На складе всего {$currentQty}"
-                    ]);
-                }
+            $currentQty = DB::table('samvol_inventory_operation_products as op')
+                ->join('samvol_inventory_operations as o', 'op.operation_id', '=', 'o.id')
+                ->join('samvol_inventory_operation_types as t', 'o.type_id', '=', 't.id')
+                ->where('op.product_id', $product->id)
+                ->where('o.id', '<>', $this->id)
+                ->sum(DB::raw("CASE WHEN LOWER(t.name) = 'приход' THEN op.quantity ELSE -op.quantity END"));
+
+            Log::info("BeforeSave: Product {$product->name} | PivotQty={$pivotQty} | CurrentQty={$currentQty}");
+
+            if ($isOutgoing && $pivotQty > $currentQty) {
+                Log::error("Невозможно списать больше, чем есть: {$pivotQty} > {$currentQty}");
+                throw new \Exception("Ошибка! Нельзя передать {$pivotQty} ед. товара {$product->name}. На складе всего {$currentQty}");
             }
         }
     }
 
     /**
-     * После сохранения корректируем количество в пивоте
-     * Всегда положительное число, знак определяет тип операции
+     * После сохранения корректируем pivot quantity и sum
      */
     public function afterSave()
     {
-        if (!$this->type || !$this->products) {
-            return;
-        }
+        if (!$this->type || !$this->products) return;
 
         $isIncoming = mb_strtolower(trim($this->type->name)) === 'приход';
+        $isOutgoing = in_array(mb_strtolower(trim($this->type->name)), ['расход','передача']);
 
         foreach ($this->products as $product) {
             $pivot = $product->pivot;
             if (!$pivot) continue;
 
             $qty = abs($pivot->quantity);
-            $pivot->quantity = $qty; // всегда положительное в пивоте
+            $pivot->quantity = $qty;
+
+            $currentQty = $product->calculated_quantity;
+            $currentSum = $product->calculated_sum;
+
+            if ($isIncoming) {
+                $pivot->sum = $pivot->sum ?: round($qty * $product->price, 2);
+            } elseif ($isOutgoing) {
+                $pivot->sum = $currentQty > 0 ? round($currentSum * ($qty / $currentQty), 2) : 0;
+            }
+
+            Log::info("AfterSave: Product {$product->name} | PivotQty={$pivot->quantity} | PivotSum={$pivot->sum} | CurrentQty={$currentQty} | CurrentSum={$currentSum}");
+
             $pivot->save();
         }
     }
 
     /**
-     * Получаем количество прибавляемое/убавляемое для конкретного продукта
-     * Используется в списке операций
+     * Количество для отображения
      */
     public function getQuantityForProduct($product)
     {
@@ -117,4 +107,7 @@ class Operation extends Model
         $isIncoming = mb_strtolower(trim($this->type->name)) === 'приход';
         return $isIncoming ? abs($product->pivot->quantity) : -abs($product->pivot->quantity);
     }
+
+    public $rules = [];
+    public $jsonable = [];
 }

@@ -9,8 +9,8 @@ columns:
         label: Цена
         type: number
     calculated_quantity:
-        label: На складе
+        label: К-во на складе
         type: number
-    sum:
+    calculated_sum:
         label: Сумма
         type: number

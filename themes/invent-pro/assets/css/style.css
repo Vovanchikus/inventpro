@@ -430,7 +430,7 @@ footer {
   display: flex;
   justify-content: start;
   align-items: center;
-  gap: 12px;
+  gap: 24px 12px;
   flex-wrap: wrap;
 }
 .add-operation__box__content--products:not(:first-child)::before {
@@ -690,6 +690,8 @@ footer {
   line-height: 16px;
   border: 1px solid #e8e8e8;
   border-radius: var(--radius-nm);
+  background: transparent;
+  color: var(--text-title);
 }
 .form-floating .form-input:focus {
   border-color: #bababa;
@@ -701,7 +703,7 @@ footer {
   font-weight: 500;
   padding: 0 4px;
   background-color: #fff;
-  color: var(--text-title);
+  color: var(--text-body);
 }
 .form-floating .form-label {
   position: absolute;
@@ -712,4 +714,22 @@ footer {
   font-size: 14px;
   color: var(--neutral-400);
   transition: all var(--transition);
+}
+
+.error-field {
+  border: 1px solid var(--red-500) !important;
+}
+
+.error-message {
+  position: absolute;
+  left: 6px;
+  bottom: -16px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-error);
+}
+
+input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:active, input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0px 1000px white inset !important;
+  -webkit-text-fill-color: var(--text-title) !important;
 }

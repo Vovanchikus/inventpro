@@ -9,7 +9,7 @@ class OperationProduct extends Pivot
     public $table = 'samvol_inventory_operation_products';
     public $timestamps = false;
 
-    protected $fillable = ['quantity'];
+    protected $fillable = ['quantity', 'sum', 'counteragent'];
 
     public $belongsTo = [
         'product' => ['Samvol\Inventory\Models\Product'],

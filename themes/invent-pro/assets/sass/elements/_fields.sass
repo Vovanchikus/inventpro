@@ -10,6 +10,8 @@
     line-height: 16px
     border: 1px solid #e8e8e8
     border-radius: $radius-nm
+    background: transparent
+    color: $text-title
     &:focus
       border-color: #bababa
 
@@ -21,7 +23,7 @@
       font-weight: 500
       padding: 0 4px
       background-color: #fff
-      color: $text-title
+      color: $text-body
 
   .form-label
     position: absolute
@@ -32,3 +34,19 @@
     font-size: 14px
     color: $neutral-400
     transition: all $transition
+
+.error-field
+  border: 1px solid $red-500!important
+
+.error-message
+  position: absolute
+  left: 6px
+  bottom: -16px
+  font-size: 12px
+  font-weight: 500
+  color: $text-error
+
+input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:active, input:-webkit-autofill:focus
+  -webkit-box-shadow: 0 0 0px 1000px white inset !important
+  -webkit-text-fill-color: $text-title!important
+
