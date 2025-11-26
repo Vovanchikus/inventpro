@@ -9,6 +9,8 @@ class Plugin extends PluginBase
          return [
             \Samvol\Inventory\Components\Warehouse::class => 'warehouse',
             \Samvol\Inventory\Components\ImportExcel::class => 'importExcel',
+            \Samvol\Inventory\Components\Types::class => 'types',
+            \Samvol\Inventory\Components\AddOperation::class => 'addOperation',
         ];
     }
 

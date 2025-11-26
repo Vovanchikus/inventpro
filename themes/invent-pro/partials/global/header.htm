@@ -1,9 +1,13 @@
 <header class="header">
-    <div class="header__logo">InventPro <span>Система инвентаризации</span></div>
+    {% if this.page.url == '/add-operation' %}
+        <a href="/" class="header__logo">InventPro <span>Система инвентаризации</span></a>
+    {% else %}
+        <div class="header__logo">InventPro <span>Система инвентаризации</span></div>
+    {% endif %}
     <div class="header__button-box">
-        <button id="btnAddOperation" class="button button--md button--brand">
+        <a href="/add-operation" class="button button--md button--brand">
             Новая операция
-        </button>
+        </a>
 
         <button id="showToastButton" class="button button--md button--brand">
             Проверка

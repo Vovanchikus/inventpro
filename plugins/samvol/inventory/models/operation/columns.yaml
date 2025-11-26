@@ -6,6 +6,9 @@ columns:
     first_document:
         label: Документ
         type: text
+    counteragent:
+        label: Контрагент
+        type: text
     created_at:
         label: Дата
         type: datetime

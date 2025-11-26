@@ -2,6 +2,7 @@
 
 use Cms\Classes\ComponentBase;
 use Samvol\Inventory\Models\Product;
+
 class Warehouse extends ComponentBase
 {
     public $products;

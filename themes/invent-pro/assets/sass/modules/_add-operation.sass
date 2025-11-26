@@ -1,0 +1,129 @@
+@import '../core/vars'
+
+.add-operation
+  &__container
+    display: flex
+    flex-direction: column
+    justify-content: center
+    align-items: center
+    gap: 48px
+    width: 640px
+    margin: 0 auto
+    padding: 24px
+
+  &__title
+    font-size: 18px
+    font-weight: 600
+    color: $text-subtitle
+    text-align: center
+
+  &__content
+    display: flex
+    flex-direction: column
+    justify-content: center
+    align-items: flex-start
+    gap: 48px
+    width: 100%
+
+  &__type-box
+    display: flex
+    justify-content: center
+    align-items: center
+    gap: 24px
+    width: 100%
+
+    &__name
+      display: flex
+      justify-content: start
+      align-items: center
+      font-size: 14px
+      line-height: 16px
+      padding: 12px 24px
+      border: 1px solid #e8e8e8
+      border-radius: $radius-md
+      transition: all $transition
+      &:hover
+        border: 1px solid $bg-brand
+
+  &__box
+    display: flex
+    flex-direction: column
+    justify-content: center
+    align-items: flex-start
+    gap: 24px
+
+    &__title
+      font-size: 16px
+      font-weight: 500
+      color: $text-body
+
+    &__content
+      display: flex
+      flex-direction: column
+      justify-content: center
+      align-items: start
+      gap: 24px
+
+      &--documents
+        display: flex
+        justify-content: start
+        align-items: center
+        gap: 12px
+
+      &--products
+        display: flex
+        justify-content: start
+        align-items: center
+        gap: 12px
+        flex-wrap: wrap
+        &:not(:first-child)
+          &::before
+            content: ''
+            margin: 0 auto 12px auto
+            height: 1px
+            width: 300px
+            background-color: #e6e6e6
+
+  &__input
+
+    &--counteragent
+      width: 150px
+
+    &--doc-name
+      width: 357px
+    &--doc-num
+      width: 90px
+    &--doc-date
+      width: 125px
+
+    &--name
+      width: 368px
+    &--inv_number
+      width: 212px
+    &--unit
+      width: 109px
+    &--price
+      width: 150px
+    &--quantity
+      width: 145px
+    &--sum
+      width: 150px
+
+.add-operation__button-box
+  display: flex
+  justify-content: center
+  align-items: center
+  gap: 12px
+  margin: 0 auto
+
+.add-operation__documents > .add-operation__box__content
+  gap: 12px
+
+
+
+
+.add-operation__type-box__label input[type="radio"]:checked + .add-operation__type-box__name
+  color: $text-light
+  background-color: $bg-brand
+  border: 1px solid transparent
+  box-shadow: $button-brand-shadow-default

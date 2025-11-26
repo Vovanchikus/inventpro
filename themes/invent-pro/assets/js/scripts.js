@@ -130,4 +130,58 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
     });
+
+    // Документы — добавить
+    const addDocumentBtn = document.getElementById("add-document");
+    const documentsWrapper = document.getElementById(
+        "add-operation__documents-wrapper"
+    );
+
+    addDocumentBtn.addEventListener("click", () => {
+        const first = documentsWrapper.querySelector(
+            ".add-operation__row--document"
+        );
+        const clone = first.cloneNode(true);
+        clone.querySelectorAll("input").forEach((i) => (i.value = ""));
+        documentsWrapper.appendChild(clone);
+    });
+
+    // Документы — удалить последний
+    const removeDocumentBtn = document.getElementById("remove-document");
+
+    removeDocumentBtn.addEventListener("click", () => {
+        const items = documentsWrapper.querySelectorAll(
+            ".add-operation__row--document"
+        );
+        if (items.length > 1) {
+            items[items.length - 1].remove();
+        }
+    });
+
+    // Продукты — добавить
+    const addProductBtn = document.getElementById("add-product");
+    const productsWrapper = document.getElementById(
+        "add-operation__products-wrapper"
+    );
+
+    addProductBtn.addEventListener("click", () => {
+        const first = productsWrapper.querySelector(
+            ".add-operation__row--product"
+        );
+        const clone = first.cloneNode(true);
+        clone.querySelectorAll("input").forEach((i) => (i.value = ""));
+        productsWrapper.appendChild(clone);
+    });
+
+    // Продукты — удалить последний
+    const removeProductBtn = document.getElementById("remove-product");
+
+    removeProductBtn.addEventListener("click", () => {
+        const items = productsWrapper.querySelectorAll(
+            ".add-operation__row--product"
+        );
+        if (items.length > 1) {
+            items[items.length - 1].remove();
+        }
+    });
 });

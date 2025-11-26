@@ -13,6 +13,7 @@ class Operation extends Model
 
     protected $fillable = [
         'type_id',
+        'counteragent',
     ];
 
     public $rules = [];

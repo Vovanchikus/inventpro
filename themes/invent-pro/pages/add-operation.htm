@@ -1,0 +1,116 @@
+title = "Новая операция"
+url = "/add-operation"
+layout = "default"
+
+[addOperation]
+==
+
+
+<div class="add-operation__container box--light">
+
+  <h2 class="add-operation__title">{{ this.page.title }}</h2>
+
+  <form data-request="onAddOperation" class="add-operation__content">
+
+    <div class="add-operation__type-box">
+      {% for type in types|slice(0, 3) %}
+        <label class="add-operation__type-box__label">
+          <input type="radio" name="type_id" value="{{ type.id }}" hidden>
+          <span class="add-operation__type-box__name">{{ type.name }}</span>
+        </label>
+      {% endfor %}
+    </div>{# add-operation__type-box #}
+
+    <div class="add-operation__box add-operation__agent">
+
+      <div class="add-operation__box__title">Контрагент</div>
+      <div class="add-operation__box__content form-floating">
+        <input type="text" name="counteragent" class="add-operation__input--counteragent form-input" placeholder>
+        <label for="counteragent" class="form-label">Часть/ДПРЗ</label>
+      </div>
+
+    </div>{# add-operation__box add-operation__agent #}
+
+    <div class="add-operation__box add-operation__documents">
+
+      <div class="add-operation__box__title">Документы операции</div>
+
+      <div id="add-operation__documents-wrapper" class="add-operation__box__content">
+
+        <div class="add-operation__row--document add-operation__box__content--documents">
+
+          <div class="form-floating add-operation__input--doc-name">
+            <input type="text" name="doc_name[]" class="form-input" placeholder>
+            <label for="doc_name" class="form-label">Наименование</label>
+          </div>
+          <div class="form-floating add-operation__input--doc-num">
+            <input type="text" name="doc_num[]" class=" form-input" placeholder>
+            <label for="doc_num" class="form-label">№</label>
+          </div>
+          <div class="form-floating add-operation__input--doc-date">
+            <input type="date" name="doc_date[]" class=" form-input" placeholder>
+            <label for="doc_date" class="form-label">Дата</label>
+          </div>
+
+        </div>{# add-operation__box__content--documents #}
+
+      </div>{# add-operation__box__content#}
+
+      <div class="add-operation__button-box">
+        <button id="add-document" type="button" class="button--sm button--brand">Добавить документ</button>
+        <button id="remove-document" type="button" class="button--sm button--second">Удалить документ</button>
+      </div>
+
+    </div>{# add-operation__box add-operation__documents #}
+
+    <div class="add-operation__box add-operation__products">
+
+      <div class="add-operation__box__title">Товары в операции</div>
+
+      <div id="add-operation__products-wrapper"  class="add-operation__box__content">
+
+        <div class="add-operation__row--product add-operation__box__content--products">
+
+          <div class="form-floating add-operation__input--name">
+            <input type="text" name="name[]" class="form-input" placeholder>
+            <label for="name" class="form-label">Наименование</label>
+          </div>
+          <div class="form-floating add-operation__input--inv_number">
+            <input type="text" name="inv_number[]" class=" form-input" placeholder>
+            <label for="inv_number" class="form-label">Номенклатурный №</label>
+          </div>
+          <div class="form-floating add-operation__input--unit">
+            <input type="text" name="unit[]" class=" form-input" placeholder>
+            <label for="unit" class="form-label">Ед.изм</label>
+          </div>
+          <div class="form-floating add-operation__input--price">
+            <input type="text" name="price[]" class=" form-input" placeholder>
+            <label for="price" class="form-label">Цена</label>
+          </div>
+          <div class="form-floating add-operation__input--quantity">
+            <input type="text" name="quantity[]" class=" form-input" placeholder>
+            <label for="quantity" class="form-label">К-во</label>
+          </div>
+          <div class="form-floating add-operation__input--sum">
+            <input type="text" name="sum[]" class=" form-input" placeholder>
+            <label for="sum" class="form-label">Сумма</label>
+          </div>
+
+        </div>{# add-operation__row--product add-operation__box__content--products #}
+
+      </div>{# add-operation__box__content#}
+
+      <div class="add-operation__button-box">
+        <button id="add-product" type="button" class="button--sm button--brand">Добавить продукт</button>
+        <button id="remove-product" type="button" class="button--sm button--second">Удалить продукт</button>
+      </div>
+
+    </div>{# add-operation__box add-operation__products #}
+
+    <div class="add-operation__button-box">
+      <button type="submit" class="button--md button--brand">Сохранить операцию</button>
+    </div>
+
+  </form>
+
+</div>{# add-operation__container box--light #}
