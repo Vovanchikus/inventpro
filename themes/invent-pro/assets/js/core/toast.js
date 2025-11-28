@@ -1,3 +1,11 @@
+/**
+ * toast
+ * ----------
+ * Универсальные уведомления (toasts)
+ * Функции:
+ * - toast(message, type, timeout, position) — показать уведомление
+ */
+
 window.toast = function (
     message,
     type = "info",
@@ -32,20 +40,20 @@ window.toast = function (
         document.body.appendChild(container);
     }
 
-    const toast = document.createElement("div");
-    toast.className = `toast ${type} ${position}`;
-    toast.innerHTML = message;
+    const toastEl = document.createElement("div");
+    toastEl.className = `toast ${type} ${position}`;
+    toastEl.innerHTML = message;
 
-    container.appendChild(toast);
+    container.appendChild(toastEl);
 
-    setTimeout(() => toast.classList.add("show"), 50);
-    setTimeout(() => hideToast(toast), timeout);
+    setTimeout(() => toastEl.classList.add("show"), 50);
+    setTimeout(() => hideToast(toastEl), timeout);
 
-    toast.addEventListener("click", () => hideToast(toast));
+    toastEl.addEventListener("click", () => hideToast(toastEl));
 };
 
-function hideToast(toast) {
-    toast.classList.remove("show");
-    toast.classList.add("hide");
-    setTimeout(() => toast.remove(), 300);
+function hideToast(toastEl) {
+    toastEl.classList.remove("show");
+    toastEl.classList.add("hide");
+    setTimeout(() => toastEl.remove(), 300);
 }

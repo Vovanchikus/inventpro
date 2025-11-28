@@ -72,27 +72,27 @@ layout = "default"
         <div class="add-operation__row--product add-operation__box__content--products">
 
           <div class="form-floating add-operation__input--name">
-            <input type="text" name="name[]" class="form-input" placeholder>
+            <input type="text" name="name[]" class="form-input" autocomplete="off" placeholder>
             <label for="name" class="form-label">Наименование</label>
           </div>
           <div class="form-floating add-operation__input--inv_number">
-            <input type="text" name="inv_number[]" class=" form-input" placeholder>
+            <input type="text" name="inv_number[]" class=" form-input" autocomplete="off" placeholder>
             <label for="inv_number" class="form-label">Номенклатурный №</label>
           </div>
           <div class="form-floating add-operation__input--unit">
-            <input type="text" name="unit[]" class=" form-input" placeholder>
+            <input type="text" name="unit[]" class=" form-input" autocomplete="off" placeholder>
             <label for="unit" class="form-label">Ед.изм</label>
           </div>
           <div class="form-floating add-operation__input--price">
-            <input type="text" name="price[]" class=" form-input" placeholder>
+            <input type="text" name="price[]" class=" form-input" autocomplete="off" placeholder>
             <label for="price" class="form-label">Цена</label>
           </div>
           <div class="form-floating add-operation__input--quantity">
-            <input type="text" name="quantity[]" class=" form-input" placeholder>
+            <input type="text" name="quantity[]" class=" form-input" autocomplete="off" placeholder >
             <label for="quantity" class="form-label">К-во</label>
           </div>
           <div class="form-floating add-operation__input--sum">
-            <input type="text" name="sum[]" class=" form-input" placeholder>
+            <input type="text" name="sum[]" class=" form-input" autocomplete="off" placeholder>
             <label for="sum" class="form-label">Сумма</label>
           </div>
 
@@ -102,6 +102,7 @@ layout = "default"
 
       <div class="add-operation__button-box">
         <button id="add-product" type="button" class="button--sm button--brand">Добавить продукт</button>
+        <button id="btnSearchProduct" type="button" class="button button--sm button--brand mb-2 d-none">Добавить из БД</button>
         <button id="remove-product" type="button" class="button--sm button--second">Удалить продукт</button>
       </div>
 

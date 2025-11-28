@@ -1,15 +1,23 @@
+/**
+ * Modal
+ * ----------
+ * Универсальный компонент для модалок на сайте
+ * Методы:
+ * - Modal.show(html, type, title) — показать модалку
+ * - Modal.hide() — скрыть модалку
+ * - Modal.init() — навесить события закрытия
+ */
+
 class Modal {
     static container = document.getElementById("modal-container");
     static content = document.querySelector("#modal-container .modal-content");
-    static title = document.querySelector("#modal-container .modal-title"); // заголовок
+    static title = document.querySelector("#modal-container .modal-title");
     static closeBtn = document.querySelector("#modal-container .modal-close");
 
     static show(html, type = "info", title = "") {
-        this.title.textContent = title; // вставляем заголовок
-        this.content.innerHTML = html; // вставляем контент
+        this.title.textContent = title;
+        this.content.innerHTML = html;
         this.container.classList.add("active");
-
-        // Цвет текста контента (можно отдельно для заголовка)
         this.content.style.color =
             type === "error" ? "red" : type === "success" ? "green" : "#000";
     }

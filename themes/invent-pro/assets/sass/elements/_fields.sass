@@ -38,13 +38,15 @@
 .error-field
   border: 1px solid $red-500!important
 
-.error-message
+.field-message
   position: absolute
   left: 6px
   bottom: -16px
   font-size: 12px
   font-weight: 500
-  color: $text-error
+  &--error
+    color: $text-error
+  &--info
 
 input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:active, input:-webkit-autofill:focus
   -webkit-box-shadow: 0 0 0px 1000px white inset !important
