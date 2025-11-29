@@ -24,6 +24,8 @@ class ImportExcel extends ComponentBase
     public function onApplyDifferences()
     {
         $updates = post('updates', []);
+        Log::info('Применение различий — данные с фронта:', ['updates' => $updates]);
+
         if (empty($updates)) {
             return ['error' => 'Нет выбранных продуктов для обновления'];
         }
@@ -34,7 +36,13 @@ class ImportExcel extends ComponentBase
             $invNumber = $item['inv_number'] ?? null;
             $excelQuantity = floatval($item['quantity'] ?? 0);
             $price = floatval($item['price'] ?? 0);
-            $sum   = floatval($item['sum'] ?? 0);
+            $excelSum = floatval($item['sum'] ?? 0);
+
+            Log::info("Обрабатываем продукт {$invNumber}", [
+                'excelQuantity' => $excelQuantity,
+                'price' => $price,
+                'excelSum' => $excelSum,
+            ]);
 
             if (!$invNumber) continue;
 
@@ -42,30 +50,43 @@ class ImportExcel extends ComponentBase
             if (!$product) continue;
 
             $currentQuantity = $product->calculated_quantity ?? 0;
-            $delta = $excelQuantity - $currentQuantity;
+            $currentSum = $product->calculated_sum ?? 0;
 
-            if ($delta != 0) {
-                $operationTypeName = $delta > 0 ? 'Импорт приход' : 'Импорт расход';
+            $deltaQuantity = $excelQuantity - $currentQuantity;
+            $deltaSum = $excelSum - $currentSum;
+
+            // Создаём операцию если есть любое изменение
+            if ($deltaQuantity != 0 || $deltaSum != 0) {
+                $operationTypeName = ($deltaQuantity > 0 || $deltaQuantity == 0 && $deltaSum > 0) ? 'Импорт приход' : 'Импорт расход';
                 $operationType = OperationType::firstOrCreate(['name' => $operationTypeName]);
 
                 $operation = new Operation();
                 $operation->type_id = $operationType->id;
                 $operation->save();
 
-                $pivotSum = $delta > 0
-                    ? $sum
-                    : ($product->calculated_sum * abs($delta) / max($currentQuantity,1));
+                // Количество и сумма записываются в pivot
+                $pivotQuantity = abs($deltaQuantity); // если не изменилось количество, будет 0
+                $pivotSum = $deltaSum != 0
+                    ? abs($deltaSum)
+                    : ($deltaQuantity > 0
+                        ? $excelSum
+                        : ($currentSum * abs($deltaQuantity) / max($currentQuantity,1)));
 
                 $operation->products()->attach($product->id, [
-                    'quantity' => abs($delta),
+                    'quantity' => $pivotQuantity,
                     'sum' => $pivotSum,
                     'counteragent' => $counteragent
                 ]);
+
+                Log::info("Создана операция для продукта {$invNumber}", [
+                    'operationType' => $operationTypeName,
+                    'pivotQuantity' => $pivotQuantity,
+                    'pivotSum' => $pivotSum,
+                ]);
             }
 
-            // Обновляем цену и сумму продукта
+            // Обновляем цену продукта
             $product->price = $price;
-            $product->sum   = $sum;
             $product->save();
         }
 
@@ -90,9 +111,14 @@ class ImportExcel extends ComponentBase
         }
 
         $file = Input::file('excel_file');
-        if (!$file) return ['toast' => ['message'=>'Файл не загружен','type'=>'error']];
+        Log::info('$_FILES:', $_FILES);
 
-        // Контрагент для всей операции
+        if (!$file) {
+            Log::info('Файл не получен через Input::file');
+            return ['toast'=>['message'=>'Файл не загружен','type'=>'error']];
+        }
+        Log::info('Файл получен: '.$file->getClientOriginalName());
+
         $counteragent = Input::get('counteragent', 'Не указан');
 
         try {
@@ -133,6 +159,7 @@ class ImportExcel extends ComponentBase
                 $currentQuantity = $product->calculated_quantity ?? 0;
                 $currentSum = $product->calculated_sum ?? 0;
 
+                // Если есть различия по количеству, цене или сумме
                 if ($currentQuantity != $quantity || $product->price != $price || $currentSum != $sum) {
                     $differences[] = [
                         'id'=>$product->id,
@@ -142,10 +169,12 @@ class ImportExcel extends ComponentBase
                         'excel_quantity'=>$quantity,
                         'price'=>$price,
                         'current_sum'=>$currentSum,
+                        'excel_sum'=>$sum,
                         'unit'=>$unit
                     ];
                 }
 
+                // Обновляем цену продукта, поле sum не трогаем
                 $product->price = $price;
                 $product->save();
             }
@@ -166,6 +195,7 @@ class ImportExcel extends ComponentBase
                 }
             }
 
+            // Если есть различия, показываем модалку для подтверждения изменений
             if (!empty($differences)) {
                 $html = $this->renderPartial('modals/modal_import_result', [
                     'differences'=>$differences,
@@ -179,7 +209,7 @@ class ImportExcel extends ComponentBase
                 ];
             }
 
-            return ['toast'=>['message'=>'Импорт завершен','type'=>'success']];
+            return ['toast'=>['message'=>'Импорт завершен','type'=>'success', 'timeout' => 5000]];
 
         } catch (\Exception $e) {
             return ['toast'=>['message'=>'Ошибка: '.$e->getMessage(),'type'=>'error']];

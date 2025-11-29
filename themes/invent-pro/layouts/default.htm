@@ -43,9 +43,11 @@ description = "Основной макет Winter CMS"
         {% snowboard all %}
 
         <!-- Мои скрипты -->
+        <script src="{{ 'assets/js/core/button-progress.js'|theme }}?v={{ random(100000,999999) }}"></script>
         <script src="{{ 'assets/js/core/modal.js'|theme }}?v={{ random(100000,999999) }}"></script>
         <script src="{{ 'assets/js/core/toast.js'|theme }}?v={{ random(100000,999999) }}"></script>
         <script src="{{ 'assets/js/core/handlers.js'|theme }}?v={{ random(100000,999999) }}"></script>
+        <script src="{{ 'assets/js/core/import-excel.js'|theme }}?v={{ random(100000,999999) }}"></script>
 
         {% if this.page.url == '/add-operation' %}
             <script src="{{ 'assets/js/pages/add-operation.js'|theme }}?v={{ random(100000,999999) }}"></script>

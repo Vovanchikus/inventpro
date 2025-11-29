@@ -19,13 +19,13 @@
                     data-id="{{ diff.id }}"
                     data-quantity="{{ diff.excel_quantity }}"
                     data-price="{{ diff.price }}"
-                    data-sum="{{ diff.sum }}" />
+                    data-sum="{{ diff.excel_sum }}" />
 
                 <!-- Скрытые поля для передачи в updates -->
                 <input type="hidden" name="updates[{{ diff.id }}][inv_number]" value="{{ diff.inv_number }}">
                 <input type="hidden" name="updates[{{ diff.id }}][quantity]" value="{{ diff.excel_quantity }}">
                 <input type="hidden" name="updates[{{ diff.id }}][price]" value="{{ diff.price }}">
-                <input type="hidden" name="updates[{{ diff.id }}][sum]" value="{{ diff.sum }}">
+                <input type="hidden" name="updates[{{ diff.id }}][sum]" value="{{ diff.excel_sum }}">
             </div>
             <div class="import__name">{{ diff.name }}</div>
             <div class="import__quantity">{{ diff.current_quantity }}</div>

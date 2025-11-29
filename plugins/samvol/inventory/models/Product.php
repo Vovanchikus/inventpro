@@ -15,7 +15,6 @@ class Product extends Model
         'unit',
         'inv_number',
         'price',
-        'sum',
     ];
 
     public $belongsToMany = [

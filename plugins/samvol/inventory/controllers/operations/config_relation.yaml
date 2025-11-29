@@ -12,6 +12,9 @@ products:
                 pivot[quantity]:
                     label: К-во в операции
                     type: number
+                pivot[sum]:
+                    label: Сумма в операции
+                    type: number
         toolbarButtons: create|add|delete
     manage:
         list: $/samvol/inventory/models/product/columns.yaml
