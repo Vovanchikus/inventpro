@@ -1,0 +1,64 @@
+<div id="product-list">
+  {% for history in histories %}
+
+    <div class="operation-history__item table-item">
+
+      <div class="operation-history__type">
+      {% if history.operation_type == 'Приход' %}
+          <div class="label--sm label--success">{{ history.operation_type }}</div>
+      {% elseif history.operation_type == 'Списание' %}
+          <div class="label--sm label--error">{{ history.operation_type }}</div>
+      {% elseif history.operation_type == 'Передача' %}
+          <div class="label--sm label--info">{{ history.operation_type }}</div>
+      {% elseif history.operation_type == 'Импорт' %}
+          <div class="label--sm label--border">{{ history.operation_type }}</div>
+      {% elseif history.operation_type == 'Импорт приход' %}
+          <div class="label--sm label--border">{{ history.operation_type }}</div>
+      {% elseif history.operation_type == 'Импорт расход' %}
+          <div class="label--sm label--border">{{ history.operation_type }}</div>
+      {% endif %}
+
+
+      </div>
+
+      <div class="operation-history__document">
+        {% if history.first_document %}
+            {{ history.first_document }}
+        {% else %}
+          -
+        {% endif %}
+      </div>
+
+      <div class="operation-history__name">
+        {% if history.product_name %}
+            {{ history.product_name }}
+        {% else %}
+          -
+        {% endif %}
+      </div>
+
+      <div class="operation-history__unit">
+        {% if history.product_unit %}
+            {{ history.product_unit }}
+        {% else %}
+          -
+        {% endif %}
+      </div>
+      <div class="operation-history__quantity">
+        {% if history.quantity %}
+            {{ history.quantity }}
+        {% else %}
+          -
+        {% endif %}
+      </div>
+      <div class="operation-history__counteragent">
+        {% if history.counteragent %}
+            {{ history.counteragent }}
+        {% else %} #}
+          -
+        {% endif %}
+      </div>
+    </div>
+
+  {% endfor %}
+</div>

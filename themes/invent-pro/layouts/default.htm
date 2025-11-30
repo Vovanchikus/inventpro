@@ -47,10 +47,14 @@ description = "Основной макет Winter CMS"
         <script src="{{ 'assets/js/core/modal.js'|theme }}?v={{ random(100000,999999) }}"></script>
         <script src="{{ 'assets/js/core/toast.js'|theme }}?v={{ random(100000,999999) }}"></script>
         <script src="{{ 'assets/js/core/handlers.js'|theme }}?v={{ random(100000,999999) }}"></script>
+        <script src="{{ 'assets/js/core/header-search.js'|theme }}?v={{ random(100000,999999) }}"></script>
         <script src="{{ 'assets/js/core/import-excel.js'|theme }}?v={{ random(100000,999999) }}"></script>
 
         {% if this.page.url == '/add-operation' %}
             <script src="{{ 'assets/js/pages/add-operation.js'|theme }}?v={{ random(100000,999999) }}"></script>
+        {% endif %}
+        {% if this.page.url == '/warehouse' or this.page.url == '/operation-history' %}
+            <script src="{{ 'assets/js/pages/table.js'|theme }}?v={{ random(100000,999999) }}"></script>
         {% endif %}
 
         {% scripts %}

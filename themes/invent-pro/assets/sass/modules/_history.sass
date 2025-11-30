@@ -1,28 +1,29 @@
 @import '../core/vars'
 
-.warehouse-box
+.table
   background-color: $bg-box--light
   border-radius: $radius-lg
   box-shadow: $box-light-shadow
   overflow: hidden
 
-.warehouse__item.table-title
+.operation-history__item.table-title
   position: sticky
-  height: 74px
+  height: 62px
   top: 0
   left: 0
   z-index: 10
   background-color: #FAFAFA
 
 
-.warehouse
+.operation-history
+
+  &-table
 
   &__item
     display: grid
-    grid-template-areas: "check left unit price quantity sum"
-    grid-template-columns: 18px 4fr 1fr 2fr 2fr 2fr
-    grid-template-rows: 74px auto
-    justify-content: space-between
+    grid-template-areas: "type document name unit quantity counteragent"
+    grid-template-columns: 137px 270px 274px 85px 124px 106px
+    grid-template-rows: 62px auto
     align-items: center
     gap: 0px 24px
     font-size: 12px
@@ -34,7 +35,7 @@
       font-size: 13px
       font-weight: normal
       color: $text-body
-      border-bottom: 1px solid #F5F5F5
+      border-bottom: 1px solid $border
       &::after
         content: ''
         position: absolute
@@ -50,42 +51,29 @@
         &::after
           opacity: 1
 
-  &__checkbox
-    grid-area: check
-    height: 18px
+  &__type
+    grid-area: type
 
-  &__left
-    grid-area: left
-    display: inline-block
-    flex-direction: column
-    gap: 4px
+  &__document
+    grid-area: document
+
   &__name
+    grid-area: name
     display: -webkit-box
     -webkit-line-clamp: 1
     -webkit-box-orient: vertical
     overflow: hidden
     text-overflow: ellipsis
-  &__number
-    display: inline-block
-    font-size: 12px
-    font-weight: 500
-    line-height: 12px
-    margin-top: 4px
-    padding: 6px 8px
-    color: $text-body
-    background-color: $neutral-200
-    border-radius: 6px
+
   &__unit
     grid-area: unit
     justify-self: center
-  &__price
-    grid-area: price
-    justify-self: center
+
   &__quantity
     grid-area: quantity
     justify-self: center
-  &__sum
-    grid-area: sum
+  &__counteragent
+    grid-area: counteragent
     justify-self: end
 
 
@@ -111,7 +99,7 @@
       font-size: 13px
       font-weight: normal
       color: $text-body
-      border-bottom: 1px solid $border
+      border-bottom: 1px solid #F5F5F5
       &::after
         content: ''
         position: absolute

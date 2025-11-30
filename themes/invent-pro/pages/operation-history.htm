@@ -1,0 +1,23 @@
+title = "История операций"
+url = "/operation-history"
+layout = "default"
+
+[history]
+==
+
+<div class="operation-history-table table">
+
+  <div class="operation-history__item table-title">
+    <div class="operation-history__type">Тип операции</div>
+    <div class="operation-history__document">Документ</div>
+    <div class="operation-history__name">Наименование</div>
+    <div class="operation-history__unit">Ед.измерения</div>
+    <div class="operation-history__quantity">Количество</div>
+    <div class="operation-history__counteragent">Контрагент</div>
+  </div>
+
+  {% partial 'operation-history/history-item' %}
+
+
+
+</div>

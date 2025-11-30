@@ -1,46 +1,55 @@
-{% for product in products %}
+<div id="product-list">
+  {% for product in products %}
 
-  <div class="warehouse__item table-item">
+    <div class="warehouse__item table-item">
 
-    <div class="warehouse__name">{{ product.name }}</div>
+      <div class="warehouse__checkbox">
+        <label for="" class="checkbox">
+          <input type="checkbox" name="" id="">
+        </label>
+      </div>
 
-    <div class="warehouse__number">
-      {% if product.inv_number %}
-          {{ product.inv_number }}
-      {% else %}
-        -
-      {% endif %}
+      <div class="warehouse__left">
+        <div class="warehouse__name">{{ product.name }}</div>
+        <div class="warehouse__number">
+          {% if product.inv_number %}
+              {{ product.inv_number }}
+          {% else %}
+            -
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="warehouse__unit">
+        {% if product.unit %}
+            {{ product.unit }}
+        {% else %}
+          -
+        {% endif %}
+      </div>
+
+      <div class="warehouse__price">
+        {% if product.price %}
+            {{ product.price }}
+        {% else %}
+          -
+        {% endif %}
+      </div>
+      <div class="warehouse__quantity">
+        {% if product.calculatedQuantity %}
+            {{ product.calculatedQuantity }}
+        {% else %}
+          -
+        {% endif %}
+      </div>
+      <div class="warehouse__sum">
+        {% if product.calculatedSum %}
+            {{ product.calculatedSum }}
+        {% else %} #}
+          -
+        {% endif %}
+      </div>
     </div>
 
-    <div class="warehouse__unit">
-      {% if product.unit %}
-          {{ product.unit }}
-      {% else %}
-        -
-      {% endif %}
-    </div>
-
-    <div class="warehouse__price">
-      {% if product.price %}
-          {{ product.price }}
-      {% else %}
-        -
-      {% endif %}
-    </div>
-    <div class="warehouse__quantity">
-      {% if product.calculatedQuantity %}
-          {{ product.calculatedQuantity }}
-      {% else %}
-        -
-      {% endif %}
-    </div>
-    <div class="warehouse__sum">
-      {% if product.calculatedSum %}
-          {{ product.calculatedSum }}
-      {% else %} #}
-        -
-      {% endif %}
-    </div>
-  </div>
-
-{% endfor %}
+  {% endfor %}
+</div>

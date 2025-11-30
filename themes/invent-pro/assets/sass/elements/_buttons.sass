@@ -27,29 +27,55 @@
       margin-right: 8px
 
   &--brand
-    color: $button-brand-text-default
+    color: $button-brand-text
     background-color: $button-brand-bg-default
     box-shadow: $button-brand-shadow-default
     transition: all $transition
     &:hover
-      color: $button-brand-text-hover
+      color: $button-brand-text
       background-color: $button-brand-bg-hover
       box-shadow: $button-brand-shadow-hover
     &:active
-      color: $button-brand-text-active
+      color: $button-brand-text
       background-color: $button-brand-bg-active
       box-shadow: none
       transform: scale(0.98)
 
+  &--success
+    color: $button-success-text
+    background-color: $button-success-bg-default
+    box-shadow: $button-success-shadow-default
+    transition: all $transition
+    &:hover
+      color: $button-success-text
+      background-color: $button-success-bg-hover
+      box-shadow: $button-success-shadow-hover
+    &:active
+      color: $button-success-text
+      background-color: $button-success-bg-active
+      box-shadow: none
+      transform: scale(0.98)
+
+  &--error
+    color: $button-error-text
+    background-color: $button-error-bg-default
+    box-shadow: $button-error-shadow-default
+    transition: all $transition
+    &:hover
+      background-color: $button-error-bg-hover
+      box-shadow: $button-error-shadow-hover
+    &:active
+      background-color: $button-error-bg-active
+      box-shadow: none
+      transform: scale(0.98)
+
   &--second
-    color: $button-second-text-default
+    color: $button-second-text
     background-color: $button-second-bg-default
     transition: all $transition
     &:hover
-      color: $button-second-text-hover
       background-color: $button-second-bg-hover
     &:active
-      color: $button-second-text-active
       background-color: $button-second-bg-active
       transform: scale(0.98)
 
@@ -57,7 +83,7 @@
   padding: 16px 32px 16px 24px
 
 .button--md:has(svg)
-  padding: 14px 24px 14px 20px
+  padding: 10px 24px 10px 20px
 
 .button--sm:has(svg)
   padding: 10px 24px 10px 20px
