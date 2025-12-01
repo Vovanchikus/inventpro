@@ -1,10 +1,23 @@
-// warehouse.js
+/**
+ * warehouse.js
+ * ----------
+ * Скрипты для страницы склада.
+ *
+ * Функции:
+ * - Управление выбором товаров через чекбоксы
+ * - Подсчет выбранных товаров и отображение нижней панели
+ * - Сохранение выбранных товаров в localStorage
+ * - Кнопка "Создать операцию" для перехода на /add-operation
+ * - Кнопка закрытия нижней панели для очистки выбора
+ */
+
 document.addEventListener("DOMContentLoaded", () => {
     // Очищаем предыдущий выбор при загрузке страницы
     localStorage.removeItem("selectedProducts");
 
     /**
      * Получить текущий список выбранных товаров из localStorage
+     * @returns {Array}
      */
     function getSelected() {
         return JSON.parse(localStorage.getItem("selectedProducts") || "[]");
@@ -20,6 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /**
      * Формируем массив выбранных товаров на основе чекбоксов на странице
+     * @returns {Array}
      */
     function getSelectedFromCheckboxes() {
         const selected = [];
@@ -42,14 +56,14 @@ document.addEventListener("DOMContentLoaded", () => {
         const selected = getSelectedFromCheckboxes();
         saveSelected(selected);
 
-        const bar = document.getElementById("bottomBar");
+        const bottomBar = document.getElementById("bottomBar");
         const countEl = document.getElementById("bottomBarCount");
 
         if (selected.length > 0) {
-            bar.classList.remove("hidden");
+            bottomBar.classList.remove("hidden");
             countEl.textContent = `${selected.length}`;
         } else {
-            bar.classList.add("hidden");
+            bottomBar.classList.add("hidden");
             countEl.textContent = "0";
         }
     }
@@ -79,6 +93,25 @@ document.addEventListener("DOMContentLoaded", () => {
             // Переходим на страницу создания операции
             window.location.href = "/add-operation";
         });
+
+    /**
+     * Кнопка закрытия нижней панели
+     * - Стирает выбранные товары из localStorage
+     * - Сбрасывает все чекбоксы
+     */
+    const bottomBarCloseBtn = document.querySelector(".bottom-bar__close");
+    bottomBarCloseBtn?.addEventListener("click", () => {
+        // Очистка localStorage
+        localStorage.removeItem("selectedProducts");
+
+        // Сброс чекбоксов
+        document.querySelectorAll(".product-check").forEach((cb) => {
+            cb.checked = false;
+        });
+
+        // Обновление панели
+        updateBottomBar();
+    });
 
     // Обновляем панель при загрузке страницы
     updateBottomBar();
