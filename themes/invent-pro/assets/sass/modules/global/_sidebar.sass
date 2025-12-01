@@ -1,0 +1,35 @@
+@import '../../core/vars'
+
+.sidebar
+  padding: 6px
+  background-color: $bg-box--light
+  box-shadow: $box-light-shadow
+  border-radius: 34px
+
+.sidebar-navigation
+
+  &__list
+    display: flex
+    flex-direction: column
+    justify-content: start
+    align-items: center
+    gap: 6px
+
+  &__item
+
+  &__link
+    display: flex
+    color: $text-title
+    padding: 16px
+    border-radius: 28px
+    transition: all $transition
+    &:hover
+      color: $text-title
+      background-color: $neutral-200
+    &:active
+      color: $button-brand-text
+      background-color: $button-brand-bg-default
+      box-shadow: $button-brand-shadow-default
+
+
+

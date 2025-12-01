@@ -28,7 +28,7 @@ description = "Основной макет Winter CMS"
 
         {% partial 'global/header' %}
 
-        {% partial 'modals/modal' %}
+        {% partial 'global/sidebar' %}
 
         <main>
             {% page %}
@@ -36,6 +36,8 @@ description = "Основной макет Winter CMS"
 
         {% partial 'global/bottom-bar' %}
 
+
+        {% partial 'modals/modal' %}
         <!-- Winter framework + Snowboard -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
@@ -55,6 +57,9 @@ description = "Основной макет Winter CMS"
         {% endif %}
         {% if this.page.url == '/warehouse' or this.page.url == '/operation-history' %}
             <script src="{{ 'assets/js/pages/table.js'|theme }}?v={{ random(100000,999999) }}"></script>
+        {% endif %}
+        {% if this.page.url == '/warehouse'%}
+            <script src="{{ 'assets/js/pages/warehouse.js'|theme }}?v={{ random(100000,999999) }}"></script>
         {% endif %}
 
         {% scripts %}

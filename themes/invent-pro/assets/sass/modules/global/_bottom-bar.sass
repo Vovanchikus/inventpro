@@ -3,39 +3,53 @@
 .bottom-bar
   position: fixed
   bottom: 50px
-  left: calc( 50% - 134px )
+  left: 50%;
+  transform: translateX(-50%)
+  width: max-content
   display: flex
-  justify-content: center
+  justify-content: space-between
   align-items: center
-  padding: 10px 12px
-  width: 268px
-  height: 72px
-  background-color: hsla(217, 51, 57, 24%)
-  border-radius: 36px
-  backdrop-filter: blur(8px)
+  gap: 32px
+  padding: 8px 8px 8px 16px
+  background-color: $bg-box--dark
+  border-radius: 28px
+  opacity: 1
+  transition: all $transition
+  &.hidden
+    opacity: 0
+    bottom: 30px
+    // transition: transform $transition, display $transition
 
-  &__list
+
+  &__close
+    height: 24px
+    color: #6868B1
+
+  &__left
     display: flex
-    justify-content: space-between
+    justify-content: start
+    align-items: center
+    gap: 16px
+
+  &__count-box
+    display: flex
+    justify-content: start
+    align-items: center
+    gap: 6px
+    font-size: 14px
+    font-weight: 500
+    line-height: 16px
+    color: $text-light
+
+  &__count
+    padding: 4px 8px
+    background-color: $neutral-700
+    border-radius: 12px
+
+  &__count-text
+    display: block
+
+  &__button-box
+    display: flex
     align-items: center
     gap: 12px
-
-  &__item
-    display: flex
-    justify-content: center
-    align-items: center
-
-  &__link
-    padding: 14px
-    height: 52px
-    color: $text-brand
-    border: 1px solid transparent
-    border-radius: 26px
-
-    &:hover
-      color: $text-light
-      background-color: $bg-brand
-      // border: 1px solid rgba(0, 0, 0, 0.16)
-      box-shadow: 0 4px 12px 0 $blue-400, inset 0 0px 2px 0 rgba(255, 255, 255, 0.56), inset 0 -1px 2px rgba(0, 0, 0, 0.16)
-
-
