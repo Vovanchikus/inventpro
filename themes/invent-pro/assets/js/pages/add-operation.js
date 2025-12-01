@@ -13,6 +13,12 @@
  * - addProductToOperation() — добавление выбранного товара в форму операции
  */
 
+/**
+ * add-operation.js
+ * ----------
+ * Скрипты для страницы добавления операции
+ */
+
 document.addEventListener("DOMContentLoaded", () => {
     const addProductBtn = document.getElementById("add-product");
     const addFromDBBtn = document.getElementById("btnSearchProduct");
@@ -197,137 +203,6 @@ document.addEventListener("DOMContentLoaded", () => {
     initAutoSumCalc();
 
     // =============================
-    // Открытие модалки "Добавить из БД"
-    // =============================
-    addFromDBBtn?.addEventListener("click", () => {
-        $.request("onShowProductSearchModal", {
-            success: (data) => {
-                // Показываем модалку с HTML из partial
-                Modal.show(data.modalContent || "", "info", "Выбор товаров");
-
-                // Инициализация модалки
-                setTimeout(() => initProductSearchModal(), 50);
-            },
-            error: () => {
-                alert("Ошибка загрузки модалки с товарами");
-            },
-        });
-    });
-
-    // =============================
-    // Инициализация модалки поиска товаров
-    // =============================
-    function initProductSearchModal() {
-        const modal = document.getElementById("modal-container");
-        if (!modal) return;
-
-        const searchInput = modal.querySelector("#searchProductInput");
-        const searchBtn = modal.querySelector("#btnSearchProductModal");
-        const resultsWrapper = modal.querySelector("#productSearchResults");
-
-        if (!searchInput || !searchBtn || !resultsWrapper) return;
-        resultsWrapper.innerHTML = "";
-
-        let addSelectedBtn = modal.querySelector("#btnAddSelectedProducts");
-        if (!addSelectedBtn) {
-            addSelectedBtn = document.createElement("button");
-            addSelectedBtn.id = "btnAddSelectedProducts";
-            addSelectedBtn.className = "button button--md button--primary mt-2";
-            addSelectedBtn.textContent = "Добавить выбранные";
-            resultsWrapper.parentNode.appendChild(addSelectedBtn);
-        }
-
-        // Отвязываем старые события
-        searchBtn.replaceWith(searchBtn.cloneNode(true));
-        addSelectedBtn.replaceWith(addSelectedBtn.cloneNode(true));
-
-        const newSearchBtn = modal.querySelector("#btnSearchProductModal");
-        const newAddBtn = modal.querySelector("#btnAddSelectedProducts");
-
-        function renderProductResult(product) {
-            const div = document.createElement("div");
-            div.className =
-                "search-result-item d-flex align-items-center gap-2";
-
-            const checkbox = document.createElement("input");
-            checkbox.type = "checkbox";
-            checkbox.dataset.name = product.name;
-            checkbox.dataset.invNumber = product.inv_number;
-            checkbox.dataset.unit = product.unit;
-            checkbox.dataset.price = product.price;
-            checkbox.dataset.calculatedQuantity = product.calculated_quantity;
-
-            if (isProductAlreadyAdded(product.inv_number)) {
-                div.style.backgroundColor = "#d3f8d3";
-                checkbox.disabled = true;
-            }
-
-            const label = document.createElement("span");
-            label.textContent = `${product.name} | ${product.inv_number} | Остаток: ${product.calculated_quantity}`;
-
-            div.appendChild(checkbox);
-            div.appendChild(label);
-            resultsWrapper.appendChild(div);
-        }
-
-        function isProductAlreadyAdded(invNumber) {
-            return Array.from(
-                productsWrapper.querySelectorAll('input[name="inv_number[]"]')
-            ).some((input) => input.value === invNumber);
-        }
-
-        const performSearch = () => {
-            const query = searchInput.value.trim();
-            if (!query) return;
-
-            resultsWrapper.innerHTML = "<div>Идёт поиск...</div>";
-
-            $.request("onSearchProducts", {
-                data: { query },
-                success: (data) => {
-                    resultsWrapper.innerHTML = "";
-                    if (data.results && data.results.length) {
-                        data.results.forEach(renderProductResult);
-                    } else {
-                        resultsWrapper.innerHTML =
-                            "<div>Ничего не найдено</div>";
-                    }
-                },
-                error: () => {
-                    resultsWrapper.innerHTML = "<div>Ошибка при поиске</div>";
-                },
-            });
-        };
-
-        newSearchBtn.addEventListener("click", performSearch);
-        searchInput.addEventListener("keyup", (e) => {
-            if (e.key === "Enter") performSearch();
-        });
-
-        newAddBtn.addEventListener("click", () => {
-            const selectedProducts = [];
-            resultsWrapper
-                .querySelectorAll("input[type=checkbox]:checked")
-                .forEach((cb) => {
-                    selectedProducts.push({
-                        name: cb.dataset.name,
-                        inv_number: cb.dataset.invNumber,
-                        unit: cb.dataset.unit,
-                        price: cb.dataset.price,
-                        calculated_quantity: cb.dataset.calculatedQuantity,
-                    });
-                });
-
-            selectedProducts.forEach((product) => {
-                if (!isProductAlreadyAdded(product.inv_number))
-                    addProductToOperation(product);
-            });
-
-            Modal.hide();
-        });
-    }
-
-    // =============================
     // Добавление товара в операцию
     // =============================
     function addProductToOperation(product) {
@@ -347,16 +222,31 @@ document.addEventListener("DOMContentLoaded", () => {
         emptyRow.querySelector('input[name="name[]"]').value =
             product.name || "";
         emptyRow.querySelector('input[name="inv_number[]"]').value =
-            product.inv_number || "";
+            product.inv_number || product.id || "";
         emptyRow.querySelector('input[name="unit[]"]').value =
             product.unit || "";
         emptyRow.querySelector('input[name="price[]"]').value =
             product.price || "";
-        emptyRow.querySelector('input[name="quantity[]"]').value = "";
-        emptyRow.querySelector('input[name="sum[]"]').value = "";
+        emptyRow.querySelector('input[name="quantity[]"]').value =
+            product.quantity || "";
+        emptyRow.querySelector('input[name="sum[]"]').value = product.sum || "";
 
         attachStockHint(emptyRow);
         attachCalcEvents(emptyRow);
+    }
+
+    // =============================
+    // Подтягиваем товары из localStorage (выбранные на складе)
+    // =============================
+    const operationProducts = JSON.parse(
+        localStorage.getItem("operationProducts") || "[]"
+    );
+    if (operationProducts.length) {
+        operationProducts.forEach((product) => {
+            addProductToOperation(product);
+        });
+        // оставляем ключ, если нужно повторно использовать
+        // localStorage.removeItem("operationProducts");
     }
 
     // =============================
@@ -383,6 +273,8 @@ document.addEventListener("DOMContentLoaded", () => {
         "#addOperationForm",
         function (event, context, data) {
             handleServerResponse(data);
+            localStorage.removeItem("operationProducts");
+            localStorage.removeItem("selectedProducts");
         }
     );
 });

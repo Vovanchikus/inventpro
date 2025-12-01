@@ -5,7 +5,12 @@
 
       <div class="warehouse__checkbox">
         <label for="" class="checkbox">
-          <input type="checkbox" class="product-check" data-id="{{ product.id }}">
+          <input type="checkbox" class="product-check"
+            data-id="{{ product.id }}"
+            data-name="{{ product.name }}"
+            data-inv-number="{{ product.inv_number }}"
+            data-unit="{{ product.unit }}"
+            data-price="{{ product.price }}">
         </label>
       </div>
 
