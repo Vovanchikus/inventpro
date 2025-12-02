@@ -84,7 +84,7 @@ a:hover {
   display: grid;
   grid-template-areas: "header header" "aside main" "footer footer";
   grid-template-columns: 68px 1fr;
-  grid-template-rows: 64px auto 128px;
+  grid-template-rows: 64px auto 64px;
   gap: 48px 32px;
   max-width: 1180px;
   width: 100%;
@@ -214,6 +214,11 @@ footer {
   background-color: var(--neutral-200);
 }
 .sidebar-navigation__link:active {
+  color: var(--button-brand-text);
+  background-color: var(--button-brand-bg-default);
+  box-shadow: var(--button-brand-shadow-default);
+}
+.sidebar-navigation__link.active {
   color: var(--button-brand-text);
   background-color: var(--button-brand-bg-default);
   box-shadow: var(--button-brand-shadow-default);
@@ -448,8 +453,8 @@ footer {
 
 .operation-history__item {
   display: grid;
-  grid-template-areas: "type document name unit quantity counteragent";
-  grid-template-columns: 137px 270px 274px 85px 124px 106px;
+  grid-template-areas: "type document name quantity counteragent";
+  grid-template-columns: 137px 270px 274px 124px 106px;
   grid-template-rows: 62px auto;
   align-items: center;
   gap: 0px 24px;
@@ -494,10 +499,6 @@ footer {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.operation-history__unit {
-  grid-area: unit;
-  justify-self: center;
-}
 .operation-history__quantity {
   grid-area: quantity;
   justify-self: center;
@@ -505,67 +506,6 @@ footer {
 .operation-history__counteragent {
   grid-area: counteragent;
   justify-self: end;
-}
-
-.import {
-  border-top: 1px solid var(--border);
-  border-left: 1px solid var(--border);
-  border-right: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  overflow: hidden;
-}
-.import__item {
-  display: grid;
-  grid-template-areas: "name quantity quantity-excel";
-  grid-template-columns: 250px 127px 127px;
-  grid-template-rows: 62px auto;
-  align-items: center;
-  gap: 0px;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-title);
-  padding: 0px 24px;
-}
-.import__item.table-item {
-  position: relative;
-  font-size: 13px;
-  font-weight: normal;
-  color: var(--text-body);
-  border-bottom: 1px solid #F5F5F5;
-}
-.import__item.table-item::after {
-  content: "";
-  position: absolute;
-  left: 12px;
-  top: calc(50% - 11px);
-  opacity: 0;
-  width: 3px;
-  height: 22px;
-  background-color: var(--bg-brand);
-  border-radius: 3px;
-  transition: opacity var(--transition);
-}
-.import__item.table-item:hover::after {
-  opacity: 1;
-}
-.import__name {
-  grid-area: name;
-  display: -webkit-box;
-  -webkit-line-clamp: 1;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.import__quantity {
-  grid-area: quantity;
-  justify-self: center;
-}
-.import__quantity-excel {
-  grid-area: quantity-excel;
-  justify-self: end;
-}
-.import__bottom {
-  margin-top: 32px;
 }
 
 .add-operation__container {
@@ -1075,7 +1015,11 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:act
   background-color: var(--neutral-700);
   transition: all var(--transition);
 }
+.button--dark:hover {
+  background-color: #4D4D94;
+}
 .button--dark:active {
+  background-color: #3F3F79;
   transform: scale(0.98);
 }
 

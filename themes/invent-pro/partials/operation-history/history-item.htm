@@ -12,10 +12,6 @@
           <div class="label--sm label--info">{{ history.operation_type }}</div>
       {% elseif history.operation_type == 'Импорт' %}
           <div class="label--sm label--border">{{ history.operation_type }}</div>
-      {% elseif history.operation_type == 'Импорт приход' %}
-          <div class="label--sm label--border">{{ history.operation_type }}</div>
-      {% elseif history.operation_type == 'Импорт расход' %}
-          <div class="label--sm label--border">{{ history.operation_type }}</div>
       {% endif %}
 
 
@@ -37,13 +33,6 @@
         {% endif %}
       </div>
 
-      <div class="operation-history__unit">
-        {% if history.product_unit %}
-            {{ history.product_unit }}
-        {% else %}
-          -
-        {% endif %}
-      </div>
       <div class="operation-history__quantity">
         {% if history.quantity %}
             {{ history.quantity }}
@@ -51,6 +40,7 @@
           -
         {% endif %}
       </div>
+
       <div class="operation-history__counteragent">
         {% if history.counteragent %}
             {{ history.counteragent }}

@@ -17,7 +17,7 @@ class History extends ComponentBase
 
     public function onRun(){
         $this->histories = OperationProduct::whereDoesntHave('operation', function($q) {
-            $q->whereIn('type_id', ['4', '6', '7']);
+            $q->whereIn('type_id', ['6', '7']);
         })->get();
         // return $histories;
         $this->page['histories'] = $this->histories;
