@@ -57,9 +57,7 @@ description = "Основной макет Winter CMS"
         {% endif %}
         {% if this.page.url == '/warehouse' or this.page.url == '/operation-history' %}
             <script src="{{ 'assets/js/pages/table.js'|theme }}?v={{ random(100000,999999) }}"></script>
-        {% endif %}
-        {% if this.page.url == '/warehouse'%}
-            <script src="{{ 'assets/js/pages/warehouse.js'|theme }}?v={{ random(100000,999999) }}"></script>
+            <script src="{{ 'assets/js/pages/bottom-bar.js'|theme }}?v={{ random(100000,999999) }}"></script>
         {% endif %}
 
         {% scripts %}

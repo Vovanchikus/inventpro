@@ -84,7 +84,7 @@ a:hover {
   display: grid;
   grid-template-areas: "header header" "aside main" "footer footer";
   grid-template-columns: 68px 1fr;
-  grid-template-rows: 64px auto 64px;
+  grid-template-rows: 80px auto 64px;
   gap: 48px 32px;
   max-width: 1180px;
   width: 100%;
@@ -186,6 +186,28 @@ footer {
   justify-content: end;
   align-items: center;
   gap: 12px;
+}
+
+.header-search__input {
+  width: 350px !important;
+  padding-left: 52px !important;
+  border-radius: 24px !important;
+}
+.header-search__icon {
+  position: absolute;
+  top: 50%;
+  left: 24px;
+  display: flex;
+  transform: translateY(-50%);
+}
+.header-search__clear {
+  position: absolute;
+  top: 50%;
+  right: 16px;
+  transform: translateY(-50%);
+  color: var(--text-error);
+  padding: 4px;
+  cursor: pointer;
 }
 
 .sidebar {
@@ -789,7 +811,7 @@ footer {
 }
 .form-floating .form-input {
   width: 100%;
-  padding: 12px 24px;
+  padding: 16px 24px;
   font-size: 14px;
   line-height: 16px;
   border: 1px solid var(--field-border-default);
@@ -845,6 +867,10 @@ footer {
 input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:active, input:-webkit-autofill:focus {
   -webkit-box-shadow: 0 0 0px 1000px white inset !important;
   -webkit-text-fill-color: var(--text-title) !important;
+}
+
+input::placeholder {
+  color: var(--field-placeholder);
 }
 
 .checkbox {

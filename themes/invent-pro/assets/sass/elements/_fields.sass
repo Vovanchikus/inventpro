@@ -5,7 +5,7 @@
 
   .form-input
     width: 100%
-    padding: 12px 24px
+    padding: 16px 24px
     font-size: 14px
     line-height: 16px
     border: 1px solid $field-border-default
@@ -55,6 +55,10 @@
 input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:active, input:-webkit-autofill:focus
   -webkit-box-shadow: 0 0 0px 1000px white inset !important
   -webkit-text-fill-color: $text-title!important
+
+input::placeholder
+  color: $field-placeholder
+
 
 .checkbox
   position: relative
