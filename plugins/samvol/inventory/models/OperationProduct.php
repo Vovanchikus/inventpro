@@ -45,6 +45,16 @@ class OperationProduct extends Pivot
         return $this->product ? $this->product->unit : '-';
     }
 
+    public function getProductInvNumberAttribute()
+    {
+        return $this->product ? $this->product->inv_number : '-';
+    }
+
+    public function getProductPriceAttribute()
+    {
+        return $this->product ? $this->product->price : '-';
+    }
+
     public $rules = [];
 
 }

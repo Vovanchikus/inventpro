@@ -1,0 +1,106 @@
+title = "Редактировать операцию"
+url = "/edit-operation"
+layout = "default"
+
+[editOperation]
+==
+
+<div class="add-operation__container box--light">
+
+  <h2 class="add-operation__title">Редактирование операции</h2>
+
+  <form data-request="onUpdateOperation" data-request-flash class="add-operation__content" id="editOperationForm">
+
+    <input type="hidden" name="operation_id" value="{{ operation.id }}">
+
+    <div class="add-operation__type-box">
+      {% for type in types|slice(0, 3) %}
+        <label class="add-operation__type-box__label">
+          <input type="radio" name="type_id" value="{{ type.id }}" hidden {% if operation.type_id == type.id %}checked{% endif %}>
+          <span class="add-operation__type-box__name">{{ type.name }}</span>
+        </label>
+      {% endfor %}
+    </div>
+
+    <div class="add-operation__box add-operation__agent">
+      <div class="add-operation__box__title">Контрагент</div>
+      <div class="add-operation__box__content form-floating">
+        <input type="text" name="counteragent" class="add-operation__input--counteragent form-input" placeholder value="{{ operation.counteragent }}">
+        <label class="form-label">Часть/ДПРЗ</label>
+      </div>
+    </div>
+
+    <div class="add-operation__box add-operation__documents">
+      <div class="add-operation__box__title">Документы операции</div>
+      <div id="add-operation__documents-wrapper" class="add-operation__box__content">
+
+          <div class="add-operation__row--document add-operation__box__content--documents">
+            <div class="form-floating add-operation__input--doc-name">
+              <input type="text" name="doc_name[]" class="form-input" value="{{ doc.doc_name }}">
+              <label class="form-label">Наименование</label>
+            </div>
+            <div class="form-floating add-operation__input--doc-num">
+              <input type="text" name="doc_num[]" class="form-input" value="{{ doc.doc_num }}">
+              <label class="form-label">№</label>
+            </div>
+            <div class="form-floating add-operation__input--doc-date">
+              <input type="date" name="doc_date[]" class="form-input" value="{{ doc.doc_date }}">
+              <label class="form-label">Дата</label>
+            </div>
+          </div>
+
+      </div>
+
+      <div class="add-operation__button-box">
+        <button id="add-document" type="button" class="button--sm button--brand">Добавить документ</button>
+        <button id="remove-document" type="button" class="button--sm button--second">Удалить документ</button>
+      </div>
+    </div>
+
+    <div class="add-operation__box add-operation__products">
+      <div class="add-operation__box__title">Товары в операции</div>
+      <div id="add-operation__products-wrapper"  class="add-operation__box__content">
+
+          <div class="add-operation__row--product add-operation__box__content--products">
+            <div class="form-floating add-operation__input--name">
+              <input type="text" name="name[]" class="form-input" autocomplete="off" value="{{ product.name }}">
+              <label class="form-label">Наименование</label>
+            </div>
+            <div class="form-floating add-operation__input--inv_number">
+              <input type="text" name="inv_number[]" class="form-input" autocomplete="off" value="{{ product.inv_number }}">
+              <label class="form-label">Номенклатурный №</label>
+            </div>
+            <div class="form-floating add-operation__input--unit">
+              <input type="text" name="unit[]" class="form-input" autocomplete="off" value="{{ product.unit }}">
+              <label class="form-label">Ед.изм</label>
+            </div>
+            <div class="form-floating add-operation__input--price">
+              <input type="text" name="price[]" class="form-input" autocomplete="off" value="{{ product.price }}">
+              <label class="form-label">Цена</label>
+            </div>
+            <div class="form-floating add-operation__input--quantity">
+              <input type="text" name="quantity[]" class="form-input" autocomplete="off" value="{{ product.pivot.quantity }}">
+              <label class="form-label">К-во</label>
+            </div>
+            <div class="form-floating add-operation__input--sum">
+              <input type="text" name="sum[]" class="form-input" autocomplete="off" value="{{ product.pivot.sum }}">
+              <label class="form-label">Сумма</label>
+            </div>
+          </div>
+
+      </div>
+
+      <div class="add-operation__button-box">
+        <button id="add-product" type="button" class="button--sm button--brand">Добавить продукт</button>
+        <button id="btnSearchProduct" type="button" class="button button--sm button--brand mb-2 d-none">Добавить из БД</button>
+        <button id="remove-product" type="button" class="button--sm button--second">Удалить продукт</button>
+      </div>
+    </div>
+
+    <div class="add-operation__button-box">
+      <button type="submit" class="button--md button--brand">Сохранить операцию</button>
+    </div>
+
+  </form>
+</div>
+

@@ -11,6 +11,7 @@ class Plugin extends PluginBase
             \Samvol\Inventory\Components\ImportExcel::class => 'importExcel',
             \Samvol\Inventory\Components\Types::class => 'types',
             \Samvol\Inventory\Components\AddOperation::class => 'addOperation',
+            \Samvol\Inventory\Components\EditOperation::class => 'editOperation',
             \Samvol\Inventory\Components\History::class => 'history',
         ];
     }

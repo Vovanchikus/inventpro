@@ -3,6 +3,20 @@
 
     <div class="operation-history__item table-item">
 
+      <div class="operation-history__checkbox">
+        <label for="" class="checkbox">
+          <input type="checkbox" class="product-check"
+            data-operation-id="{{ history.operation_id }}"
+            data-product-id="{{ history.product_id }}"
+            data-name="{{ history.product_name }}"
+            data-inv-number="{{ history.product_inv_number }}"
+            data-unit="{{ history.product_unit }}"
+            data-price="{{ history.product_price }}"
+            data-quantity="{{ history.quantity }}"
+            data-sum="{{ history.sum}}">
+        </label>
+      </div>
+
       <div class="operation-history__type">
       {% if history.operation_type == 'Приход' %}
           <div class="label--sm label--success">{{ history.operation_type }}</div>

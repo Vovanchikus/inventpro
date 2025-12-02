@@ -475,8 +475,8 @@ footer {
 
 .operation-history__item {
   display: grid;
-  grid-template-areas: "type document name quantity counteragent";
-  grid-template-columns: 137px 270px 274px 124px 106px;
+  grid-template-areas: "check type document name quantity counteragent";
+  grid-template-columns: 18px 137px 270px 274px 124px 106px;
   grid-template-rows: 62px auto;
   align-items: center;
   gap: 0px 24px;
@@ -506,6 +506,9 @@ footer {
 }
 .operation-history__item.table-item:hover::after {
   opacity: 1;
+}
+.operation-history__check {
+  grid-area: check;
 }
 .operation-history__type {
   grid-area: type;

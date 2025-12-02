@@ -7,8 +7,9 @@
  * - Управление выбором товаров через чекбоксы
  * - Подсчет выбранных товаров и отображение нижней панели
  * - Сохранение выбранных товаров в localStorage
- * - Кнопка "Создать операцию" для перехода на /add-operation
- * - Кнопка закрытия нижней панели для очистки выбора
+ * - Кнопка "Создать операцию"
+ * - Кнопка "Редактировать операцию"
+ * - Кнопка закрытия нижней панели
  */
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -39,11 +40,15 @@ document.addEventListener("DOMContentLoaded", () => {
         const selected = [];
         document.querySelectorAll(".product-check:checked").forEach((cb) => {
             selected.push({
-                id: parseInt(cb.dataset.id),
+                operation_id: parseInt(cb.dataset.operation_id),
+                product_id: parseInt(cb.dataset.product_id),
                 name: cb.dataset.name,
                 inv_number: cb.dataset.invNumber,
                 unit: cb.dataset.unit,
                 price: cb.dataset.price,
+                quantity: cb.dataset.quantity,
+                sum: cb.dataset.sum,
+                operation_id: cb.dataset.operationId,
             });
         });
         return selected;
@@ -75,8 +80,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /**
      * Кнопка "Создать операцию"
-     * - Сохраняет все выбранные товары во временный localStorage
-     * - Переходит на страницу создания операции
      */
     document
         .getElementById("createOperation")
@@ -87,17 +90,40 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-            // Сохраняем все данные выбранных товаров
+            // Сохраняем данные для создания операции
             localStorage.setItem("operationProducts", JSON.stringify(selected));
 
-            // Переходим на страницу создания операции
             window.location.href = "/add-operation";
         });
 
     /**
+     * Кнопка "Редактировать операцию" (интеграция 5 шага)
+     */
+    document.getElementById("editOperation")?.addEventListener("click", () => {
+        const selected = getSelectedFromCheckboxes();
+
+        if (selected.length === 0) {
+            alert("Выберите хотя бы один товар для редактирования!");
+            return;
+        }
+
+        // Проверяем, что все выбранные товары принадлежат одной операции
+        const operationIds = [...new Set(selected.map((p) => p.operation_id))];
+        if (operationIds.length > 1) {
+            alert("Вы можете редактировать товары только из одной операции!");
+            return;
+        }
+
+        // Сохраняем выбранные товары для страницы редактирования
+        localStorage.setItem("editProducts", JSON.stringify(selected));
+
+        // Переход на страницу редактирования операции
+        // Если нужно передавать ID операции, его можно добавить в URL
+        window.location.href = "/edit-operation";
+    });
+
+    /**
      * Кнопка закрытия нижней панели
-     * - Стирает выбранные товары из localStorage
-     * - Сбрасывает все чекбоксы
      */
     const bottomBarCloseBtn = document.querySelector(".bottom-bar__close");
     bottomBarCloseBtn?.addEventListener("click", () => {
