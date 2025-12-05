@@ -6,6 +6,8 @@ use Samvol\Inventory\Models\Product;
 use Samvol\Inventory\Models\OperationType;
 use DB;
 use Exception;
+use Input;
+use Log;
 
 class AddOperation extends ComponentBase
 {
@@ -30,6 +32,20 @@ class AddOperation extends ComponentBase
                 'position' => 'top-center'
             ]
         ];
+    }
+
+    public function onSearchProductsByInv()
+    {
+        $q = trim(post('query', ''));
+
+        if (!$q) return ['products' => []];
+
+        // Ищем товары, у которых inv_number начинается с $q
+        $product = Product::where('inv_number', 'LIKE', "$q%")
+            ->orderBy('inv_number')
+            ->first(['name', 'inv_number', 'unit', 'price']); // <- только первый результат
+
+        return ['products' => $product ? [$product] : []];
     }
 
     public function onAddOperation()
@@ -168,14 +184,34 @@ class AddOperation extends ComponentBase
 
             $operationCounteragent = $data['counteragent'] ?? null;
 
-            // Документы
+            $files = Input::file('doc_file'); // может быть UploadedFile или массив UploadedFile
+
+            // Приводим к массиву, чтобы всегда можно было использовать foreach
+            if ($files && !is_array($files)) {
+                $files = [$files];
+                foreach ($files as $f) {
+                    \Log::info('Получен файл: ' . $f->getClientOriginalName());
+                }
+            } else {
+                \Log::warning('Файлы не пришли');
+            }
+
             foreach ($data['doc_name'] as $i => $docName) {
-                $operation->documents()->create([
+                $uploadedFile = $files[$i] ?? null;
+
+                $document = $operation->documents()->create([
                     'doc_name' => $docName,
                     'doc_num'  => $data['doc_num'][$i] ?? '',
-                    'doc_date' => $data['doc_date'][$i] ?? null
+                    'doc_purpose' => $data['doc_purpose'][$i] ?? null,
+                    'doc_date' => $data['doc_date'][$i] ?? null,
                 ]);
+
+                if ($uploadedFile) {
+                    $document->doc_file = $uploadedFile; // attachOne автоматически сохранит файл
+                    $document->save();
+                }
             }
+
 
             // Товары
             foreach ($data['name'] as $i => $name) {

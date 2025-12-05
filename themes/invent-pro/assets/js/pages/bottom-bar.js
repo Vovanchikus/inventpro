@@ -91,7 +91,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             // Сохраняем данные для создания операции
-            localStorage.setItem("operationProducts", JSON.stringify(selected));
+            localStorage.setItem("createOperation", JSON.stringify(selected));
 
             window.location.href = "/add-operation";
         });
@@ -115,7 +115,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         // Сохраняем выбранные товары для страницы редактирования
-        localStorage.setItem("editProducts", JSON.stringify(selected));
+        localStorage.setItem("editOperation", JSON.stringify(selected));
 
         // Переход на страницу редактирования операции
         // Если нужно передавать ID операции, его можно добавить в URL
