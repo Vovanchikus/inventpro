@@ -32,3 +32,7 @@ navigation:
                 label: Снимки
                 url: samvol/inventory/stocksnapshots
                 icon: icon-sitemap
+            categories:
+                label: Категории
+                url: samvol/inventory/categories
+                icon: icon-sitemap

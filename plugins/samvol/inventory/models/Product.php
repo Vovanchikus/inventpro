@@ -10,11 +10,16 @@ class Product extends Model
     public $table = 'samvol_inventory_products';
 
     protected $fillable = [
+        'category_id',
         'name',
         'quantity',
         'unit',
         'inv_number',
         'price',
+    ];
+
+    public $belongsTo = [
+        'category' => ['Samvol\Inventory\Models\Category']
     ];
 
     public $belongsToMany = [

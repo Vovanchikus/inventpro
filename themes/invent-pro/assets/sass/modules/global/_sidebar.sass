@@ -1,12 +1,17 @@
 @import '../../core/vars'
 
 .sidebar
+  display: flex
+  flex-direction: column
+  justify-content: center
+  align-items: center
+  gap: 24px
+
+.sidebar-navigation
   padding: 6px
   background-color: $bg-box--light
   box-shadow: $box-light-shadow
   border-radius: 34px
-
-.sidebar-navigation
 
   &__list
     display: flex
@@ -35,5 +40,47 @@
       background-color: $button-brand-bg-default
       box-shadow: $button-brand-shadow-default
 
+
+.sidebar-category
+  position: relative
+  padding: 6px
+  background-color: $bg-box--dark
+  box-shadow: $box-light-shadow
+  border-radius: 34px
+
+  &__button
+    display: flex
+    color: $text-light
+    padding: 16px
+    border-radius: 28px
+    transition: all $transition
+    &:hover
+      color: $text-light
+      background-color: $neutral-700
+    &:active
+      color: $text-light
+      background-color: #4D4D94
+      box-shadow: $button-brand-shadow-default
+    &.active
+      color: $button-brand-text
+      background-color: $button-brand-bg-default
+      box-shadow: $button-brand-shadow-default
+      transition: all $transition
+
+  &__content
+    position: absolute
+    left: calc( 100% + 12px )
+    bottom: -48px
+    width: max-content
+    // padding: 4px
+    background-color: $bg-box--dark
+    opacity: 0
+    z-index: 10
+    visibility: hidden
+    border-radius: $radius-nm
+    transition: visibility $transition, opacity $transition
+    &.active
+      opacity: 1
+      visibility: visible
 
 

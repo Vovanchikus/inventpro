@@ -1,4 +1,8 @@
 columns:
+    category:
+        label: Категория
+        relation: category
+        select: name
     name:
         label: Наименование
         type: text

@@ -1,0 +1,95 @@
+@import '../core/vars'
+
+
+.custom-select
+  position: relative
+  user-select: none
+  cursor: pointer
+  margin-right: 10px
+  &::after
+    position: absolute
+    top: 50%
+    right: 24px
+    content: ''
+    width: 16px
+    height: 16px
+    background-image: url(../img/icon/select-arrow.svg)
+    background-size: 16px
+    transform: translateY(-50%)
+    transition: transform $transition
+
+  &.active
+    &::after
+      transform: rotate(180deg) translateY(50%)
+    .options
+      visibility: visible
+      opacity: 1
+      transform: translateY(24px)
+
+  .selected
+    font-size: 14px
+    padding: 12px 24px
+    border: 1px solid $border
+    border-radius: 24px
+    transition: border $transition
+    &:hover
+      border: 1px solid $field-border-hover
+    &:active
+      border: 1px solid $field-border-focus
+
+  .options
+    position: absolute
+    top: 32px
+    left: 0
+    right: 0
+    max-height: 250px
+    font-size: 14px
+    line-height: 14px
+    color: $text-body
+    border-radius: 6px
+    opacity: 0
+    overflow-y: auto
+    visibility: hidden
+    transform: translateY(0)
+    transition: opacity $transition, visibility $transition, transform $transition
+    z-index: 100
+
+  .option
+    padding: 12px 24px
+    margin-bottom: 4px
+    border-radius: 4px
+    transition: background 0.2s
+    &:hover
+      background: $neutral-200
+
+    &.operation-history__filters-option--type
+      padding: 12px 24px 12px 34px
+
+      &:nth-child(1)
+        background-image: url(../img/icon/select/ring--dark.svg)
+        background-repeat: no-repeat
+        background-position: 16px center
+
+      &:nth-child(2)
+        background-image: url(../img/icon/select/ring--success.svg)
+        background-repeat: no-repeat
+        background-position: 16px center
+
+      &:nth-child(3)
+        background-image: url(../img/icon/select/ring--info.svg)
+        background-repeat: no-repeat
+        background-position: 16px center
+
+      &:nth-child(4)
+        background-image: url(../img/icon/select/ring--error.svg)
+        background-repeat: no-repeat
+        background-position: 16px center
+
+      &:nth-child(5)
+        background-image: url(../img/icon/select/ring--light.svg)
+        background-repeat: no-repeat
+        background-position: 16px center
+        margin-bottom: 0
+
+
+

@@ -1,4 +1,4 @@
-<div id="product-list">
+
   {% for history in histories %}
 
     <div class="operation-history__item table-item">
@@ -64,5 +64,7 @@
       </div>
     </div>
 
+  {% else %}
+    <div class="operation-history__item">Нет данных</div>
   {% endfor %}
-</div>
+

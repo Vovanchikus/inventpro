@@ -5,6 +5,55 @@ layout = "default"
 [history]
 ==
 
+
+<div class="operation-history__box box--light">
+
+  <div class="operation-history__count">Всего таких операций: <span>{{ filteredCount }} </span></div>
+
+  <!-- Форма фильтрации -->
+  <form method="get" class="operation-history__filters">
+
+    <!-- Тип операции -->
+    <div class="custom-select operation-history__filters-select--type" data-name="type">
+      <div class="selected operation-history__filters-selected">
+        {{ request.get('type') ? types.where('id', request.get('type')).first.name : 'Тип операции' }}
+      </div>
+
+      <div class="options operation-history__filters-options dropdown">
+        <div class="option operation-history__filters-option--type" data-value="">Все типы</div>
+        {% for type in types %}
+          <div class="option operation-history__filters-option--type" data-value="{{ type.id }}">
+            {{ type.name }}
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Контрагент -->
+    <div class="custom-select operation-history__filters-select--counteragent" data-name="counteragent">
+      <div class="selected operation-history__filters-selected">
+          {{ request.get('counteragent') ?: 'Контрагент' }}
+      </div>
+      <div class="options operation-history__filters-options dropdown">
+        <div class="option operation-history__filters-option" data-value="">Все контрагенты</div>
+        {% for ca in counteragents %}
+          <div class="option operation-history__filters-option--counteragent" data-value="{{ ca }}">
+            {{ ca }}
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <input type="hidden" name="type" id="typeInput">
+    <input type="hidden" name="counteragent" id="counteragentInput">
+
+    <button type="submit" class="button--md button--brand">Применить фильтры</button>
+
+  </form>
+
+</div>
+
+<!-- Таблица истории операций -->
 <div class="operation-history-table table">
 
   <div class="operation-history__item table-title">
@@ -15,8 +64,8 @@ layout = "default"
     <div class="operation-history__counteragent">Контрагент</div>
   </div>
 
-  {% partial 'operation-history/history-item' %}
-
-
+  <div id="product-list">
+    {% partial 'operation-history/history-item' histories=histories %}
+  </div>
 
 </div>

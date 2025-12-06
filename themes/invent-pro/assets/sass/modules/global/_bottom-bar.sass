@@ -15,9 +15,11 @@
   border-radius: 28px
   opacity: 1
   transition: all $transition
+  z-index: 4
   &.hidden
     opacity: 0
     bottom: 30px
+    pointer-events: none
 
 
   &__close
@@ -52,3 +54,6 @@
     display: flex
     align-items: center
     gap: 12px
+
+  &__add-category-section
+    position: relative

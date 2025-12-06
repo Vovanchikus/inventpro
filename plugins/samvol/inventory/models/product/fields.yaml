@@ -1,4 +1,9 @@
 fields:
+    category:
+        label: "Выбрать категорию"
+        nameFrom: name
+        type: relation
+        span: auto
     name:
         label: "Наименование товара"
         span: auto

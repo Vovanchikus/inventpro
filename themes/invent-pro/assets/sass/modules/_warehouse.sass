@@ -1,18 +1,23 @@
 @import '../core/vars'
 
 .warehouse-box
+  position: relative
   background-color: $bg-box--light
   border-radius: $radius-lg
   box-shadow: $box-light-shadow
-  overflow: hidden
 
-.warehouse__item.table-title
+.table-title
   position: sticky
-  height: 74px
   top: 0
   left: 0
-  z-index: 10
+  height: 74px
   background-color: #FAFAFA
+  border-radius: 12px 12px 0 0
+  &.scrolled
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1)
+    z-index: 2
+    border-radius: 0
+
 
 
 .warehouse

@@ -1,5 +1,7 @@
 {% if this.page.url != '/add-operation' %}
 
+<div class="category-menu__overlay hidden"></div>
+
 <div id="bottomBar" class="bottom-bar hidden">
 
   <div class="bottom-bar__left">
@@ -31,12 +33,61 @@
     {% endif %}
 
     {% if this.page.url == '/warehouse' %}
-      <button type="submit" class="button--round button--dark button--inset-shadow">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M13.5532 3.13155C12.8259 1.62281 10.6772 1.62282 9.94997 3.13155L7.8192 7.55186C7.78256 7.62788 7.71003 7.68028 7.62635 7.6912L2.74353 8.32835C1.06954 8.54678 0.40249 10.613 1.63273 11.769L5.18951 15.1113C5.25163 15.1697 5.27973 15.2557 5.26405 15.3395L4.3686 20.1265C4.05971 21.7778 5.80115 23.0511 7.28107 22.256L11.6333 19.9178C11.7071 19.8781 11.796 19.8781 11.8699 19.9178L16.2221 22.256C17.702 23.0511 19.4435 21.7778 19.1346 20.1265L18.2391 15.3395C18.2234 15.2557 18.2515 15.1697 18.3137 15.1113L21.8704 11.769C23.1007 10.613 22.4336 8.54678 20.7596 8.32835L15.8768 7.6912C15.7931 7.68028 15.7206 7.62788 15.684 7.55186L13.5532 3.13155Z" fill="currentColor"/>
-        </svg>
-        Дать категорию
-      </button>
+      <div class="bottom-bar__add-category-section">
+        <button type="submit" id="addToCategory" class="button--round button--dark button--inset-shadow">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M13.5532 3.13155C12.8259 1.62281 10.6772 1.62282 9.94997 3.13155L7.8192 7.55186C7.78256 7.62788 7.71003 7.68028 7.62635 7.6912L2.74353 8.32835C1.06954 8.54678 0.40249 10.613 1.63273 11.769L5.18951 15.1113C5.25163 15.1697 5.27973 15.2557 5.26405 15.3395L4.3686 20.1265C4.05971 21.7778 5.80115 23.0511 7.28107 22.256L11.6333 19.9178C11.7071 19.8781 11.796 19.8781 11.8699 19.9178L16.2221 22.256C17.702 23.0511 19.4435 21.7778 19.1346 20.1265L18.2391 15.3395C18.2234 15.2557 18.2515 15.1697 18.3137 15.1113L21.8704 11.769C23.1007 10.613 22.4336 8.54678 20.7596 8.32835L15.8768 7.6912C15.7931 7.68028 15.7206 7.62788 15.684 7.55186L13.5532 3.13155Z" fill="currentColor"/>
+          </svg>
+          Дать категорию
+        </button>
+        <!-- Меню выбора категории -->
+        <div id="categoryMenu" class="category-menu hidden">
+          <ul class="category-menu__list">
+              {% for cat in categories %}
+                  {% if cat.nest_depth == 0 %}
+                      <li class="category-menu__item" data-id="{{ cat.id }}">
+                          <div class="category-menu__item-left">{{ cat.name }}<span>{{ cat.desc }}</span></div>
+
+                          {% if cat.children|length %}
+                              <div class="category-menu__item-arrow">
+                                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                      <path d="M6.29289 9.29289C6.68342 8.90237 7.31658 8.90237 7.70711 9.29289L12 13.5858L16.2929 9.29289C16.6834 8.90237 17.3166 8.90237 17.7071 9.29289C18.0976 9.68342 18.0976 10.3166 17.7071 10.7071L12.7071 15.7071C12.3166 16.0976 11.6834 16.0976 11.2929 15.7071L6.29289 10.7071C5.90237 10.3166 5.90237 9.68342 6.29289 9.29289Z" fill="currentColor"/>
+                                  </svg>
+                              </div>
+
+                              <ul class="category-menu__children hidden">
+                                  {% for child in cat.children %}
+                                      <li class="category-menu__item" data-id="{{ child.id }}">
+                                          <div class="category-menu__item-left">{{ child.name }}<span>{{ child.desc }}</span></div>
+
+                                          {% if child.children|length %}
+                                              <div class="category-menu__item-arrow">
+                                                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                      <path d="M6.29289 9.29289C6.68342 8.90237 7.31658 8.90237 7.70711 9.29289L12 13.5858L16.2929 9.29289C16.6834 8.90237 17.3166 8.90237 17.7071 9.29289C18.0976 9.68342 18.0976 10.3166 17.7071 10.7071L12.7071 15.7071C12.3166 16.0976 11.6834 16.0976 11.2929 15.7071L6.29289 10.7071C5.90237 10.3166 5.90237 9.68342 6.29289 9.29289Z" fill="currentColor"/>
+                                                  </svg>
+                                              </div>
+
+                                              <ul class="category-menu__children hidden">
+                                                  {% for subchild in child.children %}
+                                                      <li class="category-menu__item" data-id="{{ subchild.id }}">
+                                                          <div class="category-menu__item-left">{{ subchild.name }}<span>{{ subchild.desc }}</span></div>
+                                                      </li>
+                                                  {% endfor %}
+                                              </ul>
+                                          {% endif %}
+                                      </li>
+                                  {% endfor %}
+                              </ul>
+                          {% endif %}
+                      </li>
+                  {% endif %}
+              {% endfor %}
+          </ul>
+      </div>
+
+
+
+      </div>{# bottom-bar__add-category-section #}
 
       <button type="submit" id="createOperation" class="button--round button--brand button--inset-shadow">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

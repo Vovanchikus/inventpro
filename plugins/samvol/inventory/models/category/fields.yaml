@@ -1,0 +1,21 @@
+fields:
+    name:
+        label: 'Название категории'
+        span: auto
+        type: text
+    slug:
+        label: URL
+        span: auto
+        type: text
+        preset: name
+    parent:
+        label: 'Родительская категория'
+        nameFrom: name
+        descriptionFrom: description
+        span: auto
+        type: relation
+        emptyOption: 'Родительская категория'
+    desc:
+        label: Описание
+        span: auto
+        type: text

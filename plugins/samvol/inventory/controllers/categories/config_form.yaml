@@ -1,0 +1,10 @@
+name: Categories
+form: $/samvol/inventory/models/category/fields.yaml
+modelClass: Samvol\Inventory\Models\Category
+defaultRedirect: samvol/inventory/categories
+create:
+    redirect: 'samvol/inventory/categories/update/:id'
+    redirectClose: samvol/inventory/categories
+update:
+    redirect: samvol/inventory/categories
+    redirectClose: samvol/inventory/categories
