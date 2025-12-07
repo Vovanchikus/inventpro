@@ -36,3 +36,7 @@ navigation:
                 label: Категории
                 url: samvol/inventory/categories
                 icon: icon-sitemap
+            drugdropcategory:
+                label: 'Настройка категорий'
+                url: samvol/inventory/categories/reorder
+                icon: icon-sitemap

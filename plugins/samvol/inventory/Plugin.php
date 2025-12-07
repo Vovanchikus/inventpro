@@ -1,6 +1,7 @@
 <?php namespace Samvol\Inventory;
 
 use System\Classes\PluginBase;
+use Backend;
 
 class Plugin extends PluginBase
 {
@@ -15,6 +16,10 @@ class Plugin extends PluginBase
             \Samvol\Inventory\Components\History::class => 'history',
         ];
     }
+
+
+
+
 
     public function registerSettings()
     {

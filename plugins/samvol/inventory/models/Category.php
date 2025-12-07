@@ -12,6 +12,7 @@ class Category extends Model
     use \Winter\Storm\Database\Traits\NestedTree;
     use \Winter\Storm\Database\Traits\Sluggable;
 
+    public $fillable = ['name', 'parent_id'];
 
     protected $dates = ['deleted_at'];
     protected $slugs = ['slug' => 'name'];

@@ -219,12 +219,43 @@ class EditOperation extends ComponentBase
 
                 $pivotSum = round($quantity * $price, 2);
 
-                // Удаляем товар из других операций
-                DB::table('samvol_inventory_operation_products')
+                // ========================
+                // ЧАСТИЧНЫЙ ПЕРЕНОС ТОВАРА
+                // ========================
+
+                // Ищем товар в старой операции
+                $oldPivot = DB::table('samvol_inventory_operation_products')
                     ->where('product_id', $product->id)
                     ->where('operation_id', '!=', $operation->id)
-                    ->delete();
+                    ->first();
 
+                if ($oldPivot) {
+                    $oldQty = floatval($oldPivot->quantity);
+                    $newQty = floatval($quantity);
+
+                    // Остаток в старой операции
+                    $diff = $oldQty - $newQty;
+
+                    if ($diff > 0) {
+                        // 🔹 Переносим часть → уменьшаем количество в старой операции
+                        DB::table('samvol_inventory_operation_products')
+                            ->where('product_id', $product->id)
+                            ->where('operation_id', $oldPivot->operation_id)
+                            ->update([
+                                'quantity' => $diff,
+                                'sum'      => round($diff * $price, 2),
+                            ]);
+
+                    } else {
+                        // 🔹 Переносим всё → удаляем старую запись
+                        DB::table('samvol_inventory_operation_products')
+                            ->where('product_id', $product->id)
+                            ->where('operation_id', $oldPivot->operation_id)
+                            ->delete();
+                    }
+                }
+
+                // Добавляем товар в текущую операцию (новая запись или обновление)
                 $operation->products()->syncWithoutDetaching([
                     $product->id => [
                         'quantity' => $quantity,
