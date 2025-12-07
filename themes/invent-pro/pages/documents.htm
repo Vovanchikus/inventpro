@@ -1,0 +1,106 @@
+title = "Документи"
+url = "/documents"
+layout = "default"
+
+[operationInfo]
+==
+
+
+<div class="documents-list">
+
+{% for operation in operations %}
+  <div class="documents-item">
+
+    <div class="documents-item__top">
+      <div class="documents-item__top-left">
+
+        <div class="documents-item__type">
+          {% if operation.type.name == 'Приход' %}
+              <div class="label--sm label--success">{{ operation.type.name }}</div>
+          {% elseif operation.type.name == 'Списание' %}
+              <div class="label--sm label--error">{{ operation.type.name }}</div>
+          {% elseif operation.type.name == 'Передача' %}
+              <div class="label--sm label--info">{{ operation.type.name }}</div>
+          {% elseif operation.type.name == 'Импорт' %}
+              <div class="label--sm label--border">{{ operation.type.name }}</div>
+          {% endif %}
+        </div>{# documents-item__type #}
+
+        <div class="documents-item__counteragent">
+          {% if operation.type.name == 'Приход' %}
+            от <span>{{ operation.first_counteragent }}</span>
+          {% elseif operation.type.name == 'Передача' %}
+            в <span>{{ operation.first_counteragent }}</span>
+          {% endif %}
+        </div>
+
+      </div>{# documents-item__top-left #}
+
+      {% if operation.documents %}
+          <div class="documents-item__doc-date">{{ operation.first_document_date }}</div>
+      {% endif %}
+
+    </div>{# documents-item__top #}
+
+    <div class="documents-item__middle">
+
+        {% if operation.documents %}
+          <div class="documents-item__documents-info">
+          {% for doc in operation.documents %}
+
+
+              <div class="documents-item__doc-item">
+                <div class="documents-item__doc-name">{{ doc.doc_name }} №{{ doc.doc_num }}</div>
+                <div class="documents-item__button-box">
+                  {% if doc.doc_file_flag %}
+                      <div class="documents-item__have-pdf">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M12 2C6.49 2 2 6.49 2 12C2 17.51 6.49 22 12 22C17.51 22 22 17.51 22 12C22 6.49 17.51 2 12 2ZM16.78 9.7L11.11 15.37C10.97 15.51 10.78 15.59 10.58 15.59C10.38 15.59 10.19 15.51 10.05 15.37L7.22 12.54C6.93 12.25 6.93 11.77 7.22 11.48C7.51 11.19 7.99 11.19 8.28 11.48L10.58 13.78L15.72 8.64C16.01 8.35 16.49 8.35 16.78 8.64C17.07 8.93 17.07 9.4 16.78 9.7Z" fill="currentColor"/>
+                        </svg>
+                        PDF
+                      </div>
+                  {% endif %}
+                </div>{# documents-item__button-box #}
+              </div>{# documents-item__doc-item" #}
+
+          {% endfor %}
+          </div>{# documents-item__documents-list #}
+        {% endif %}
+
+        <div class="documents-item__doc-purpose">
+          Підстава:
+          {% if operation.documents %}
+              <p>{{ operation.first_document_purpose}}</p>
+          {% endif %}
+        </div>
+
+    </div>{# documents-item__middle #}
+    <div class="documents-item__bottom">
+
+      <div class="documents-item__product-count">
+      {% if operation.products.count %}
+
+        {% set count = operation.products.count %}
+        {% set n = count % 100 %}
+        {% set n1 = n % 10 %}
+
+        {% if n > 10 and n < 20 %}
+            {{ count }} товаров
+        {% elseif n1 == 1 %}
+            {{ count }} товар
+        {% elseif n1 >= 2 and n1 <= 4 %}
+            {{ count }} товара
+        {% else %}
+            {{ count }} товаров
+        {% endif %}
+
+      {% endif %}
+      </div>
+      <a href="#!" class="button--md button--brand">Детальніше</a>
+
+    </div>{# documents-item__bottom #}
+
+  </div>{# documents-item #}
+{% endfor %}
+
+</div>{# documents-list box--light #}

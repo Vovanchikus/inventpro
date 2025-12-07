@@ -108,6 +108,46 @@ class Operation extends Model
         return $isIncoming ? abs($product->pivot->quantity) : -abs($product->pivot->quantity);
     }
 
+    public function getFirstCounteragentAttribute()
+    {
+        $firstProduct = $this->products->first(); // первый товар в операции
+        return $firstProduct ? $firstProduct->pivot->counteragent : null;
+    }
+
+    public function getFirstDocumentAttribute()
+    {
+        $first = $this->documents()->orderBy('id', 'asc')->first();
+        if (!$first) {
+            return null; // или 'Документ отсутствует'
+        }
+
+        $date = $first->doc_date ? \Carbon\Carbon::parse($first->doc_date)->format('d.m.Y') : '-';
+        return $first->doc_name . ' №' . $first->doc_num . ', ' . $date;
+    }
+
+    public function getFirstDocumentDateAttribute()
+    {
+        $first = $this->documents()->orderBy('id', 'asc')->first();
+
+        if (!$first || !$first->doc_date) {
+            return null; // или '-'
+        }
+
+        return \Carbon\Carbon::parse($first->doc_date)->format('d.m.Y');
+    }
+
+    public function getFirstDocumentPurposeAttribute()
+    {
+        $first = $this->documents()->orderBy('id', 'asc')->first();
+
+        if (!$first || !$first->doc_purpose) {
+            return null; // или '-'
+        }
+        return $first->doc_purpose;
+    }
+
+
+
     public $rules = [];
     public $jsonable = [];
 }

@@ -6,9 +6,10 @@ columns:
     first_document:
         label: Документ
         type: text
-    counteragent:
+    first_counteragent:
         label: Контрагент
-        type: text
+        relation: products
+        select: counteragent
     created_at:
         label: Дата
         type: datetime

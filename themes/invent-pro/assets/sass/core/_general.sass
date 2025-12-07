@@ -30,7 +30,7 @@ body
   position: relative
   font-family: $fontFamily
   font-weight: 400
-  font-size: 1rem
+  font-size: 14px
   line-height: 1rem
   background-color: $bg-body
   color: $text-body
@@ -55,6 +55,16 @@ a
   width: 100%
   margin: 32px auto
   padding: 0
+
+  &--sm
+    display: flex
+    flex-direction: column
+    justify-content: center
+    align-items: center
+    gap: 48px
+    width: 640px
+    margin: 0 auto
+    padding: 24px
 
 header
   grid-area: header

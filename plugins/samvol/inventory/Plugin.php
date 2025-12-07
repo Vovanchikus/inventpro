@@ -14,6 +14,7 @@ class Plugin extends PluginBase
             \Samvol\Inventory\Components\AddOperation::class => 'addOperation',
             \Samvol\Inventory\Components\EditOperation::class => 'editOperation',
             \Samvol\Inventory\Components\History::class => 'history',
+            \Samvol\Inventory\Components\OperationInfo::class => 'operationInfo',
         ];
     }
 
