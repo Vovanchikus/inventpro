@@ -6,6 +6,7 @@ use Samvol\Inventory\Models\Operation;
 class OperationInfo extends ComponentBase
 {
     public $operations;
+    public $operation_item;
 
     public function componentDetails()
     {
@@ -21,7 +22,9 @@ class OperationInfo extends ComponentBase
         ->get();
         $this->page['operations'] = $this->operations;
 
-        $this->page['plural'] = [$this, 'plural'];
+        $slug = $this->param('slug');
+        $this->operation_item = Operation::where('slug', $slug)->first();
+        $this->page['operation_item'] = $this->operation_item;
     }
 
     public function defineProperties()

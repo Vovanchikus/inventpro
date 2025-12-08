@@ -1,4 +1,7 @@
 columns:
+    slug:
+        label: "URL"
+        type: text
     type_name:
         label: Тип операции
         relation: type

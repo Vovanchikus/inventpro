@@ -1,0 +1,122 @@
+title = "Страница документа"
+url = "/documents/:slug"
+layout = "default"
+
+[operationInfo]
+==
+
+
+  <div class="documents-item document__single box--light container--sm">
+
+    <div class="documents-item__top">
+      <div class="documents-item__top-left document__single">
+
+        <div class="documents-item__type">
+          {% if operation_item.type.name == 'Приход' %}
+              <div class="label--sm label--success">{{ operation_item.type.name }}</div>
+          {% elseif operation_item.type.name == 'Списание' %}
+              <div class="label--sm label--error">{{ operation_item.type.name }}</div>
+          {% elseif operation_item.type.name == 'Передача' %}
+              <div class="label--sm label--info">{{ operation_item.type.name }}</div>
+          {% elseif operation_item.type.name == 'Импорт' %}
+              <div class="label--sm label--border">{{ operation_item.type.name }}</div>
+          {% endif %}
+        </div>{# documents-item__type #}
+
+        <div class="documents-item__counteragent">
+          {% if operation_item.type.name == 'Приход' %}
+            от <span>{{ operation_item.first_counteragent }}</span>
+          {% elseif operation_item.type.name == 'Передача' %}
+            в <span>{{ operation_item.first_counteragent }}</span>
+          {% endif %}
+        </div>
+
+      </div>{# documents-item__top-left #}
+
+      {% if operation_item.documents %}
+          <div class="documents-item__doc-date">{{ operation_item.first_document_date }}</div>
+      {% endif %}
+
+    </div>{# documents-item__top #}
+
+    <div class="documents-item__middle document__single">
+
+        {% if operation_item.documents %}
+          <div class="documents-item__documents-info document__single">
+            <div class="documents-item__documents-title">Документи в операції</div>
+
+          <div class="documents-item__doc-list">
+            {% for doc in operation_item.documents %}
+                <div class="documents-item__doc-item">
+                  <div class="documents-item__doc-name">{{ doc.doc_name }} №{{ doc.doc_num }}</div>
+                  <div class="documents-item__button-box">
+                    {% if doc.doc_file_flag %}
+                        <a href="/document/{{ doc.id }}" class="documents-item__button-see" target="_blank">
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M20.5 10.19H17.61C15.24 10.19 13.31 8.26 13.31 5.89V3C13.31 2.45 12.86 2 12.31 2H8.07C4.99 2 2.5 4 2.5 7.57V16.43C2.5 20 4.99 22 8.07 22H15.93C19.01 22 21.5 20 21.5 16.43V11.19C21.5 10.64 21.05 10.19 20.5 10.19Z" fill="currentColor"/>
+                            <path d="M15.8 2.21C15.39 1.8 14.68 2.08 14.68 2.65V6.14C14.68 7.6 15.92 8.81 17.43 8.81C18.38 8.82 19.7 8.82 20.83 8.82C21.4 8.82 21.7 8.15 21.3 7.75C19.86 6.3 17.28 3.69 15.8 2.21Z" fill="currentColor"/>
+                          </svg>
+                          Переглянути
+                        </a>
+                    {% endif %}
+                  </div>{# documents-item__button-box #}
+                </div>{# documents-item__doc-item" #}
+            {% endfor %}
+          </div>
+          </div>{# documents-item__documents-list #}
+        {% endif %}
+
+        <div class="documents-item__doc-purpose">
+          Підстава:
+          {% if operation_item.documents %}
+              <p>{{ operation_item.first_document_purpose}}</p>
+          {% endif %}
+        </div>
+
+    </div>{# documents-item__middle #}
+    <div class="documents-item__bottom">
+
+      <div class="documents-item__product-box">
+
+        <div class="documents-item__product-box-title">Товари в документі <span>{{ operation_item.products.count }}</span></div>
+
+          <div id="operation-form__products-wrapper"  class="operation-form__box__content">
+            {% for product in operation_item.products %}
+
+              <div class="operation-form__row--product operation-form__box__content--products">
+
+                <div class="form-floating operation-form__input--name">
+                  <input type="text" class="form-input" value="{{ product.name }}" onclick="copyText('{{ product.name }}')" autocomplete="off" placeholder readonly>
+                  <label for="name" class="form-label">Наименование</label>
+                </div>
+                <div class="form-floating operation-form__input--inv_number">
+                  <input type="text" class="form-input" value="{{ product.inv_number }}" onclick="copyText('{{ product.inv_number }}')" autocomplete="off" placeholder readonly>
+                  <label for="inv_number" class="form-label">Номенклатурный №</label>
+                  <div class="operation-form__input--inv-suggestion"></div>
+                </div>
+                <div class="form-floating operation-form__input--unit">
+                  <input type="text" class=" form-input" value="{{ product.unit }}" onclick="copyText('{{ product.unit }}')" autocomplete="off" placeholder readonly>
+                  <label for="unit" class="form-label">Ед.изм</label>
+                </div>
+                <div class="form-floating operation-form__input--price">
+                  <input type="text" class=" form-input" value="{{ product.price }}" onclick="copyText('{{ product.price }}')" autocomplete="off" placeholder readonly>
+                  <label for="price" class="form-label">Цена</label>
+                </div>
+                <div class="form-floating operation-form__input--quantity">
+                  <input type="text" class=" form-input" value="{{ product.pivot.quantity }}" onclick="copyText('{{ product.pivot.quantity }}')" autocomplete="off" placeholder readonly>
+                  <label for="quantity" class="form-label">К-во</label>
+                </div>
+                <div class="form-floating operation-form__input--sum">
+                  <input type="text" class=" form-input" value="{{ product.pivot.sum }}" onclick="copyText('{{ product.pivot.sum }}')" autocomplete="off" placeholder readonly>
+                  <label for="sum" class="form-label">Сумма</label>
+                </div>
+
+              </div>{# operation-form__row--product operation-form__box__content--products #}
+            {% endfor %}
+
+          </div>{# operation-form__box__content#}
+
+      </div>{# documents-item__product-box #}
+    </div>{# documents-item__bottom #}
+  </div>{# documents-item #}
+</div>{# documents-list box--light #}

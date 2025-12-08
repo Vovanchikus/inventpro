@@ -15,18 +15,25 @@
   background-color: $bg-box--light
   box-shadow: $box-light-shadow
   border-radius: $radius-lg
+  &.document__single
+    gap: 32px
+    padding: 24px
 
   &__top
     display: flex
     justify-content: space-between
-    align-items: center
+    align-items: flex-start
     width: 100%
 
     &-left
       display: flex
+      flex-direction: column
       justify-content: start
-      align-items: center
+      align-items: start
       gap: 8px
+      &.document__single
+        flex-direction: row
+        align-items: center
 
   &__counteragent
     font-size: 14px
@@ -43,20 +50,40 @@
   &__middle
     display: flex
     flex-direction: column
-    gap: 12px
+    gap: 24px
     width: 100%
+    &.document__single
+      gap: 24px
 
   &__documents-info
     display: flex
     flex-direction: column
     gap: 8px
     height: 104px
+    &.document__single
+      height: auto
+      gap: 24px
+
+  &__documents-title
+    display: flex
+    align-items: center
+    font-size: 16px
+    font-weight: 600
+    line-height: 16px
+    color: $text-title
+
+  &__doc-list
+    display: flex
+    flex-direction: column
+    align-items: start
+    gap: 8px
 
   &__doc-item
     display: flex
     justify-content: space-between
     align-items: center
     gap: 8px
+    width: 100%
 
 
   &__doc-name
@@ -64,22 +91,35 @@
     line-height: 16px
     font-weight: 500
 
-  &__have-pdf
+  &__have-pdf, &__button-see
     display: flex
     align-items: center
     gap: 4px
     font-size: 12px
     font-weight: 600
     line-height: 12px
+    border-radius: $radius-sm
+
+  &__have-pdf
     padding: 4px 6px
     color: $text-light
     background-color: $bg-success
-    border-radius: $radius-sm
+
+  &__button-see
+    padding: 6px 12px
+    color: $text-light
+    background-color: $bg-brand
+    &:hover
+      color: $text-light
+      background-color: $button-brand-bg-hover
+    &:active
+      color: $text-light
+      background-color: $button-brand-bg-active
 
   &__doc-purpose
     font-size: 12px
     font-weight: 600
-    padding: 8px
+    padding: 8px 16px
     color: $text-title
     background-color: $bg-body
     border-radius: $radius-nm
@@ -98,4 +138,31 @@
     font-weight: 600
     line-height: 16px
     color: $text-title
+
+  &__product-box
+    display: flex
+    flex-direction: column
+    gap: 32px
+
+    input
+      cursor: pointer
+
+    &-title
+      display: flex
+      align-items: center
+      font-size: 16px
+      font-weight: 600
+      line-height: 16px
+      color: $text-title
+      span
+        font-size: 14px
+        line-height: 16px
+        color: $text-light
+        padding: 4px 12px
+        margin-left: 8px
+        background-color: $bg-brand
+        border-radius: 14px
+
+
+
 

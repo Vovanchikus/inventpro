@@ -65,12 +65,31 @@
     flex-direction: column
     gap: 4px
   &__name
+    position: relative
     display: -webkit-box
     -webkit-line-clamp: 1
     -webkit-box-orient: vertical
     overflow: hidden
     text-overflow: ellipsis
+    transition: all $transition
+    svg
+      position: absolute
+      left: 0
+      visibility: hidden
+      opacity: 0
+      pointer-events: none
+      transition: all $transition
+      cursor: pointer
+    &:hover
+      transition: all $transition
+      padding-left: 20px
+      svg
+        visibility: visible
+        opacity: 1
+        pointer-events: auto
+
   &__number
+    position: relative
     display: inline-block
     font-size: 12px
     font-weight: 500
@@ -80,18 +99,104 @@
     color: $text-body
     background-color: $neutral-200
     border-radius: 6px
+    cursor: pointer
+    svg
+      position: absolute
+      top: 50%
+      left: 6px
+      visibility: hidden
+      opacity: 0
+      pointer-events: none
+      transform: translateY(-50%)
+      transition: all $transition
+      cursor: pointer
+    &:hover
+      transition: all $transition
+      padding-left: 26px
+      svg
+        visibility: visible
+        opacity: 1
+        pointer-events: auto
+
   &__unit
+    position: relative
     grid-area: unit
     justify-self: center
+    svg
+      position: absolute
+      left: 0
+      visibility: hidden
+      opacity: 0
+      pointer-events: none
+      transition: all $transition
+      cursor: pointer
+    &:hover
+      transition: all $transition
+      padding-left: 20px
+      svg
+        visibility: visible
+        opacity: 1
+        pointer-events: auto
+
   &__price
+    position: relative
     grid-area: price
     justify-self: center
+    svg
+      position: absolute
+      left: 0
+      visibility: hidden
+      opacity: 0
+      pointer-events: none
+      transition: all $transition
+      cursor: pointer
+    &:hover
+      transition: all $transition
+      padding-left: 20px
+      svg
+        visibility: visible
+        opacity: 1
+        pointer-events: auto
+
   &__quantity
+    position: relative
     grid-area: quantity
     justify-self: center
+    svg
+      position: absolute
+      left: 0
+      visibility: hidden
+      opacity: 0
+      pointer-events: none
+      transition: all $transition
+      cursor: pointer
+    &:hover
+      transition: all $transition
+      padding-left: 20px
+      svg
+        visibility: visible
+        opacity: 1
+        pointer-events: auto
+
   &__sum
+    position: relative
     grid-area: sum
     justify-self: end
+    svg
+      position: absolute
+      left: 0
+      visibility: hidden
+      opacity: 0
+      pointer-events: none
+      transition: all $transition
+      cursor: pointer
+    &:hover
+      transition: all $transition
+      padding-left: 20px
+      svg
+        visibility: visible
+        opacity: 1
+        pointer-events: auto
 
 
 .import

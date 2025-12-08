@@ -7,10 +7,12 @@ use Log;
 class Operation extends Model
 {
     use \Winter\Storm\Database\Traits\Validation;
+    use \Winter\Storm\Database\Traits\Sluggable;
 
     public $table = 'samvol_inventory_operations';
 
     protected $fillable = ['type_id'];
+    protected $slugs = ['slug' => 'id'];
 
     public $belongsTo = [
         'type' => [

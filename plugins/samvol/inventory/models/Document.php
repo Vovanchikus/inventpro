@@ -27,14 +27,9 @@ class Document extends Model
         'doc_file' => \System\Models\File::class
     ];
 
-    public function getDocFileFlagAttribute() {
-        $doc_file = $this->doc_file;
-
-        if($doc_file) {
-            return 'PDF есть';
-        } else {
-            return '-';
-        }
+    public function getDocFileFlagAttribute()
+    {
+        return $this->doc_file !== null;
     }
 
     public $rules = [

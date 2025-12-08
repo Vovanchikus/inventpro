@@ -13,3 +13,8 @@ fields:
         label: "Товары"
         type: partial
         path: $/samvol/inventory/controllers/operations/_add_products.htm
+
+    slug:
+        label: URL
+        type: text
+        preset: id
