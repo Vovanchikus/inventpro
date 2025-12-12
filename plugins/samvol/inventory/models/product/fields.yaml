@@ -8,10 +8,15 @@ fields:
         label: "Наименование товара"
         span: auto
         type: text
+    inv_number:
+        label: "Инвентарный/Номенклатурный номер"
+        span: auto
+        type: text
     unit:
         label: Ед.измерения
         span: auto
         type: text
-    quantity:
-        label: На складе
-        type: number
+    slug:
+        label: URL
+        type: text
+        preset: inv_number

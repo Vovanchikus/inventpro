@@ -1,31 +1,32 @@
 <?php
 
-use Samvol\Inventory\Models\Document;
-use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Route;
+use Samvol\Inventory\Controllers\Api;
 
-// Безопасная раздача документов
-Route::get('/document/{id}', function ($id) {
-    $doc = Document::find($id);
+// API prefix
+Route::group(['prefix' => 'api'], function () {
 
-    if (!$doc || !$doc->doc_file) {
-        abort(404, 'Документ не найден');
-    }
+    // Products
+    Route::get('/products', [Api::class, 'products']);
+    Route::get('/products/{id}', [Api::class, 'product']);
 
-    $file = $doc->doc_file;
+    // Operations
+    Route::get('/operations', [Api::class, 'operations']);
+    Route::get('/operations/{id}', [Api::class, 'operation']);
 
-    $path = $file->getLocalPath();
+    // Documents
+    Route::get('/documents', [Api::class, 'documents']);
+    Route::get('/documents/{id}', [Api::class, 'document']);
+    Route::get('/documents/file/{id}', [Api::class, 'documentFile']);
 
-    if (!file_exists($path)) {
-        abort(404, 'Файл отсутствует');
-    }
+    // Categories
+    Route::get('/categories', [Api::class, 'categories']);
+    Route::get('/categories/{id}', [Api::class, 'category']);
 
-    return Response::make(
-        file_get_contents($path),
-        200,
-        [
-            'Content-Type'        => $file->content_type ?: 'application/pdf',
-            'Content-Disposition' => 'inline; filename="' . $file->file_name . '"',
-            'Content-Length'      => filesize($path),
-        ]
-    );
+    // Operation Types
+    Route::get('/operation-types', [Api::class, 'operationTypes']);
+    Route::get('/operation-types/{id}', [Api::class, 'operationType']);
+
+    // Warehouse products
+    Route::get('/warehouse-products', [Api::class, 'warehouseProducts']);
 });

@@ -1,0 +1,15 @@
+title = "Склад"
+url = "/warehouse/:slug"
+layout = "default"
+
+[warehouse]
+[qrProductCode]
+==
+
+Qr код товара
+
+{% if qrCode %}
+    <img src="{{ qrCode }}" alt="QR код товара">
+{% else %}
+    <p>Товар не найден.</p>
+{% endif %}

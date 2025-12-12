@@ -6,8 +6,11 @@ use DB;
 class Product extends Model
 {
     use \Winter\Storm\Database\Traits\Validation;
+    use \Winter\Storm\Database\Traits\Sluggable;
 
     public $table = 'samvol_inventory_products';
+
+    protected $slugs = ['slug' => 'inv_number'];
 
     protected $fillable = [
         'category_id',
