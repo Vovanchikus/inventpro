@@ -11,6 +11,7 @@ use Samvol\Inventory\Models\OperationType;
 use Samvol\Inventory\Classes\Transformers\ProductTransformer;
 use Samvol\Inventory\Classes\Transformers\OperationTransformer;
 use Samvol\Inventory\Classes\Transformers\DocumentTransformer;
+use Samvol\Inventory\Classes\Transformers\CategoryTransformer;
 
 class Api extends Controller
 {
@@ -24,19 +25,18 @@ class Api extends Controller
     public function products()
     {
         $items = Product::all();
-
         return $this->success(ProductTransformer::collection($items));
     }
 
     public function product($id)
     {
         $item = Product::find($id);
-
-        if (!$item)
-            return $this->error("Product not found", 404);
+        if (!$item) return $this->error("Product not found", 404);
 
         return $this->success(ProductTransformer::one($item));
     }
+
+
 
     /*
     |--------------------------------------------------------------------------
@@ -46,16 +46,13 @@ class Api extends Controller
     public function operations()
     {
         $items = Operation::with('products', 'documents')->get();
-
         return $this->success(OperationTransformer::collection($items));
     }
 
     public function operation($id)
     {
         $item = Operation::with('products', 'documents')->find($id);
-
-        if (!$item)
-            return $this->error("Operation not found", 404);
+        if (!$item) return $this->error("Operation not found", 404);
 
         return $this->success(OperationTransformer::one($item));
     }
@@ -68,16 +65,13 @@ class Api extends Controller
     public function documents()
     {
         $items = Document::all();
-
         return $this->success(DocumentTransformer::collection($items));
     }
 
     public function document($id)
     {
         $item = Document::find($id);
-
-        if (!$item)
-            return $this->error("Document not found", 404);
+        if (!$item) return $this->error("Document not found", 404);
 
         return $this->success(DocumentTransformer::one($item));
     }
@@ -85,9 +79,7 @@ class Api extends Controller
     public function documentFile($id)
     {
         $doc = Document::find($id);
-
-        if (!$doc || !$doc->doc_file)
-            abort(404, "Document file not found");
+        if (!$doc || !$doc->doc_file) abort(404, "Document file not found");
 
         $file = $doc->doc_file;
         $path = $file->getLocalPath();
@@ -108,45 +100,18 @@ class Api extends Controller
     | Categories
     |--------------------------------------------------------------------------
     */
-    // Список всех категорий
     public function categories()
     {
-        $categories = Category::with('children')->get();
-
-        return $this->success(
-            $categories->map(fn($cat) => [
-                'id'         => $cat->id,
-                'name'       => $cat->name,
-                'parent_id'  => $cat->parent_id,
-                'slug'       => $cat->slug,
-                'children'   => $cat->children->map(fn($c) => [
-                    'id'   => $c->id,
-                    'name' => $c->name,
-                    'slug' => $c->slug
-                ]),
-            ])
-        );
+        $categories = Category::whereNull('parent_id')->get();
+        return $this->success(CategoryTransformer::collection($categories));
     }
 
-    // Конкретная категория
     public function category($id)
     {
-        $cat = Category::with('children')->find($id);
+        $cat = Category::find($id);
+        if (!$cat) return $this->error("Category not found", 404);
 
-        if (!$cat)
-            return $this->error("Category not found", 404);
-
-        return $this->success([
-            'id'         => $cat->id,
-            'name'       => $cat->name,
-            'parent_id'  => $cat->parent_id,
-            'slug'       => $cat->slug,
-            'children'   => $cat->children->map(fn($c) => [
-                'id'   => $c->id,
-                'name' => $c->name,
-                'slug' => $c->slug
-            ]),
-        ]);
+        return $this->success(CategoryTransformer::one($cat));
     }
 
     /*
@@ -157,7 +122,6 @@ class Api extends Controller
     public function operationTypes()
     {
         $items = OperationType::all();
-
         return $this->success(
             $items->map(fn($type) => [
                 'id'   => $type->id,
@@ -169,9 +133,7 @@ class Api extends Controller
     public function operationType($id)
     {
         $type = OperationType::find($id);
-
-        if (!$type)
-            return $this->error("Operation type not found", 404);
+        if (!$type) return $this->error("Operation type not found", 404);
 
         return $this->success([
             'id'   => $type->id,
@@ -181,12 +143,12 @@ class Api extends Controller
 
     /*
     |--------------------------------------------------------------------------
-    | Warehouse Products (с категориями)
+    | Warehouse Products (с категориями через трансформер)
     |--------------------------------------------------------------------------
     */
     public function warehouseProducts()
     {
-        $products = Product::with('category')->get();
+        $products = Product::with('category.children')->get();
 
         return $this->success(
             $products->map(fn($p) => [
@@ -198,11 +160,7 @@ class Api extends Controller
                 'quantity'    => $p->calculated_quantity,
                 'sum'         => $p->calculated_sum,
                 'category_id' => $p->category_id,
-                'category'    => $p->category ? [
-                    'id'   => $p->category->id,
-                    'name' => $p->category->name,
-                    'slug' => $p->category->slug
-                ] : null,
+                'category'    => $p->category ? ProductTransformer::category($p->category) : null,
             ])
         );
     }
@@ -235,8 +193,6 @@ class Api extends Controller
     | Counteragents
     |--------------------------------------------------------------------------
     */
-
-    // Список всех уникальных контрагентов
     public function counteragents()
     {
         $counteragents = \Samvol\Inventory\Models\OperationProduct::select('counteragent')
@@ -248,15 +204,11 @@ class Api extends Controller
         return $this->success($counteragents);
     }
 
-    // Получить контрагента по имени (или id, если будет поле)
     public function counteragent($name)
     {
         $exists = \Samvol\Inventory\Models\OperationProduct::where('counteragent', $name)->exists();
-
-        if (!$exists)
-            return $this->error("Counteragent not found", 404);
+        if (!$exists) return $this->error("Counteragent not found", 404);
 
         return $this->success(['name' => $name]);
     }
-
 }
