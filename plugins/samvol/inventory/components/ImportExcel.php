@@ -127,6 +127,21 @@ class ImportExcel extends ComponentBase
             if (empty($rows)) return ['toast' => ['message'=>'Файл пустой','type'=>'error']];
 
             unset($rows[0]); // пропускаем заголовок
+
+            // ===============================
+            // Предзагрузка товаров по inv_number (убираем N+1)
+            // ===============================
+            $invNumbers = collect($rows)
+                ->pluck(2)          // колонка inv_number
+                ->filter()
+                ->map('trim')
+                ->unique()
+                ->values();
+
+            $products = Product::whereIn('inv_number', $invNumbers)
+                ->get()
+                ->keyBy('inv_number');
+
             $differences = [];
             $newProducts = [];
             $newCount = 0;
@@ -141,8 +156,10 @@ class ImportExcel extends ComponentBase
                 $quantity   = parseExcelNumber($row[4] ?? 0);
                 $sum        = parseExcelNumber($row[5] ?? 0);
 
-                $product = Product::where('inv_number', $inv_number)->first();
-                if (!$product) $product = Product::where('name',$name)->where('unit',$unit)->first();
+                $product = $products[$inv_number] ?? null;
+
+                // $product = Product::where('inv_number', $inv_number)->first();
+                // if (!$product) $product = Product::where('name',$name)->where('unit',$unit)->first();
 
                 if (!$product) {
                     $product = Product::create([

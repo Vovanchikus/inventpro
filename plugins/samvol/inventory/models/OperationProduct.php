@@ -16,45 +16,38 @@ class OperationProduct extends Pivot
         'operation' => ['Samvol\Inventory\Models\Operation'],
     ];
 
+    /*
+     |--------------------------------------------------------------------------
+     | Быстрые аксессоры (БЕЗ ЗАПРОСОВ)
+     |--------------------------------------------------------------------------
+     */
+
     public function getOperationTypeAttribute()
     {
-        return $this->operation && $this->operation->type ? $this->operation->type->name : '-';
-    }
-
-
-    public function getFirstDocumentAttribute()
-    {
-        $first = $this->operation->documents()->orderBy('id', 'asc')->first();
-        $firstDate = $this->operation->documents()->orderBy('id', 'asc')->first();
-        if (!$first){
-            return 'Документ отсутствует';
-        } elseif (!$firstDate) {
-            return 'Дата не указана';
-        }
-        $date = \Carbon\Carbon::parse($first->doc_date)->format('d.m.Y');
-        return $first ? $first->doc_name . ' №' . $first->doc_num . ', ' . $date : '-';
+        return $this->operation && $this->operation->type
+            ? $this->operation->type->name
+            : '-';
     }
 
     public function getProductNameAttribute()
     {
-        return $this->product ? $this->product->name : '-';
+        return $this->product->name ?? '-';
     }
 
     public function getProductUnitAttribute()
     {
-        return $this->product ? $this->product->unit : '-';
+        return $this->product->unit ?? '-';
     }
 
     public function getProductInvNumberAttribute()
     {
-        return $this->product ? $this->product->inv_number : '-';
+        return $this->product->inv_number ?? '-';
     }
 
     public function getProductPriceAttribute()
     {
-        return $this->product ? $this->product->price : '-';
+        return $this->product->price ?? '-';
     }
 
     public $rules = [];
-
 }

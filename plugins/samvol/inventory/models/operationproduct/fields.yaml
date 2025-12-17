@@ -2,3 +2,6 @@ fields:
     pivot[quantity]:
         label: Количество
         type: number
+    pivot[sum]:
+        label: Сумма
+        type: number

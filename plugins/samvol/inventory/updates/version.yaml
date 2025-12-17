@@ -93,3 +93,6 @@
 1.0.32:
     - 'Updated table samvol_inventory_products'
     - builder_table_update_samvol_inventory_products_7.php
+1.0.33:
+    - 'Updated table samvol_inventory_products'
+    - builder_table_update_samvol_inventory_products_8.php

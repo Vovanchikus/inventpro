@@ -41,6 +41,8 @@
         min-width: 164px
       &--counteragent
         min-width: 200px
+      &--year
+        min-width: 164px
 
     &-option
       padding: 12px 16px
@@ -53,7 +55,7 @@
 
 .operation-history__item.table-title
   position: sticky
-  height: 62px
+  height: 74px
   top: 0
   left: 0
   z-index: 10
@@ -66,9 +68,9 @@
 
   &__item
     display: grid
-    grid-template-areas: "check type document name quantity counteragent"
-    grid-template-columns: 18px 106px 270px 274px 122px 106px
-    grid-template-rows: 62px auto
+    grid-template-areas: "check type left price quantity date counteragent"
+    grid-template-columns: 18px 106px 270px 122px 122px 122px 106px
+    grid-template-rows: 74px auto
     align-items: center
     gap: 0px 24px
     font-size: 12px
@@ -102,20 +104,47 @@
   &__type
     grid-area: type
 
-  &__document
-    grid-area: document
+  &__left
+    grid-area: left
+    display: inline-block
+    flex-direction: column
+    gap: 4px
 
   &__name
-    grid-area: name
+    position: relative
     display: -webkit-box
     -webkit-line-clamp: 1
     -webkit-box-orient: vertical
     overflow: hidden
     text-overflow: ellipsis
+    transition: all $transition
+
+  &__number
+    position: relative
+    display: inline-block
+    font-size: 12px
+    font-weight: 500
+    line-height: 12px
+    margin-top: 4px
+    padding: 6px 8px
+    color: $text-body
+    background-color: $neutral-200
+    border-radius: 6px
+    cursor: pointer
+
+  &__price
+    position: relative
+    grid-area: price
+    justify-self: center
 
   &__quantity
     grid-area: quantity
     justify-self: center
+
+  &__date
+    grid-area: date
+    justify-self: center
+
   &__counteragent
     grid-area: counteragent
     justify-self: end

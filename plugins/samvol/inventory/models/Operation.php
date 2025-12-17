@@ -129,10 +129,14 @@ class Operation extends Model
 
     public function getFirstDocumentDateAttribute()
     {
-        $first = $this->documents()->orderBy('id', 'asc')->first();
+        if (!$this->relationLoaded('documents')) {
+            return null;
+        }
+
+        $first = $this->documents->sortBy('id')->first();
 
         if (!$first || !$first->doc_date) {
-            return null; // или '-'
+            return null;
         }
 
         return \Carbon\Carbon::parse($first->doc_date)->format('d.m.Y');

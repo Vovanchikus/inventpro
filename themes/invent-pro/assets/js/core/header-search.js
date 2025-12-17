@@ -1,53 +1,78 @@
 document.addEventListener("DOMContentLoaded", () => {
     const searchInput = document.getElementById("warehouse-search");
-    const clearSearch = document.getElementById("clearSearch"); // крестик
+    const clearSearch = document.getElementById("clearSearch");
     const productList = document.getElementById("product-list");
 
     if (!searchInput || !productList) return;
 
-    const products = Array.from(
-        productList.querySelectorAll(".warehouse__item")
+    // Берём все элементы внутри product-list
+    const items = Array.from(
+        productList.querySelectorAll(
+            ".warehouse__item, .operation-history__item"
+        )
     );
 
-    // Функция фильтрации
-    const filterProducts = () => {
+    const filterItems = () => {
         const query = searchInput.value.toLowerCase().trim();
 
-        products.forEach((item) => {
-            const name =
-                item
-                    .querySelector(".warehouse__name")
-                    ?.textContent.toLowerCase() || "";
-            const number =
-                item
-                    .querySelector(".warehouse__number")
-                    ?.textContent.toLowerCase() || "";
-
-            if (name.includes(query) || number.includes(query)) {
-                item.style.display = "";
-            } else {
+        items.forEach((item) => {
+            // Игнорируем строки без данных
+            if (
+                !item.querySelector(".operation-history__name") &&
+                !item.querySelector(".warehouse__name")
+            ) {
                 item.style.display = "none";
+                return;
             }
+
+            let text = "";
+
+            // Для склада
+            const warehouseName =
+                item.querySelector(".warehouse__name")?.textContent || "";
+            const warehouseNumber =
+                item.querySelector(".warehouse__number")?.textContent || "";
+            if (warehouseName || warehouseNumber) {
+                text = (warehouseName + " " + warehouseNumber).toLowerCase();
+            }
+
+            // Для истории операций
+            const historyName =
+                item.querySelector(".operation-history__name")?.textContent ||
+                "";
+            const historyInv =
+                item.querySelector(".operation-history__number")?.textContent ||
+                "";
+            const historyCounteragent =
+                item.querySelector(".operation-history__counteragent")
+                    ?.textContent || "";
+            if (historyName || historyInv || historyCounteragent) {
+                text = (
+                    historyName +
+                    " " +
+                    historyInv +
+                    " " +
+                    historyCounteragent
+                ).toLowerCase();
+            }
+
+            item.style.display = text.includes(query) ? "" : "none";
         });
 
-        // Показываем или скрываем крестик
         if (clearSearch) {
             clearSearch.style.display = query ? "flex" : "none";
         }
     };
 
-    // Вызываем фильтрацию при вводе
-    searchInput.addEventListener("input", filterProducts);
+    searchInput.addEventListener("input", filterItems);
 
-    // Крестик для очистки
     if (clearSearch) {
         clearSearch.addEventListener("click", () => {
             searchInput.value = "";
-            filterProducts();
+            filterItems();
             searchInput.focus();
         });
     }
 
-    // Вызовем фильтрацию сразу при загрузке страницы
-    filterProducts();
+    filterItems(); // фильтруем сразу при загрузке
 });

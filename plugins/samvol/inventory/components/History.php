@@ -3,64 +3,74 @@
 use Cms\Classes\ComponentBase;
 use Samvol\Inventory\Models\OperationProduct;
 use Samvol\Inventory\Models\OperationType;
+use Samvol\Inventory\Models\Document;
+use Carbon\Carbon;
 
 class History extends ComponentBase
 {
-    public $histories;
-    public $types;
-    public $counteragents;
-
     public function componentDetails()
     {
         return [
             'name'        => 'История операций',
-            'description' => 'Вывод информации об истории операций'
+            'description' => 'Оптимизированная история операций'
         ];
     }
 
-    // Основной метод — выполняется при загрузке страницы
     public function onRun()
     {
-        // Получаем значения фильтров из GET-параметров
         $filterType = get('type');
         $filterCounteragent = get('counteragent');
+        $filterYear = get('year');
 
-        // Базовый запрос: исключаем типы 6 и 7
-        $query = OperationProduct::whereDoesntHave('operation', function($q) {
+        $query = OperationProduct::with([
+            'product:id,name,unit,inv_number,price',
+            'operation:id,type_id',
+            'operation.type:id,name',
+            'operation.documents:id,operation_id,doc_date'
+        ])->whereDoesntHave('operation', function ($q) {
             $q->whereIn('type_id', ['6', '7']);
         });
 
-        // Фильтр по типу операции
-        if (!empty($filterType)) {
-            $query->whereHas('operation', function($q) use ($filterType) {
-                $q->where('type_id', $filterType);
-            });
+        if ($filterType) {
+            $query->whereHas('operation', fn($q) => $q->where('type_id', $filterType));
         }
 
-        // Фильтр по контрагенту
-        if (!empty($filterCounteragent)) {
+        if ($filterCounteragent) {
             $query->where('counteragent', $filterCounteragent);
         }
 
-        // Получаем отфильтрованные продукты
-        $this->histories = $query->get();
-        $this->page['histories'] = $this->histories;
+        if ($filterYear) {
+            $query->whereHas('operation.documents', fn($q) =>
+                $q->whereYear('doc_date', $filterYear)
+            );
+        }
 
-        // Подсчет количества подходящих продуктов
-        $this->page['filteredCount'] = $this->histories->count();
+        $histories = $query->get();
 
-        // Список всех типов для фильтра
-        $this->types = OperationType::whereIn('id', ['1','2','3','4'])->get();
-        $this->page['types'] = $this->types;
+        /*
+         |-------------------------------------------------------
+         | Вычисляем дату ОДИН РАЗ, без аксессоров
+         |-------------------------------------------------------
+         */
+        $histories->each(function ($item) {
+            $doc = $item->operation->documents->sortBy('id')->first();
+            $item->doc_date = $doc && $doc->doc_date
+                ? Carbon::parse($doc->doc_date)->format('d.m.Y')
+                : null;
+        });
 
-        // Список всех контрагентов для фильтра
-        $this->counteragents = OperationProduct::distinct()->pluck('counteragent');
-        $this->page['counteragents'] = $this->counteragents;
-    }
+        $this->page['histories'] = $histories;
+        $this->page['filteredCount'] = $histories->count();
 
+        $this->page['types'] = OperationType::whereIn('id', [1,2,3,4])->get();
 
-    public function defineProperties()
-    {
-        return [];
+        $this->page['counteragents'] = OperationProduct::whereNotNull('counteragent')
+            ->distinct()->pluck('counteragent');
+
+        $this->page['years'] = Document::whereNotNull('doc_date')
+            ->selectRaw('YEAR(doc_date) as year')
+            ->distinct()
+            ->orderByDesc('year')
+            ->pluck('year');
     }
 }

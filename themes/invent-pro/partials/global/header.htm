@@ -5,7 +5,7 @@
         <div class="header__logo">InventPro <span>Система инвентаризации</span></div>
     {% endif %}
 
-    {% if this.page.url == '/warehouse' %}
+    {% if this.page.url == '/warehouse' or this.page.url == '/operation-history' %}
         <div class="header-search form-floating">
             <input type="text" id="warehouse-search" class="header-search__input form-input" placeholder="Поиск товаров...">
 

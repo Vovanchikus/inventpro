@@ -1,70 +1,85 @@
+<div id="product-list">
 
-  {% for history in histories %}
+    {% for history in histories %}
 
-    <div class="operation-history__item table-item">
+      <div class="operation-history__item table-item">
 
-      <div class="operation-history__checkbox">
-        <label for="" class="checkbox">
-          <input type="checkbox" class="product-check"
-            data-operation-id="{{ history.operation_id }}"
-            data-product-id="{{ history.product_id }}"
-            data-name="{{ history.product_name }}"
-            data-inv-number="{{ history.product_inv_number }}"
-            data-unit="{{ history.product_unit }}"
-            data-price="{{ history.product_price }}"
-            data-quantity="{{ history.quantity }}"
-            data-sum="{{ history.sum}}">
-        </label>
-      </div>
+        <div class="operation-history__checkbox">
+          <label for="" class="checkbox">
+            <input type="checkbox" class="product-check"
+              data-operation-id="{{ history.operation_id }}"
+              data-product-id="{{ history.product_id }}"
+              data-name="{{ history.product_name }}"
+              data-inv-number="{{ history.product_inv_number }}"
+              data-unit="{{ history.product_unit }}"
+              data-price="{{ history.product_price }}"
+              data-quantity="{{ history.quantity }}"
+              data-sum="{{ history.sum}}">
+          </label>
+        </div>
 
-      <div class="operation-history__type">
-      {% if history.operation_type == 'Приход' %}
-          <div class="label--sm label--success">{{ history.operation_type }}</div>
-      {% elseif history.operation_type == 'Списание' %}
-          <div class="label--sm label--error">{{ history.operation_type }}</div>
-      {% elseif history.operation_type == 'Передача' %}
-          <div class="label--sm label--info">{{ history.operation_type }}</div>
-      {% elseif history.operation_type == 'Импорт' %}
-          <div class="label--sm label--border">{{ history.operation_type }}</div>
-      {% endif %}
-
-
-      </div>
-
-      <div class="operation-history__document">
-        {% if history.first_document %}
-            {{ history.first_document }}
-        {% else %}
-          -
+        <div class="operation-history__type">
+        {% if history.operation_type == 'Приход' %}
+            <div class="label--sm label--success">{{ history.operation_type }}</div>
+        {% elseif history.operation_type == 'Списание' %}
+            <div class="label--sm label--error">{{ history.operation_type }}</div>
+        {% elseif history.operation_type == 'Передача' %}
+            <div class="label--sm label--info">{{ history.operation_type }}</div>
+        {% elseif history.operation_type == 'Импорт' %}
+            <div class="label--sm label--border">{{ history.operation_type }}</div>
         {% endif %}
+
+
+        </div>
+
+        <div class="operation-history__left">
+          <div class="operation-history__name">
+            {% if history.product_name %}
+                {{ history.product_name }}
+            {% else %}
+              -
+            {% endif %}
+          </div>
+          <div class="operation-history__number">
+            {% if history.product.inv_number %}
+                {{ history.product.inv_number }}
+            {% else %}
+              -
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="operation-history__price">
+          {% if history.product.price %}
+              {{ history.product.price }}
+          {% else %}
+            -
+          {% endif %}
+        </div>
+
+        <div class="operation-history__quantity">
+          {% if history.quantity %}
+              {{ history.quantity }}
+          {% else %}
+            -
+          {% endif %}
+        </div>
+
+        <div class="operation-history__date">
+          {{ history.doc_date ?: '-' }}
+        </div>
+
+        <div class="operation-history__counteragent">
+          {% if history.counteragent %}
+              {{ history.counteragent }}
+          {% else %}
+            -
+          {% endif %}
+        </div>
       </div>
 
-      <div class="operation-history__name">
-        {% if history.product_name %}
-            {{ history.product_name }}
-        {% else %}
-          -
-        {% endif %}
-      </div>
-
-      <div class="operation-history__quantity">
-        {% if history.quantity %}
-            {{ history.quantity }}
-        {% else %}
-          -
-        {% endif %}
-      </div>
-
-      <div class="operation-history__counteragent">
-        {% if history.counteragent %}
-            {{ history.counteragent }}
-        {% else %} #}
-          -
-        {% endif %}
-      </div>
-    </div>
-
-  {% else %}
-    <div class="operation-history__item">Нет данных</div>
-  {% endfor %}
+    {% else %}
+      <div class="operation-history__item">Нет данных</div>
+    {% endfor %}
+</div>
 

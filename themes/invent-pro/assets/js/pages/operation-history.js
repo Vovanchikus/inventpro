@@ -1,64 +1,66 @@
 document.addEventListener("DOMContentLoaded", () => {
-    // Получаем GET-параметры сразу
+    // Читаем GET-параметры
     const urlParams = new URLSearchParams(window.location.search);
-    const typeValue = urlParams.get("type") || "";
-    const counteragentValue = urlParams.get("counteragent") || "";
 
-    // Устанавливаем их в скрытые поля
-    document.getElementById("typeInput").value = typeValue;
-    document.getElementById("counteragentInput").value = counteragentValue;
+    const params = {
+        type: urlParams.get("type") || "",
+        counteragent: urlParams.get("counteragent") || "",
+        year: urlParams.get("year") || "",
+    };
+
+    // Устанавливаем значения в hidden input
+    Object.keys(params).forEach((key) => {
+        const input = document.getElementById(key + "Input");
+        if (input) {
+            input.value = params[key];
+        }
+    });
 
     const selects = document.querySelectorAll(".custom-select");
 
     selects.forEach((sel) => {
         const selected = sel.querySelector(".selected");
         const options = sel.querySelector(".options");
-        const paramName = sel.dataset.name;
+        const paramName = sel.dataset.name; // type / counteragent / year
 
-        // Выбираем правильное значение для dropdown
-        let value = "";
-        if (paramName === "type") {
-            value = typeValue;
-        } else if (paramName === "counteragent") {
-            value = counteragentValue;
-        }
-
-        if (value) {
-            const opt = options.querySelector(`.option[data-value="${value}"]`);
-            if (opt) {
-                selected.innerHTML = opt.innerHTML;
-                sel.dataset.value = value;
+        // Установка выбранного значения из URL
+        const currentValue = params[paramName];
+        if (currentValue) {
+            const option = options.querySelector(
+                `.option[data-value="${CSS.escape(currentValue)}"]`
+            );
+            if (option) {
+                selected.innerHTML = option.innerHTML;
+                sel.dataset.value = currentValue;
             }
         }
 
-        // Открытие/закрытие dropdown
-        selected.addEventListener("click", () => {
+        // Открытие / закрытие dropdown
+        selected.addEventListener("click", (e) => {
+            e.stopPropagation();
             sel.classList.toggle("active");
         });
 
         // Выбор значения
         options.querySelectorAll(".option").forEach((option) => {
             option.addEventListener("click", () => {
+                const value = option.dataset.value || "";
+
                 selected.innerHTML = option.innerHTML;
-                sel.dataset.value = option.dataset.value;
+                sel.dataset.value = value;
                 sel.classList.remove("active");
 
-                if (sel.dataset.name === "type") {
-                    document.getElementById("typeInput").value =
-                        option.dataset.value;
-                }
-                if (sel.dataset.name === "counteragent") {
-                    document.getElementById("counteragentInput").value =
-                        option.dataset.value;
+                // Записываем значение в hidden input
+                const input = document.getElementById(paramName + "Input");
+                if (input) {
+                    input.value = value;
                 }
             });
         });
     });
 
-    // Закрытие dropdown при клике вне
-    document.addEventListener("click", (e) => {
-        selects.forEach((sel) => {
-            if (!sel.contains(e.target)) sel.classList.remove("active");
-        });
+    // Закрытие всех dropdown при клике вне
+    document.addEventListener("click", () => {
+        selects.forEach((sel) => sel.classList.remove("active"));
     });
 });

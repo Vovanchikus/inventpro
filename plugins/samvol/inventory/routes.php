@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Samvol\Inventory\Controllers\Api;
+use Samvol\Inventory\Controllers\DocumentsDownloadController;
 
 // API prefix
 Route::group(['prefix' => 'api'], function () {
@@ -30,3 +31,9 @@ Route::group(['prefix' => 'api'], function () {
     // Warehouse products
     Route::get('/warehouse-products', [Api::class, 'warehouseProducts']);
 });
+
+
+Route::get('document-file/{id}', [
+    \Samvol\Inventory\Controllers\DocumentsDownloadController::class,
+    'download'
+]);

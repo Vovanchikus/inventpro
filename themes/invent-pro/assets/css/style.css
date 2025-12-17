@@ -689,6 +689,9 @@ footer {
 .operation-history__filters-select--counteragent {
   min-width: 200px;
 }
+.operation-history__filters-select--year {
+  min-width: 164px;
+}
 .operation-history__filters-option {
   padding: 12px 16px;
 }
@@ -701,7 +704,7 @@ footer {
 
 .operation-history__item.table-title {
   position: sticky;
-  height: 62px;
+  height: 74px;
   top: 0;
   left: 0;
   z-index: 10;
@@ -710,9 +713,9 @@ footer {
 
 .operation-history__item {
   display: grid;
-  grid-template-areas: "check type document name quantity counteragent";
-  grid-template-columns: 18px 106px 270px 274px 122px 106px;
-  grid-template-rows: 62px auto;
+  grid-template-areas: "check type left price quantity date counteragent";
+  grid-template-columns: 18px 106px 270px 122px 122px 122px 106px;
+  grid-template-rows: 74px auto;
   align-items: center;
   gap: 0px 24px;
   font-size: 12px;
@@ -748,19 +751,45 @@ footer {
 .operation-history__type {
   grid-area: type;
 }
-.operation-history__document {
-  grid-area: document;
+.operation-history__left {
+  grid-area: left;
+  display: inline-block;
+  flex-direction: column;
+  gap: 4px;
 }
 .operation-history__name {
-  grid-area: name;
+  position: relative;
   display: -webkit-box;
   -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
+  transition: all var(--transition);
+}
+.operation-history__number {
+  position: relative;
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 12px;
+  margin-top: 4px;
+  padding: 6px 8px;
+  color: var(--text-body);
+  background-color: var(--neutral-200);
+  border-radius: 6px;
+  cursor: pointer;
+}
+.operation-history__price {
+  position: relative;
+  grid-area: price;
+  justify-self: center;
 }
 .operation-history__quantity {
   grid-area: quantity;
+  justify-self: center;
+}
+.operation-history__date {
+  grid-area: date;
   justify-self: center;
 }
 .operation-history__counteragent {

@@ -5,6 +5,7 @@ use BackendMenu;
 
 class Documents extends Controller
 {
+
     public $implement = [
         'Backend\Behaviors\ListController',
         'Backend\Behaviors\FormController'
@@ -18,4 +19,5 @@ class Documents extends Controller
         parent::__construct();
         BackendMenu::setContext('Samvol.Inventory', 'inventory', 'documents');
     }
+
 }

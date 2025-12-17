@@ -2,6 +2,9 @@
 
 use System\Classes\PluginBase;
 use Backend;
+use Route;
+use Samvol\Inventory\Controllers\DocumentsDownloadController;
+
 
 class Plugin extends PluginBase
 {
@@ -21,6 +24,10 @@ class Plugin extends PluginBase
 
 
 
+    public function boot()
+    {
+        Route::get('document/{id}', [DocumentsDownloadController::class, 'download']);
+    }
 
 
     public function registerSettings()
