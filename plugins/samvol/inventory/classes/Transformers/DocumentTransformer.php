@@ -8,8 +8,9 @@ class DocumentTransformer
     {
         return [
             'id'         => $doc->id,
-            'name'       => $doc->name,
-            'type'       => $doc->type,
+            'name'       => $doc->doc_name,
+            'number'     => $doc->doc_num,
+            'date'       => $doc->doc_date,
             'file_url'   => $doc->doc_file ? URL::to('/api/documents/file/' . $doc->id) : null,
             'file_name'  => $doc->doc_file?->file_name,
             'created_at' => $doc->created_at?->toDateTimeString(),

@@ -1,34 +1,10 @@
 /**
  * bottom-bar.js
  * ----------
- * Скрипты для страницы склада.
- *
- * Основные функции:
- * - Управление выбором товаров через чекбоксы
- * - Подсчет количества выбранных товаров и отображение нижней панели
- * - Хранение выбора в localStorage
- * - Создание / редактирование операций
- * - Назначение категории через модальное меню
- * - Блокировка родительских категорий
- * - Корректное открытие и закрытие меню категорий
- * - Сброс активных элементов и подкатегорий при закрытии меню
+ * Скрипты для страницы склада / истории операций
  */
 
 document.addEventListener("DOMContentLoaded", () => {
-    // ============================================================
-    // 0. Содержание
-    // ============================================================
-    // 1. Очистка предыдущего выбора
-    // 2. Утилиты
-    // 3. Обновление нижней панели
-    // 4. Создание операции
-    // 5. Редактирование операции
-    // 6. Открытие меню категорий
-    // 7. Назначение категории
-    // 8. Закрытие нижней панели
-    // 9. Закрытие меню при клике на overlay
-    // 10. Инициализация
-
     // ============================================================
     // 1. Очистка предыдущего выбора
     // ============================================================
@@ -63,9 +39,22 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ============================================================
-    // Вспомогательная функция: сброс всех активных категорий и скрытие подкатегорий
+    // 3. DOM элементы (БЕЗОПАСНО)
+    // ============================================================
+    const bottomBar = document.getElementById("bottomBar");
+    const countEl = document.getElementById("bottomBarCount");
+
+    const categoryMenu = document.getElementById("categoryMenu");
+    const categoryOverlay = document.querySelector(".category-menu__overlay");
+
+    const hasCategoryMenu = !!categoryMenu;
+
+    // ============================================================
+    // 4. Сброс меню категорий (БЕЗОПАСНО)
     // ============================================================
     function resetCategoryMenu() {
+        if (!hasCategoryMenu) return;
+
         categoryMenu
             .querySelectorAll(".category-menu__item.active")
             .forEach((el) => el.classList.remove("active"));
@@ -76,14 +65,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ============================================================
-    // 3. Обновление нижней панели
+    // 5. Обновление нижней панели
     // ============================================================
     function updateBottomBar() {
         const selected = getSelectedFromCheckboxes();
         saveSelected(selected);
 
-        const bottomBar = document.getElementById("bottomBar");
-        const countEl = document.getElementById("bottomBarCount");
+        if (!bottomBar || !countEl) return;
 
         if (selected.length > 0) {
             bottomBar.classList.remove("hidden");
@@ -99,7 +87,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // ============================================================
-    // 4. Создание операции
+    // 6. Создание операции
     // ============================================================
     document
         .getElementById("createOperation")
@@ -109,12 +97,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 toast("Выберите хотя бы один товар!", "error");
                 return;
             }
+
             localStorage.setItem("createOperation", JSON.stringify(selected));
             window.location.href = "/add-operation";
         });
 
     // ============================================================
-    // 5. Редактирование операции
+    // 7. Редактирование операции
     // ============================================================
     document.getElementById("editOperation")?.addEventListener("click", () => {
         const selected = getSelectedFromCheckboxes();
@@ -137,116 +126,134 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // ============================================================
-    // 6. Открытие меню категорий
+    // 8. Открытие меню категорий
     // ============================================================
-    const categoryMenu = document.getElementById("categoryMenu");
-    const categoryOverlay = document.querySelector(".category-menu__overlay");
-
     document.getElementById("addToCategory")?.addEventListener("click", () => {
+        if (!hasCategoryMenu) return;
+
         const selected = getSelectedFromCheckboxes();
         if (!selected.length) {
             toast("Товары не выбраны", "error");
             return;
         }
 
-        // Сброс меню перед открытием
         resetCategoryMenu();
-
         categoryMenu.classList.remove("hidden");
         categoryOverlay?.classList.remove("hidden");
     });
 
     // ============================================================
-    // 7. Назначение категории с раскрытием родительских категорий
+    // 9. Назначение категории (ИСПРАВЛЕНО)
     // ============================================================
-    categoryMenu.addEventListener("click", (event) => {
-        const clickedItem = event.target.closest(".category-menu__item");
-        if (!clickedItem) return;
+    if (hasCategoryMenu) {
+        categoryMenu.addEventListener("click", (event) => {
+            const clickedItem = event.target.closest(".category-menu__item");
+            if (!clickedItem) return;
 
-        const parentUl = clickedItem.parentElement;
+            const parentUl = clickedItem.parentElement;
 
-        // Закрываем всех соседей на этом уровне вместе с их подкатегориями
-        parentUl.querySelectorAll(".category-menu__item").forEach((el) => {
-            if (el !== clickedItem) {
-                el.classList.remove("active");
-                el.querySelectorAll(".category-menu__children").forEach(
-                    (child) => {
-                        child.classList.add("hidden");
+            // ❗ ТОЛЬКО соседи текущего уровня
+            parentUl
+                .querySelectorAll(":scope > .category-menu__item")
+                .forEach((el) => {
+                    if (el !== clickedItem) {
+                        el.classList.remove("active");
+
+                        const children = el.querySelector(
+                            ":scope > .category-menu__children"
+                        );
+                        if (children) {
+                            children.classList.add("hidden");
+                        }
                     }
-                );
+                });
+
+            // Активируем текущий
+            clickedItem.classList.toggle("active");
+
+            // Подкатегории
+            const children = clickedItem.querySelector(
+                ":scope > .category-menu__children"
+            );
+
+            if (children) {
+                children.classList.toggle("hidden");
+                return; // если есть дети — AJAX не делаем
             }
+
+            // Листовая категория
+            const selected = getSelectedFromCheckboxes();
+            const productIds = selected.map((p) => p.product_id);
+
+            if (!productIds.length) {
+                toast("Нет выбранных товаров!", "error");
+                return;
+            }
+
+            const categoryId = clickedItem.dataset.id;
+
+            $.request("onAssignCategory", {
+                data: {
+                    product_ids: productIds,
+                    category_id: categoryId,
+                },
+                success(res) {
+                    handleServerResponse(res);
+
+                    document
+                        .querySelectorAll(".product-check")
+                        .forEach((cb) => (cb.checked = false));
+
+                    localStorage.removeItem("selectedProducts");
+                    updateBottomBar();
+
+                    categoryMenu.classList.add("hidden");
+                    categoryOverlay?.classList.add("hidden");
+                    resetCategoryMenu();
+                },
+                error() {
+                    toast("Ошибка при назначении категории", "error");
+                },
+            });
         });
+    }
 
-        // Переключаем active на текущем элементе
-        clickedItem.classList.toggle("active");
+    // ============================================================
+    // 10. Закрытие нижней панели (РАБОТАЕТ ВЕЗДЕ)
+    // ============================================================
+    document.addEventListener("click", (e) => {
+        const closeBtn = e.target.closest(".bottom-bar__close");
+        if (!closeBtn) return;
 
-        // Раскрытие подкатегорий текущего элемента (если есть)
-        const children = clickedItem.querySelector(".category-menu__children");
-        if (children) {
-            children.classList.toggle("hidden");
-            return; // если есть подкатегории, AJAX не выполняем
+        localStorage.removeItem("selectedProducts");
+
+        document
+            .querySelectorAll(".product-check")
+            .forEach((cb) => (cb.checked = false));
+
+        updateBottomBar();
+
+        if (hasCategoryMenu) {
+            categoryMenu.classList.add("hidden");
+            resetCategoryMenu();
         }
 
-        // Листовая категория (AJAX)
-        const selected = getSelectedFromCheckboxes();
-        const productIds = selected.map((p) => p.product_id);
-
-        if (!productIds.length) {
-            toast("Нет выбранных товаров!", "error");
-            return;
-        }
-
-        const categoryId = clickedItem.dataset.id;
-
-        $.request("onAssignCategory", {
-            data: { product_ids: productIds, category_id: categoryId },
-            success(res) {
-                handleServerResponse(res);
-
-                document
-                    .querySelectorAll(".product-check")
-                    .forEach((cb) => (cb.checked = false));
-                localStorage.removeItem("selectedProducts");
-                updateBottomBar();
-
-                categoryMenu.classList.add("hidden");
-                categoryOverlay?.classList.add("hidden");
-                resetCategoryMenu();
-            },
-            error() {
-                toast("Ошибка при назначении категории", "error");
-            },
-        });
+        categoryOverlay?.classList.add("hidden");
     });
 
     // ============================================================
-    // 8. Закрытие нижней панели
-    // ============================================================
-    document
-        .querySelector(".bottom-bar__close")
-        ?.addEventListener("click", () => {
-            localStorage.removeItem("selectedProducts");
-            document
-                .querySelectorAll(".product-check")
-                .forEach((cb) => (cb.checked = false));
-            updateBottomBar();
-
-            categoryMenu.classList.add("hidden");
-            categoryOverlay?.classList.add("hidden");
-            resetCategoryMenu();
-        });
-
-    // ============================================================
-    // 9. Закрытие меню категорий при клике на overlay
+    // 11. Закрытие меню при клике на overlay
     // ============================================================
     categoryOverlay?.addEventListener("click", () => {
-        categoryMenu.classList.add("hidden");
+        if (hasCategoryMenu) {
+            categoryMenu.classList.add("hidden");
+            resetCategoryMenu();
+        }
         categoryOverlay.classList.add("hidden");
-        resetCategoryMenu();
     });
 
     // ============================================================
-    // 10. Инициализация
+    // 12. Инициализация
     // ============================================================
     updateBottomBar();
 });

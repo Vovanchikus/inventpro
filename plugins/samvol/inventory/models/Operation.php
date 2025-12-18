@@ -3,6 +3,7 @@
 use Model;
 use DB;
 use Log;
+use Carbon\Carbon;
 
 class Operation extends Model
 {
@@ -13,6 +14,10 @@ class Operation extends Model
 
     protected $fillable = ['type_id'];
     protected $slugs = ['slug' => 'id'];
+
+    /* -----------------------------------------------------------------
+     | Relations
+     |-----------------------------------------------------------------*/
 
     public $belongsTo = [
         'type' => [
@@ -25,28 +30,37 @@ class Operation extends Model
         'products' => [
             'Samvol\Inventory\Models\Product',
             'table' => 'samvol_inventory_operation_products',
-            'pivot' => ['quantity','sum','counteragent'],
+            'pivot' => ['quantity', 'sum', 'counteragent'],
             'pivotModel' => \Samvol\Inventory\Models\OperationProduct::class,
             'timestamps' => true,
-            'detach' => true
+            'detach' => true,
         ]
     ];
 
     public $hasMany = [
         'documents' => [
             'Samvol\Inventory\Models\Document',
-            'key' => 'operation_id'
+            'key' => 'operation_id',
         ]
     ];
+
+    /* -----------------------------------------------------------------
+     | Hooks
+     |-----------------------------------------------------------------*/
 
     /**
      * Проверка перед сохранением — нельзя списывать больше, чем есть
      */
     public function beforeSave()
     {
-        if (!$this->type || !$this->products) return;
+        if (!$this->type || !$this->products) {
+            return;
+        }
 
-        $isOutgoing = in_array(mb_strtolower(trim($this->type->name)), ['расход','передача']);
+        $isOutgoing = in_array(
+            mb_strtolower(trim($this->type->name)),
+            ['расход', 'передача']
+        );
 
         foreach ($this->products as $product) {
             $pivotQty = abs($product->pivot->quantity);
@@ -56,13 +70,19 @@ class Operation extends Model
                 ->join('samvol_inventory_operation_types as t', 'o.type_id', '=', 't.id')
                 ->where('op.product_id', $product->id)
                 ->where('o.id', '<>', $this->id)
-                ->sum(DB::raw("CASE WHEN LOWER(t.name) = 'приход' THEN op.quantity ELSE -op.quantity END"));
+                ->sum(DB::raw("
+                    CASE
+                        WHEN LOWER(t.name) = 'приход' THEN op.quantity
+                        ELSE -op.quantity
+                    END
+                "));
 
-            Log::info("BeforeSave: Product {$product->name} | PivotQty={$pivotQty} | CurrentQty={$currentQty}");
+            Log::info("BeforeSave: {$product->name} | Qty={$pivotQty} | Current={$currentQty}");
 
             if ($isOutgoing && $pivotQty > $currentQty) {
-                Log::error("Невозможно списать больше, чем есть: {$pivotQty} > {$currentQty}");
-                throw new \Exception("Ошибка! Нельзя передать {$pivotQty} ед. товара {$product->name}. На складе всего {$currentQty}");
+                throw new \Exception(
+                    "Ошибка! Нельзя передать {$pivotQty} ед. товара {$product->name}. На складе всего {$currentQty}"
+                );
             }
         }
     }
@@ -72,14 +92,19 @@ class Operation extends Model
      */
     public function afterSave()
     {
-        if (!$this->type || !$this->products) return;
+        if (!$this->type || !$this->products) {
+            return;
+        }
 
-        $isIncoming = mb_strtolower(trim($this->type->name)) === 'приход';
-        $isOutgoing = in_array(mb_strtolower(trim($this->type->name)), ['расход','передача']);
+        $type = mb_strtolower(trim($this->type->name));
+        $isIncoming = $type === 'приход';
+        $isOutgoing = in_array($type, ['расход', 'передача']);
 
         foreach ($this->products as $product) {
             $pivot = $product->pivot;
-            if (!$pivot) continue;
+            if (!$pivot) {
+                continue;
+            }
 
             $qty = abs($pivot->quantity);
             $pivot->quantity = $qty;
@@ -89,70 +114,96 @@ class Operation extends Model
 
             if ($isIncoming) {
                 $pivot->sum = $pivot->sum ?: round($qty * $product->price, 2);
-            } elseif ($isOutgoing) {
-                $pivot->sum = $currentQty > 0 ? round($currentSum * ($qty / $currentQty), 2) : 0;
             }
 
-            Log::info("AfterSave: Product {$product->name} | PivotQty={$pivot->quantity} | PivotSum={$pivot->sum} | CurrentQty={$currentQty} | CurrentSum={$currentSum}");
+            if ($isOutgoing) {
+                $pivot->sum = $currentQty > 0
+                    ? round($currentSum * ($qty / $currentQty), 2)
+                    : 0;
+            }
+
+            Log::info("AfterSave: {$product->name} | Qty={$qty} | Sum={$pivot->sum}");
 
             $pivot->save();
         }
     }
 
+    /* -----------------------------------------------------------------
+     | Helpers
+     |-----------------------------------------------------------------*/
+
     /**
-     * Количество для отображения
+     * Количество для отображения (со знаком)
      */
     public function getQuantityForProduct($product)
     {
-        if (!$this->type) return $product->pivot->quantity;
+        if (!$this->type) {
+            return $product->pivot->quantity;
+        }
 
         $isIncoming = mb_strtolower(trim($this->type->name)) === 'приход';
-        return $isIncoming ? abs($product->pivot->quantity) : -abs($product->pivot->quantity);
+
+        return $isIncoming
+            ? abs($product->pivot->quantity)
+            : -abs($product->pivot->quantity);
     }
 
+    /* -----------------------------------------------------------------
+     | Accessors (FIRST VALUES)
+     |-----------------------------------------------------------------*/
+
+    /**
+     * Первый контрагент
+     */
     public function getFirstCounteragentAttribute()
     {
-        $firstProduct = $this->products->first(); // первый товар в операции
-        return $firstProduct ? $firstProduct->pivot->counteragent : null;
+        $product = $this->products->first();
+        return $product?->pivot?->counteragent;
     }
 
+    /**
+     * Первый документ (МОДЕЛЬ)
+     */
     public function getFirstDocumentAttribute()
     {
-        $first = $this->documents()->orderBy('id', 'asc')->first();
-        if (!$first) {
-            return null; // или 'Документ отсутствует'
+        if ($this->relationLoaded('documents')) {
+            return $this->documents->sortBy('id')->first();
         }
 
-        $date = $first->doc_date ? \Carbon\Carbon::parse($first->doc_date)->format('d.m.Y') : '-';
-        return $first->doc_name . ' №' . $first->doc_num . ', ' . $date;
+        return $this->documents()->orderBy('id')->first();
     }
 
+    /**
+     * Дата первого документа
+     */
     public function getFirstDocumentDateAttribute()
     {
-        if (!$this->relationLoaded('documents')) {
-            return null;
-        }
+        $doc = $this->first_document;
 
-        $first = $this->documents->sortBy('id')->first();
-
-        if (!$first || !$first->doc_date) {
-            return null;
-        }
-
-        return \Carbon\Carbon::parse($first->doc_date)->format('d.m.Y');
+        return $doc && $doc->doc_date
+            ? Carbon::parse($doc->doc_date)->format('d.m.Y')
+            : null;
     }
 
+    /**
+     * Назначение первого документа
+     */
     public function getFirstDocumentPurposeAttribute()
     {
-        $first = $this->documents()->orderBy('id', 'asc')->first();
-
-        if (!$first || !$first->doc_purpose) {
-            return null; // или '-'
-        }
-        return $first->doc_purpose;
+        return $this->first_document->doc_purpose ?? null;
     }
 
+    /**
+     * Номер первого документа
+     */
+    public function getFirstDocumentNumberAttribute()
+    {
+        return $this->first_document->doc_num ?? null;
+    }
 
+    /* -----------------------------------------------------------------
+     | Validation
+     |-----------------------------------------------------------------*/
 
     public $rules = [];
     public $jsonable = [];

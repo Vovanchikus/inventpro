@@ -82,10 +82,14 @@ document.addEventListener("DOMContentLoaded", () => {
             addFromDBBtn?.classList.add("d-none");
         }
     }
-    document
-        .querySelectorAll('input[name="type_id"]')
-        .forEach((r) => r.addEventListener("change", updateProductButtons));
+    document.querySelectorAll('input[name="type_id"]').forEach((r) =>
+        r.addEventListener("change", () => {
+            updateProductButtons();
+            updateCounteragentVisibility();
+        })
+    );
     updateProductButtons();
+    updateCounteragentVisibility();
 
     // ==============================
     // Управление кнопками удаления строк
@@ -495,4 +499,32 @@ document.addEventListener("DOMContentLoaded", () => {
         localStorage.removeItem(storageKey);
         localStorage.removeItem("selectedProducts");
     });
+
+    // ==============================
+    // Управление видимостью поля "Контрагент"
+    // ==============================
+    function updateCounteragentVisibility() {
+        const checked = document.querySelector('input[name="type_id"]:checked');
+        if (!checked) return;
+
+        const typeName = checked.nextElementSibling?.textContent
+            .trim()
+            .toLowerCase();
+
+        const counteragentBox = document.querySelector(
+            ".operation-form__counteragent"
+        );
+        const counteragentInput = counteragentBox?.querySelector(
+            'input[name="counteragent"]'
+        );
+
+        if (!counteragentBox || !counteragentInput) return;
+
+        if (typeName.includes("списание")) {
+            counteragentBox.style.display = "none";
+            counteragentInput.value = "";
+        } else {
+            counteragentBox.style.display = "";
+        }
+    }
 });

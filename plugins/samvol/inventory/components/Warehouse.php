@@ -3,13 +3,12 @@
 use Cms\Classes\ComponentBase;
 use Samvol\Inventory\Models\Product;
 use Samvol\Inventory\Models\Category;
-use Log;
+use DB;
 
 class Warehouse extends ComponentBase
 {
     public $products;
     public $categories;
-
 
     public function componentDetails()
     {
@@ -19,93 +18,89 @@ class Warehouse extends ComponentBase
         ];
     }
 
+    /* -----------------------------------------------------------------
+     | Ajax
+     |-----------------------------------------------------------------*/
 
     public function onAssignCategory()
     {
         $productIds = post('product_ids');
         $categoryId = post('category_id');
 
-        if (!$productIds || !is_array($productIds)) {
-            return [
-                'toast' => [
-                    'message' => 'Товары не выбраны',
-                    'type' => 'error',
-                    'timeout' => 4000,
-                    'position' => 'top-center'
-                ]
-            ];
+        if (!is_array($productIds) || empty($productIds)) {
+            return $this->toast('Товары не выбраны', 'error');
         }
 
         if (!$categoryId) {
-            return [
-                'toast' => [
-                    'message' => 'Категория не выбрана',
-                    'type' => 'error',
-                    'timeout' => 4000,
-                    'position' => 'top-center'
-                ]
-            ];
+            return $this->toast('Категория не выбрана', 'error');
         }
 
-        // Загружаем категорию вместе с дочерними
-        $category = Category::with('children')->find($categoryId);
+        $category = Category::withCount('children')->find($categoryId);
 
         if (!$category) {
-            return [
-                'toast' => [
-                    'message' => 'Категория не найдена',
-                    'type' => 'error',
-                    'timeout' => 4000,
-                    'position' => 'top-center'
-                ]
-            ];
+            return $this->toast('Категория не найдена', 'error');
         }
 
-        // ❗ Запрещаем добавлять товары в родительские категории
-        if ($category->children->count() > 0) {
-            return [
-                'toast' => [
-                    'message' => 'В родительскую категорию нельзя добавлять товары',
-                    'type' => 'error',
-                    'timeout' => 4000,
-                    'position' => 'top-center'
-                ]
-            ];
+        if ($category->children_count > 0) {
+            return $this->toast('В родительскую категорию нельзя добавлять товары', 'error');
         }
 
-        // Обновление категории товаров
-        Product::whereIn('id', $productIds)->update([
-            'category_id' => $categoryId
-        ]);
+        DB::transaction(function () use ($productIds, $categoryId) {
+            Product::whereIn('id', $productIds)
+                ->update(['category_id' => $categoryId]);
+        });
 
+        return $this->toast('Товары добавлены в категорию', 'success');
+    }
+
+    /* -----------------------------------------------------------------
+     | Page
+     |-----------------------------------------------------------------*/
+
+    public function onRun()
+    {
+        $this->products = Product::query()
+            ->select([
+                'id',
+                'name',
+                'slug',
+                'inv_number',
+                'unit',
+                'price',
+                'category_id',
+            ])
+            ->with('category:id,name')
+            ->orderBy('name')
+            ->get();
+
+        $this->categories = Category::query()
+            ->select(['id', 'name', 'desc', 'parent_id', 'nest_left'])
+            ->with('children')
+            ->whereNull('parent_id')
+            ->orderBy('nest_left')
+            ->get();
+
+        $this->page['products']   = $this->products;
+        $this->page['categories'] = $this->categories;
+    }
+
+
+    /* -----------------------------------------------------------------
+     | Helpers
+     |-----------------------------------------------------------------*/
+
+    protected function toast($message, $type = 'success')
+    {
         return [
             'toast' => [
-                'message' => 'Товары добавлены в категорию',
-                'type' => 'success',
-                'timeout' => 4000,
+                'message'  => $message,
+                'type'     => $type,
+                'timeout'  => 4000,
                 'position' => 'top-center'
             ]
         ];
     }
 
-
-
-
-
-    public function onRun(){
-        $this->products = Product::all();
-        $this->page['products'] = $this->products;
-
-        $this->categories = Category::withCount('children')
-            ->orderBy('nest_left')
-            ->get();
-
-        $this->page['categories'] = $this->categories;
-    }
-
-    /**
-     * Returns the properties provided by the component
-     */
     public function defineProperties()
     {
         return [];

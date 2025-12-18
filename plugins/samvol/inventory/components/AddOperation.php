@@ -52,9 +52,21 @@ class AddOperation extends ComponentBase
     {
         $data = post();
 
-        // --- Тип и контрагент ---
-        if (empty($data['type_id'])) return $this->firstError('type_id', 'Не указан тип операции');
-        if (empty($data['counteragent'])) return $this->firstError('counteragent', 'Не указан контрагент');
+        // --- Тип операции ---
+        if (empty($data['type_id'])) {
+            return $this->firstError('type_id', 'Не указан тип операции');
+        }
+
+        // ⬇⬇⬇ ВАЖНО: определяем тип ДО использования
+        $opType = OperationType::find($data['type_id']);
+        $operationTypeName = mb_strtolower(trim($opType->name ?? ''));
+
+        // Контрагент обязателен НЕ для всех операций
+        if (!in_array($operationTypeName, ['списание'])) {
+            if (empty($data['counteragent'])) {
+                return $this->firstError('counteragent', 'Не указан контрагент');
+            }
+        }
 
         // --- Документы ---
         if (empty($data['doc_name']) || !is_array($data['doc_name'])) {

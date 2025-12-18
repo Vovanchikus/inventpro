@@ -6,109 +6,149 @@
   gap: 24px 16px
 
 .documents-item
+  position: relative
   display: flex
   flex-direction: column
-  justify-content: start
-  align-items: start
-  gap: 24px
+  gap: 16px
   padding: 16px
   background-color: $bg-box--light
   box-shadow: $box-light-shadow
-  border-radius: $radius-lg
+  border-radius: $radius-nm
+
   &.document__single
     gap: 32px
-    padding: 24px
+
+  .form-input
+    cursor: pointer
+
+  &__status
+    position: absolute
+    top: 4px
+    right: 4px
+    color: $text-error
+    &.document__single
+      top: -14px
+      left: 50%
+      transform: translateX(-50%)
+      width: max-content
+      padding: 6px 12px
+      color: $text-light
+      background-color: $bg-error
+      border-radius: 14px
+    span
+      position: absolute
+      top: calc( 100% - 54px )
+      right: 0
+      text-align: right
+      width: 317px
+      padding: 6px
+      color: $text-light
+      background-color: $bg-error
+      border-radius: $radius-sm
+      visibility: hidden
+      opacity: 0
+      pointer-events: none
+      cursor: help
+      transform: translateY(8px)
+      transition: opacity $transition, visibility $transition, transform $transition
+    &:hover
+      span
+        visibility: visible
+        opacity: 1
+        pointer-events: auto
+        transform: translateY(0)
 
   &__top
     display: flex
     justify-content: space-between
-    align-items: flex-start
-    width: 100%
+    align-items: center
+    &.document__single
+      width: 100%
 
     &-left
       display: flex
+      align-items: center
+      gap: 12px
+
+    &-info
+      display: flex
       flex-direction: column
-      justify-content: start
-      align-items: start
       gap: 8px
-      &.document__single
-        flex-direction: row
-        align-items: center
 
-  &__counteragent
-    font-size: 14px
-    line-height: 14px
-    color: $text-body
-    span
-      font-weight: 600
-
-  &__doc-date
-    font-size: 12px
-    font-weight: 600
-    color: $text-title
-
-  &__middle
-    display: flex
-    flex-direction: column
-    gap: 24px
-    width: 100%
-    &.document__single
-      gap: 24px
-
-  &__documents-info
-    display: flex
-    flex-direction: column
-    gap: 8px
-    height: 104px
-    &.document__single
-      height: auto
-      gap: 24px
-
-  &__documents-title
+  &__date
     display: flex
     align-items: center
-    font-size: 16px
+    gap: 8px
+    font-size: 12px
     font-weight: 600
     line-height: 16px
     color: $text-title
 
+  &__counteragent
+    font-size: 14px
+    font-weight: 600
+    line-height: 14px
+
+  &__number
+    font-size: 18px
+    font-weight: 600
+    line-height: 18px
+    color: $text-title
+
+  &__type--transfer
+    svg
+      transform: rotate(180deg)
+
+  &__middle
+    display: flex
+    flex-direction: column
+    gap: 16px
+    width: 100%
+
+  &__documents-info
+    display: flex
+    flex-direction: column
+    gap: 24px
+
+  &__documents-title, &__product-box-title
+    font-size: 16px
+    font-weight: 600
+    color: $text-title
+    span
+      font-size: 13px
+      font-weight: 600
+      padding: 4px 12px
+      color: $text-light
+      background-color: $bg-brand
+      border-radius: 16px
+      margin-left: 6px
+
   &__doc-list
     display: flex
     flex-direction: column
-    align-items: start
-    gap: 8px
+    gap: 12px
 
   &__doc-item
     display: flex
     justify-content: space-between
     align-items: center
-    gap: 8px
-    width: 100%
-
 
   &__doc-name
     font-size: 14px
-    line-height: 16px
     font-weight: 500
+    color: $text-body
 
-  &__have-pdf, &__button-see
+  &__button-see
     display: flex
     align-items: center
     gap: 4px
     font-size: 12px
-    font-weight: 600
-    line-height: 12px
-    border-radius: $radius-sm
-
-  &__have-pdf
-    padding: 4px 6px
+    font-weight: 500
+    line-height: 14px
     color: $text-light
-    background-color: $bg-success
-
-  &__button-see
     padding: 6px 12px
-    color: $text-light
-    background-color: $bg-brand
+    background-color: $button-brand-bg-default
+    border-radius: $radius-sm
     &:hover
       color: $text-light
       background-color: $button-brand-bg-hover
@@ -116,52 +156,38 @@
       color: $text-light
       background-color: $button-brand-bg-active
 
-  &__doc-purpose
+
+  &__purpose
+    display: flex
+    flex-direction: column
+    gap: 4px
     font-size: 12px
     font-weight: 600
-    padding: 8px 16px
-    color: $text-title
+    padding: 12px
+    border-radius: $radius-md
     background-color: $bg-body
-    border-radius: $radius-nm
+    color: $text-title
     p
-      font-weight: 500
+      font-weight: normal
       color: $text-body
+      line-height: 1.35
 
   &__bottom
     display: flex
     justify-content: space-between
     align-items: center
-    width: 100%
 
-  &__product-count
+  &__count
     font-size: 16px
     font-weight: 600
-    line-height: 16px
     color: $text-title
 
   &__product-box
     display: flex
     flex-direction: column
-    gap: 32px
+    gap: 24px
 
-    input
-      cursor: pointer
 
-    &-title
-      display: flex
-      align-items: center
-      font-size: 16px
-      font-weight: 600
-      line-height: 16px
-      color: $text-title
-      span
-        font-size: 14px
-        line-height: 16px
-        color: $text-light
-        padding: 4px 12px
-        margin-left: 8px
-        background-color: $bg-brand
-        border-radius: 14px
 
 
 
