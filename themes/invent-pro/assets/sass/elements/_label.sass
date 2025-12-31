@@ -10,28 +10,13 @@
     padding: 8px 24px
     border-radius: 14px
 
-  &--icon
+  &--nr
     display: inline-flex
-    padding: 8px
-    border: 1px solid $neutral-200
-    border-radius: 32px
-
-    .label--success
-      color: $text-light
-      background-color: $bg-success
-
-    .label--error
-      color: $text-light
-      background-color: $bg-error
-
-    .label--warning
-      color: $text-light
-      background-color: #F48B1E
-
-    .label__svg
-      display: flex
-      padding: 12px
-      border-radius: 24px
+    font-size: 14px
+    line-height: 14px
+    font-weight: 500
+    padding: 12px 24px
+    border-radius: 24px
 
 
   &--success
@@ -49,3 +34,44 @@
   &--border
     color: $text-body
     border: 1px solid #e8e8e8
+
+  &--secondary
+    color: $text-subtitle
+    background-color: $neutral-200
+    border: 1px solid $text-subtitle
+
+
+  &--type-operation
+    display: inline-flex
+    padding: 8px
+    border: 1px solid $neutral-200
+    border-radius: 32px
+
+  &--incoming
+    color: $text-light
+    background-color: $bg-success
+
+  &--write-off
+    color: $text-light
+    background-color: $bg-error
+
+  &--outgoing
+    color: $text-light
+    background-color: #F48B1E
+    svg
+      transform: rotate(180deg)
+
+  &--import
+    color: $text-subtitle
+    background-color: $neutral-200
+
+  &--type-operation__svg
+    display: flex
+    padding: 12px
+    border-radius: 24px
+
+.product-page__history-type > .label--type-operation__svg
+  padding: 8px
+
+.operation-history__type > .label--type-operation__svg
+  padding: 8px

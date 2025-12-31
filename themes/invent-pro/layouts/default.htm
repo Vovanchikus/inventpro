@@ -60,12 +60,15 @@ description = "Основной макет Winter CMS"
             <script src="{{ 'assets/js/pages/operation-history.js'|theme }}?v={{ random(100000,999999) }}"></script>
         {% endif %}
 
-        {% if this.page.url == '/warehouse' or this.page.url == '/documents/:slug' %}
+        {% if this.page.url == '/warehouse' or this.page.url == '/documents/:slug' or this.page.url == '/warehouse/:slug' %}
             <script src="{{ 'assets/js/pages/copy-click.js'|theme }}?v={{ random(100000,999999) }}"></script>
         {% endif %}
 
-        {% if this.page.url == '/warehouse' or this.page.url == '/operation-history' %}
+        {% if this.page.id != 'product-page' %}
             <script src="{{ 'assets/js/pages/table.js'|theme }}?v={{ random(100000,999999) }}"></script>
+        {% endif %}
+
+        {% if this.page.url == '/warehouse' or this.page.url == '/operation-history' %}
             <script src="{{ 'assets/js/pages/sidebar.js'|theme }}?v={{ random(100000,999999) }}"></script>
             <script src="{{ 'assets/js/pages/bottom-bar.js'|theme }}?v={{ random(100000,999999) }}"></script>
         {% endif %}

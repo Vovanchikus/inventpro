@@ -714,7 +714,7 @@ footer {
 .operation-history__item {
   display: grid;
   grid-template-areas: "check type left price quantity date counteragent";
-  grid-template-columns: 18px 106px 270px 122px 122px 122px 106px;
+  grid-template-columns: 18px 50px 270px 122px 122px 122px 106px;
   grid-template-rows: 74px auto;
   align-items: center;
   gap: 0px 24px;
@@ -1263,6 +1263,189 @@ footer {
   gap: 24px;
 }
 
+.product-page {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  padding: 16px;
+  background-color: var(--bg-box--light);
+  box-shadow: var(--box-light-shadow);
+  border-radius: var(--radius-lg);
+}
+.product-page__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.product-page__category {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.product-page__category-arrow {
+  color: var(--text-title);
+  transform: rotate(-90deg);
+}
+.product-page__button-box {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.product-page__button-box button {
+  display: inline-flex;
+  color: var(--text-body);
+  padding: 8px;
+  border-radius: 18px;
+  transition: background-color var(--transition);
+}
+.product-page__button-box button:hover {
+  background-color: var(--neutral-200);
+}
+.product-page__button-box button:active {
+  background-color: var(--neutral-300);
+}
+.product-page__images {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+}
+.product-page__images img {
+  width: 338px;
+  height: 300px;
+  object-fit: cover;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.product-page__middle {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.product-page__name {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 1.45;
+  color: var(--text-body);
+}
+.product-page__name-title {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-title);
+}
+.product-page__name-title svg {
+  cursor: pointer;
+  margin-right: 8px;
+}
+.product-page__bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.product-page__history-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-title);
+}
+
+.product-page__table {
+  border: 1px solid var(--neutral-300);
+}
+
+.product-page__table.table {
+  box-shadow: none;
+}
+.product-page__item {
+  display: grid;
+  grid-template-areas: "type quantity date document file counteragent";
+  grid-template-columns: 48px 66px 80px 300px 142px 132px;
+  grid-template-rows: 74px auto;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0px 24px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-title);
+  padding: 0px 32px;
+}
+.product-page__item.table-row {
+  position: relative;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-body);
+  border-top: 1px solid var(--neutral-300);
+}
+.product-page__item.table-row::after {
+  content: "";
+  position: absolute;
+  left: 12px;
+  top: calc(50% - 11px);
+  opacity: 0;
+  width: 3px;
+  height: 22px;
+  background-color: var(--bg-brand);
+  border-radius: 3px;
+  transition: opacity var(--transition);
+}
+.product-page__item.table-row:hover::after {
+  opacity: 1;
+}
+.product-page__history-type {
+  grid-area: type;
+  justify-self: center;
+}
+.product-page__history-quantity {
+  grid-area: quantity;
+  justify-self: center;
+}
+.product-page__history-date {
+  grid-area: date;
+  justify-self: center;
+}
+.product-page__history-document {
+  grid-area: document;
+  justify-self: start;
+}
+.product-page__history-file {
+  grid-area: file;
+  justify-self: center;
+}
+.product-page__history-counteragent {
+  grid-area: counteragent;
+  justify-self: end;
+}
+
+.product-page .operation-form__input--inv_number {
+  width: 250px;
+}
+.product-page .operation-form__input--unit {
+  width: 200px;
+}
+.product-page .operation-form__input--price {
+  width: 200px;
+}
+.product-page .operation-form__input--quantity {
+  width: 133px;
+}
+.product-page .operation-form__input--sum {
+  width: 200px;
+}
+.product-page input {
+  cursor: pointer;
+}
+.product-page .operation-form__box__content--products {
+  gap: 16px;
+}
+
+.product-page__table > .table-title {
+  position: relative;
+}
+
 .alert {
   width: 100%;
   font-size: 14px;
@@ -1291,27 +1474,12 @@ footer {
   padding: 8px 24px;
   border-radius: 14px;
 }
-.label--icon {
+.label--nr {
   display: inline-flex;
-  padding: 8px;
-  border: 1px solid var(--neutral-200);
-  border-radius: 32px;
-}
-.label--icon .label--success {
-  color: var(--text-light);
-  background-color: var(--bg-success);
-}
-.label--icon .label--error {
-  color: var(--text-light);
-  background-color: var(--bg-error);
-}
-.label--icon .label--warning {
-  color: var(--text-light);
-  background-color: #F48B1E;
-}
-.label--icon .label__svg {
-  display: flex;
-  padding: 12px;
+  font-size: 14px;
+  line-height: 14px;
+  font-weight: 500;
+  padding: 12px 24px;
   border-radius: 24px;
 }
 .label--success {
@@ -1329,6 +1497,49 @@ footer {
 .label--border {
   color: var(--text-body);
   border: 1px solid #e8e8e8;
+}
+.label--secondary {
+  color: var(--text-subtitle);
+  background-color: var(--neutral-200);
+  border: 1px solid var(--text-subtitle);
+}
+.label--type-operation {
+  display: inline-flex;
+  padding: 8px;
+  border: 1px solid var(--neutral-200);
+  border-radius: 32px;
+}
+.label--incoming {
+  color: var(--text-light);
+  background-color: var(--bg-success);
+}
+.label--write-off {
+  color: var(--text-light);
+  background-color: var(--bg-error);
+}
+.label--outgoing {
+  color: var(--text-light);
+  background-color: #F48B1E;
+}
+.label--outgoing svg {
+  transform: rotate(180deg);
+}
+.label--import {
+  color: var(--text-subtitle);
+  background-color: var(--neutral-200);
+}
+.label--type-operation__svg {
+  display: flex;
+  padding: 12px;
+  border-radius: 24px;
+}
+
+.product-page__history-type > .label--type-operation__svg {
+  padding: 8px;
+}
+
+.operation-history__type > .label--type-operation__svg {
+  padding: 8px;
 }
 
 .modal-overlay {

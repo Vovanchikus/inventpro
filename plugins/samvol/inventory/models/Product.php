@@ -82,6 +82,22 @@ class Product extends Model
         return max($total, 0);
     }
 
+    /**
+     * Возвращает массив с категориями по уровням: [level1, level2, level3, ...]
+     */
+    public function getCategoryTreeAttribute()
+    {
+        $tree = [];
+        $category = $this->category;
+
+        while ($category) {
+            array_unshift($tree, $category); // вставляем в начало, чтобы был порядок родитель → потомок
+            $category = $category->parent ?? null;
+        }
+
+        return $tree; // массив объектов Category
+    }
+
     public $rules = [
     ];
 

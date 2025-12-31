@@ -1,4 +1,9 @@
 document.addEventListener("DOMContentLoaded", () => {
+    if (window.location.pathname.startsWith("/warehouse/")) {
+        // Страница warehouse/:slug — не выполняем скрипт
+        return;
+    }
+
     const header = document.querySelector(".table-title");
 
     if (!header) return;

@@ -11,6 +11,7 @@
 class Modal {
     static container = document.getElementById("modal-container");
     static content = document.querySelector("#modal-container .modal-content");
+    static window = document.querySelector("#modal-container .modal-window");
     static title = document.querySelector("#modal-container .modal-title");
     static closeBtn = document.querySelector("#modal-container .modal-close");
 

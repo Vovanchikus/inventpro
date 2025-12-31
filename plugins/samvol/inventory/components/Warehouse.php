@@ -69,7 +69,7 @@ class Warehouse extends ComponentBase
                 'price',
                 'category_id',
             ])
-            ->with('category:id,name')
+            ->with('category.parent.parent.parent') // подгружаем родителей до нужной глубины
             ->orderBy('name')
             ->get();
 
