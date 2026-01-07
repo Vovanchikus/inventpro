@@ -2,47 +2,58 @@
 
 use Backend\Classes\Controller;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Http\Request;
+use System\Models\File;
+
 use Samvol\Inventory\Models\Product;
 use Samvol\Inventory\Models\Operation;
 use Samvol\Inventory\Models\Document;
 use Samvol\Inventory\Models\Category;
 use Samvol\Inventory\Models\OperationType;
+use Samvol\Inventory\Models\OperationProduct;
 
 use Samvol\Inventory\Classes\Transformers\ProductTransformer;
 use Samvol\Inventory\Classes\Transformers\OperationTransformer;
 use Samvol\Inventory\Classes\Transformers\DocumentTransformer;
 use Samvol\Inventory\Classes\Transformers\CategoryTransformer;
+use Samvol\Inventory\Classes\Transformers\OperationProductTransformer;
 
 class Api extends Controller
 {
     public $implement = [];
 
-    /*
-    |--------------------------------------------------------------------------
+    /*--------------------------
     | Products
-    |--------------------------------------------------------------------------
-    */
+    --------------------------*/
     public function products()
     {
-        $items = Product::all();
-        return $this->success(ProductTransformer::collection($items));
+        try {
+            $items = Product::with(['images', 'category', 'category.children'])->get();
+            return $this->success(
+                $items->map(fn($p) => $this->mapProduct($p))
+            );
+        } catch (\Throwable $e) {
+            \Log::error('API products error', ['message'=>$e->getMessage(),'trace'=>$e->getTraceAsString()]);
+            return $this->error('Ошибка получения продуктов: '.$e->getMessage(), 500);
+        }
     }
 
     public function product($id)
     {
-        $item = Product::find($id);
-        if (!$item) return $this->error("Product not found", 404);
+        try {
+            $item = Product::with(['images','category','category.children'])->find($id);
+            if (!$item) return $this->error("Product not found", 404);
 
-        return $this->success(ProductTransformer::one($item));
+            return $this->success($this->mapProduct($item));
+        } catch (\Throwable $e) {
+            \Log::error('API product error', ['id'=>$id,'message'=>$e->getMessage()]);
+            return $this->error('Ошибка получения продукта: '.$e->getMessage(), 500);
+        }
     }
 
-
-
-    /*
-    |--------------------------------------------------------------------------
+    /*--------------------------
     | Operations
-    |--------------------------------------------------------------------------
-    */
+    --------------------------*/
     public function operations()
     {
         $items = Operation::with('products', 'documents')->get();
@@ -57,15 +68,12 @@ class Api extends Controller
         return $this->success(OperationTransformer::one($item));
     }
 
-    /*
-    |--------------------------------------------------------------------------
+    /*--------------------------
     | Documents
-    |--------------------------------------------------------------------------
-    */
+    --------------------------*/
     public function documents()
     {
-        $items = Document::all();
-        return $this->success(DocumentTransformer::collection($items));
+        return $this->success(DocumentTransformer::collection(Document::all()));
     }
 
     public function document($id)
@@ -79,7 +87,7 @@ class Api extends Controller
     public function documentFile($id)
     {
         $doc = Document::find($id);
-        if (!$doc || !$doc->doc_file) abort(404, "Document file not found");
+        if (!$doc || !$doc->doc_file) abort(404);
 
         $file = $doc->doc_file;
         $path = $file->getLocalPath();
@@ -95,15 +103,16 @@ class Api extends Controller
         );
     }
 
-    /*
-    |--------------------------------------------------------------------------
+    /*--------------------------
     | Categories
-    |--------------------------------------------------------------------------
-    */
+    --------------------------*/
     public function categories()
     {
-        $categories = Category::whereNull('parent_id')->get();
-        return $this->success(CategoryTransformer::collection($categories));
+        return $this->success(
+            CategoryTransformer::collection(
+                Category::whereNull('parent_id')->get()
+            )
+        );
     }
 
     public function category($id)
@@ -114,18 +123,15 @@ class Api extends Controller
         return $this->success(CategoryTransformer::one($cat));
     }
 
-    /*
-    |--------------------------------------------------------------------------
+    /*--------------------------
     | Operation Types
-    |--------------------------------------------------------------------------
-    */
+    --------------------------*/
     public function operationTypes()
     {
-        $items = OperationType::all();
         return $this->success(
-            $items->map(fn($type) => [
-                'id'   => $type->id,
-                'name' => $type->name,
+            OperationType::all()->map(fn($t) => [
+                'id' => $t->id,
+                'name' => $t->name
             ])
         );
     }
@@ -136,47 +142,141 @@ class Api extends Controller
         if (!$type) return $this->error("Operation type not found", 404);
 
         return $this->success([
-            'id'   => $type->id,
-            'name' => $type->name,
+            'id' => $type->id,
+            'name' => $type->name
         ]);
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Warehouse Products (с категориями через трансформер)
-    |--------------------------------------------------------------------------
-    */
+    /*--------------------------
+    | Warehouse Products
+    --------------------------*/
     public function warehouseProducts()
     {
-        $products = Product::with('category.children')->get();
+        $products = Product::with(['category.children', 'images'])->get();
 
         return $this->success(
-            $products->map(fn($p) => [
-                'id'          => $p->id,
-                'name'        => $p->name,
-                'unit'        => $p->unit,
-                'inv_number'  => $p->inv_number,
-                'price'       => $p->price,
-                'quantity'    => $p->calculated_quantity,
-                'sum'         => $p->calculated_sum,
-                'category_id' => $p->category_id,
-                'category'    => $p->category ? ProductTransformer::category($p->category) : null,
-            ])
+            $products->map(fn($p) => $this->mapProduct($p))
         );
     }
 
-    /*
-    |--------------------------------------------------------------------------
+    /*--------------------------
+    | History
+    --------------------------*/
+    public function history(Request $request)
+    {
+        $query = OperationProduct::with([
+            'product',
+            'operation.type',
+            'operation.documents'
+        ])->whereDoesntHave('operation', fn($q) =>
+            $q->whereIn('type_id', [6, 7])
+        );
+
+        if ($slug = $request->get('slug')) {
+            if ($product = Product::where('slug', $slug)->first()) {
+                $query->where('product_id', $product->id);
+            }
+        }
+
+        return $this->success(
+            OperationProductTransformer::collection($query->get())
+        );
+    }
+
+    /*--------------------------
+    | Upload Image
+    --------------------------*/
+    public function upload(Request $request)
+    {
+        $product = Product::find($request->get('product_id'));
+        if (!$product) return $this->error('Product not found', 404);
+
+        $clientId = $request->get('client_id');
+        if (!$clientId) return $this->error('client_id required', 400);
+
+        // 🔐 ИДЕМПОТЕНТНОСТЬ
+        $existing = $product->images()
+            ->where('description', $clientId)
+            ->first();
+
+        if ($existing) {
+            return $this->success([
+                'id' => $existing->id,
+                'serverUrl' => url($existing->getPath()),
+                'duplicate' => true,
+            ]);
+        }
+
+        if (!$request->hasFile('file')) {
+            return $this->error('No file uploaded', 400);
+        }
+
+        $file = new File();
+        $file->data = $request->file('file');
+        $file->field = 'images';
+        $file->description = $clientId; // 🔑 сохраняем
+        $file->is_public = 1;
+        $file->save();
+
+        $product->images()->add($file);
+
+        return $this->success([
+            'id' => $file->id,
+            'serverUrl' => url($file->getPath()),
+            'duplicate' => false,
+        ]);
+    }
+
+    /*--------------------------
+    | Check Image
+    --------------------------*/
+    public function checkImage(Request $request)
+    {
+        $url = $request->get('url');
+        if (!$url) return $this->error('URL not provided', 400);
+
+        $path = public_path(parse_url($url, PHP_URL_PATH));
+
+        return $this->success([
+            'exists' => file_exists($path)
+        ]);
+    }
+
+    /*--------------------------
     | Helpers
-    |--------------------------------------------------------------------------
-    */
+    --------------------------*/
+    private function mapProduct(Product $p): array
+    {
+        return [
+            'id'          => $p->id,
+            'name'        => $p->name,
+            'unit'        => $p->unit,
+            'inv_number'  => $p->inv_number,
+            'price'       => $p->price,
+            'quantity'    => $p->calculated_quantity,
+            'sum'         => $p->calculated_sum,
+            'category_id' => $p->category_id,
+            'category'    => $p->category
+                ? ProductTransformer::category($p->category)
+                : null,
+            'images'      => $p->images->map(fn($img) => [
+                'id'   => $img->id,
+                'url'  => url($img->getPath()),
+                'name' => $img->file_name,
+                'size' => $img->file_size,
+            ])->values(),
+            'created_at'  => $p->created_at?->toDateTimeString(),
+            'updated_at'  => $p->updated_at?->toDateTimeString(),
+        ];
+    }
+
     private function success($data)
     {
         return Response::json([
             'success' => true,
             'data'    => $data,
             'error'   => null,
-        ]);
+        ], 200, [], JSON_UNESCAPED_SLASHES);
     }
 
     private function error($message, $code = 400)
@@ -186,29 +286,5 @@ class Api extends Controller
             'data'    => null,
             'error'   => $message,
         ], $code);
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | Counteragents
-    |--------------------------------------------------------------------------
-    */
-    public function counteragents()
-    {
-        $counteragents = \Samvol\Inventory\Models\OperationProduct::select('counteragent')
-            ->whereNotNull('counteragent')
-            ->distinct()
-            ->orderBy('counteragent')
-            ->pluck('counteragent');
-
-        return $this->success($counteragents);
-    }
-
-    public function counteragent($name)
-    {
-        $exists = \Samvol\Inventory\Models\OperationProduct::where('counteragent', $name)->exists();
-        if (!$exists) return $this->error("Counteragent not found", 404);
-
-        return $this->success(['name' => $name]);
     }
 }

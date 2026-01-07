@@ -4,6 +4,10 @@ use Cms\Classes\ComponentBase;
 use Samvol\Inventory\Models\Product;
 use Samvol\Inventory\Models\Category;
 use DB;
+use Input;
+use Validator;
+use ValidationException;
+use Storage;
 
 class Warehouse extends ComponentBase
 {
@@ -17,6 +21,35 @@ class Warehouse extends ComponentBase
             'description' => 'Все данные со склада'
         ];
     }
+
+    public function onUploadProductImage()
+    {
+        $files = Input::file('images') ?: [Input::file('image')]; // поддержка нескольких файлов или одного
+        $productId = post('product_id');
+        $product = Product::find($productId);
+
+        if (!$files || !$product) {
+            return ['error' => 'Файл не выбран или товар не найден'];
+        }
+
+        $uploadedPaths = [];
+
+        foreach ($files as $file) {
+            try {
+                $product->images()->create(['data' => $file]);
+                $lastImage = $product->images->last();
+                if ($lastImage) {
+                    $uploadedPaths[] = $lastImage->getPath();
+                }
+            } catch (\Exception $e) {
+                return ['error' => 'Ошибка при загрузке изображения'];
+            }
+        }
+
+        return ['image_paths' => $uploadedPaths];
+    }
+
+
 
     /* -----------------------------------------------------------------
      | Ajax
@@ -52,6 +85,8 @@ class Warehouse extends ComponentBase
 
         return $this->toast('Товары добавлены в категорию', 'success');
     }
+
+
 
     /* -----------------------------------------------------------------
      | Page

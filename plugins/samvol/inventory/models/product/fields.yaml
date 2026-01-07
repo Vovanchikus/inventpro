@@ -20,3 +20,10 @@ fields:
         label: URL
         type: text
         preset: inv_number
+    images:
+        label: "Изображения товара"
+        type: fileupload
+        mode: image
+        imageWidth: 200
+        imageHeight: 200
+        span: full

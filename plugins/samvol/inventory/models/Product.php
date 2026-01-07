@@ -2,6 +2,7 @@
 
 use Model;
 use DB;
+use System\Models\File;
 
 class Product extends Model
 {
@@ -32,6 +33,10 @@ class Product extends Model
             'pivot' => ['quantity','sum'],
             'timestamps' => true
         ]
+    ];
+
+    public $attachMany = [
+        'images' => File::class
     ];
 
     /**

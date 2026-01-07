@@ -96,3 +96,9 @@
 1.0.33:
     - 'Updated table samvol_inventory_products'
     - builder_table_update_samvol_inventory_products_8.php
+1.0.34:
+    - 'Created table samvol_inventory_product_images'
+    - builder_table_create_samvol_inventory_product_images.php
+1.0.35:
+    - 'Drop table samvol_inventory_product_images'
+    - builder_table_delete_samvol_inventory_product_images.php
