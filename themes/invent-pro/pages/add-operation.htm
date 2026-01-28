@@ -5,6 +5,7 @@ layout = "default"
 [addOperation]
 ==
 
+{% if user and user.isInGroup('admin') %}
 
 <div class="container--sm box--light">
 
@@ -165,3 +166,7 @@ layout = "default"
   </form>
 
 </div>{# operation-form__container box--light #}
+
+{% else %}
+    <p>У вас нет прав для создания операций.</p>
+{% endif %}

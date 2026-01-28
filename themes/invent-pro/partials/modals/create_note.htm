@@ -1,0 +1,22 @@
+<form data-request="workflowNotesFrontend::onCreateNote">
+    <div class="form-group">
+        <label>Название заметки</label>
+        <input type="text" name="title" required class="form-control">
+    </div>
+
+    <div class="form-group">
+        <label>Описание</label>
+        <textarea name="description" class="form-control"></textarea>
+    </div>
+
+    <div class="form-group">
+        <label>Срок (дата)</label>
+        <input type="date" name="deadline_at" class="form-control">
+    </div>
+
+    {% for p in selected %}
+        <input type="hidden" name="product_ids[]" value="{{ p.product_id }}">
+    {% endfor %}
+
+    <button type="submit" class="button--brand">Создать</button>
+</form>

@@ -41,7 +41,11 @@ class Operation extends Model
         'documents' => [
             'Samvol\Inventory\Models\Document',
             'key' => 'operation_id',
-        ]
+        ],
+        'workflowNotes' => [
+            'Samvol\Inventory\Models\WorkflowNoteOperation',
+            'key' => 'operation_id',
+        ],
     ];
 
     /* -----------------------------------------------------------------

@@ -67,6 +67,13 @@ class EditOperation extends ComponentBase
 
     public function onEditOperation()
     {
+        $user = \Auth::getUser();
+
+        // 🔐 Проверка прав: только admin
+        if (!$user || !$user->isInGroup('admin')) {
+            throw new \ApplicationException('У вас нет прав на создание операций!');
+        }
+
         $data = post();
 
         // --- Валидация типа и контрагента ---

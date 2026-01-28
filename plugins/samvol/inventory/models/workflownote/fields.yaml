@@ -1,0 +1,33 @@
+fields:
+    title:
+        label: Название
+        span: left
+        required: true
+
+    deadline_at:
+        label: Сроки
+        mode: datetime
+        span: auto
+        type: datepicker
+
+    description:
+        label: Описание
+        type: textarea
+        size: large
+        span: full
+
+    is_archived:
+        label: Архив
+        type: switch
+        span: left
+        readOnly: true
+
+    items:
+        label: Документы
+        type: partial
+        path: $/samvol/inventory/controllers/workflownotes/_add_item.htm
+
+    operations:
+        label: "Товары"
+        type: partial
+        path: $/samvol/inventory/controllers/workflownotes/_add_operation.htm

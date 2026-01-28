@@ -40,3 +40,7 @@ navigation:
                 label: 'Настройка категорий'
                 url: samvol/inventory/categories/reorder
                 icon: icon-sitemap
+            workflownotes:
+                label: Заметки
+                url: samvol/inventory/workflownotes
+                icon: icon-sitemap

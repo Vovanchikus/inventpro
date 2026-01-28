@@ -1,0 +1,18 @@
+<form data-request="onAddOperationToNote">
+    <input type="hidden" name="note_id" value="{{ note.id }}">
+    <ul class="operation-list">
+        {% for op in operations %}
+        <li>
+            <label>
+                <input type="radio" name="operation_id" value="{{ op.id }}">
+                {{ op.type.name ?? 'Операция' }} — {{ op.created_at|date('d.m.Y H:i') }}
+            </label>
+        </li>
+        {% endfor %}
+    </ul>
+
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-primary">Добавить</button>
+        <button type="button" class="btn btn-secondary" data-modal-close>Отмена</button>
+    </div>
+</form>

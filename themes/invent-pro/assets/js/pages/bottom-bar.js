@@ -256,4 +256,86 @@ document.addEventListener("DOMContentLoaded", () => {
     // 12. Инициализация
     // ============================================================
     updateBottomBar();
+
+    // ==============================================
+    // Notes: create / add handlers
+    // ==============================================
+    function initModalForm(handler) {
+        const modalForm = document.querySelector(
+            `.modal .modal-content form[data-request="${handler}"]`
+        );
+        if (!modalForm) return;
+
+        // Отвязка старого обработчика, чтобы не дублировался
+        modalForm.removeEventListener("submit", modalForm._handler);
+
+        modalForm._handler = function (e) {
+            e.preventDefault();
+            $(modalForm).request(handler, {
+                data: $(modalForm).serializeArray(),
+                success(res) {
+                    if (typeof handleServerResponse === "function")
+                        handleServerResponse(res);
+
+                    if (res && res.success) {
+                        Modal.hide();
+                        document
+                            .querySelectorAll(".product-check")
+                            .forEach((cb) => (cb.checked = false));
+                        localStorage.removeItem("selectedProducts");
+                        updateBottomBar();
+                    }
+                },
+                error() {
+                    toast("Ошибка сервера", "error");
+                },
+            });
+        };
+
+        modalForm.addEventListener("submit", modalForm._handler);
+    }
+
+    // Создать заметку
+    document.getElementById("createNote")?.addEventListener("click", () => {
+        const selected = getSelectedFromCheckboxes();
+        if (!selected.length) {
+            toast("Выберите товары", "error");
+            return;
+        }
+
+        $.request("onShowCreateModal", {
+            data: { selected_products: selected },
+            success(resp) {
+                if (resp && resp.modalContent) {
+                    Modal.show(resp.modalContent, "info", "Создать заметку");
+                    initModalForm("onCreateNote");
+                }
+            },
+            error() {
+                toast("Ошибка при запросе формы", "error");
+            },
+        });
+    });
+
+    // Добавить в существующую заметку
+    document.getElementById("addToNote")?.addEventListener("click", () => {
+        const selected = getSelectedFromCheckboxes();
+        if (!selected.length) {
+            toast("Выберите товары", "error");
+            return;
+        }
+
+        $.request("onShowAddModal", {
+            data: { selected_products: selected },
+            success(resp) {
+                if (resp && resp.modalContent) {
+                    Modal.show(resp.modalContent, "info", "Добавить в заметку");
+                    initModalForm("onAddToExistingNote");
+                }
+            },
+            error() {
+                toast("Ошибка при запросе формы", "error");
+            },
+        });
+    });
 });

@@ -1,0 +1,58 @@
+<div class="workflow-note {% if note.is_completed %}is-completed{% endif %}">
+    <div class="note-header">
+        <h3>{{ note.title }}</h3>
+
+        {% if note.deadline_at %}
+            <div class="note-deadline">
+                Срок: {{ note.deadline_at|date('d.m.Y') }}
+            </div>
+        {% endif %}
+
+        <div class="note-status">
+            Статус:
+            <span class="status {{ note.is_completed ? 'done' : 'work' }}">
+                {{ note.is_completed ? 'Завершена' : 'В работе' }}
+            </span>
+        </div>
+    </div>
+
+    <div class="note-items">
+        <strong>Товары:</strong>
+
+        {% for item in note.items %}
+            <div class="note-item">
+                <span>{{ item.product.name ?? 'Товар #' ~ item.product_id }}</span>
+                <span class="item-status {{ item.is_completed ? 'done' : 'work' }}">
+                    {{ item.is_completed ? '✓ Готово' : 'В работе' }}
+                </span>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="note-operations">
+        <strong>Операции:</strong>
+
+        {% if note.operations|length %}
+            <ul>
+                {% for op in note.operations %}
+                    <li>
+                        {{ op.type.name ?? 'Операция' }}
+                        — {{ op.created_at|date('d.m.Y H:i') }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <em>Операций пока нет</em>
+        {% endif %}
+
+</n+        <div class="note-actions">
+                    <button class="addOperationForNotes btn btn-sm btn-add-operation"
+                        data-note-id="{{ note.id }}"
+                        data-request="onShowAddOperationModal"
+                        data-request-data="note_id: {{ note.id }}"
+                        data-request-flash>
+                            Добавить операцию
+                    </button>
+</div>
+    </div>
+</div>

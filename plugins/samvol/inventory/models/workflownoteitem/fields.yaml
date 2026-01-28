@@ -1,0 +1,12 @@
+fields:
+    product:
+        label: Товар
+        type: relation
+        span: left
+        required: true
+
+    required_quantity:
+        label: Количество
+        type: number
+        span: right
+        required: true

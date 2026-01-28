@@ -1,0 +1,20 @@
+columns:
+    product[name]:
+        label: Товар
+        type: text
+
+    required_quantity:
+        label: Нужно
+        type: number
+
+    completed_quantity:
+        label: Закрыто
+        type: number
+
+    remaining_quantity:
+        label: Осталось
+        type: number
+
+    progress:
+        label: Статус
+        type: partial

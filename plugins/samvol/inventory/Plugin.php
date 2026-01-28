@@ -19,6 +19,7 @@ class Plugin extends PluginBase
             \Samvol\Inventory\Components\History::class => 'history',
             \Samvol\Inventory\Components\OperationInfo::class => 'operationInfo',
             \Samvol\Inventory\Components\QrProductCode::class => 'qrProductCode',
+            \Samvol\Inventory\Components\WorkflowNotesFrontend::class => 'workflowNotesFrontend',
         ];
     }
 

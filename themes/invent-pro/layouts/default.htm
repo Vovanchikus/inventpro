@@ -52,6 +52,10 @@ description = "Основной макет Winter CMS"
         <script src="{{ 'assets/js/core/header-search.js'|theme }}?v={{ random(100000,999999) }}"></script>
         <script src="{{ 'assets/js/core/import-excel.js'|theme }}?v={{ random(100000,999999) }}"></script>
 
+        {% if this.page.url == '/' %}
+            <script src="{{ 'assets/js/pages/home.js'|theme }}?v={{ random(100000,999999) }}"></script>
+        {% endif %}
+
         {% if this.page.url == '/add-operation' or this.page.url == '/edit-operation' %}
             <script src="{{ 'assets/js/pages/operation-form.js'|theme }}?v={{ random(100000,999999) }}"></script>
         {% endif %}

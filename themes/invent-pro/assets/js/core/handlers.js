@@ -93,3 +93,5 @@ function handleServerResponse(data) {
         }
     }
 }
+
+// NOTE: handler for add-operation moved to pages/home.js

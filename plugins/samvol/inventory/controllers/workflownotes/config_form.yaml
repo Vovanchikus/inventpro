@@ -1,0 +1,10 @@
+name: WorkflowNotes
+form: $/samvol/inventory/models/workflownote/fields.yaml
+modelClass: Samvol\Inventory\Models\WorkflowNote
+defaultRedirect: samvol/inventory/workflownotes
+create:
+    redirect: "samvol/inventory/workflownotes/update/:id"
+    redirectClose: samvol/inventory/workflownotes
+update:
+    redirect: samvol/inventory/workflownotes
+    redirectClose: samvol/inventory/workflownotes

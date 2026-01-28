@@ -1,7 +1,14 @@
 title = "Главная страница"
 url = "/"
 layout = "default"
+
+[workflowNotesFrontend]
+status = "{{ :status }}"
 ==
 
+{# Заметки #}
 
-Главная страница
+<section class="page-workflow-notes">
+    <h1>Заметки</h1>
+    {% component 'workflowNotesFrontend' %}
+</section>

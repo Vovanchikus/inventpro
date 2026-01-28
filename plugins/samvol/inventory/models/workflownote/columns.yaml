@@ -1,0 +1,26 @@
+columns:
+    title:
+        label: Название
+        type: text
+        searchable: true
+
+    deadline_at:
+        label: Срок
+        type: datetime
+
+    items_count:
+        label: Товаров
+        type: number
+        sortable: false
+
+    completion_progress:
+        label: Прогресс
+        type: partial
+
+    is_archived:
+        label: Архив
+        type: switch
+
+    created_at:
+        label: Создано
+        type: datetime

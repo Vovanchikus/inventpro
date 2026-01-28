@@ -102,3 +102,24 @@
 1.0.35:
     - 'Drop table samvol_inventory_product_images'
     - builder_table_delete_samvol_inventory_product_images.php
+1.0.36:
+    - 'Created table samvol_inventory_workflow_notes'
+    - builder_table_create_samvol_inventory_workflow_notes.php
+1.0.37:
+    - 'Created table samvol_inventory_workflow_note_items'
+    - builder_table_create_samvol_inventory_workflow_note_items.php
+1.0.38:
+    - 'Created table samvol_inventory_workflow_note_operation'
+    - builder_table_create_samvol_inventory_workflow_note_operation.php
+1.0.39:
+    - 'Updated table samvol_inventory_workflow_notes'
+    - builder_table_update_samvol_inventory_workflow_notes.php
+1.0.40:
+    - 'Updated table samvol_inventory_workflow_note_items'
+    - builder_table_update_samvol_inventory_workflow_note_items.php
+1.0.41:
+    - 'Updated table samvol_inventory_workflow_note_operation'
+    - builder_table_update_samvol_inventory_workflow_note_operation.php
+1.0.42:
+    - 'Updated table samvol_inventory_workflow_notes'
+    - builder_table_update_samvol_inventory_workflow_notes_2.php

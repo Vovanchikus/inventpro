@@ -1,0 +1,20 @@
+1769629708a:1:{s:8:"home.htm";a:9:{s:8:"fileName";s:8:"home.htm";s:7:"content";s:282:"title = "Главная страница"
+url = "/"
+layout = "default"
+
+[workflowNotesFrontend]
+status = "{{ :status }}"
+==
+
+{# Заметки #}
+
+<section class="page-workflow-notes">
+    <h1>Заметки</h1>
+    {% component 'workflowNotesFrontend' %}
+</section>
+";s:5:"mtime";i:1768557437;s:6:"markup";s:147:"{# Заметки #}
+
+<section class="page-workflow-notes">
+    <h1>Заметки</h1>
+    {% component 'workflowNotesFrontend' %}
+</section>";s:4:"code";N;s:5:"title";s:31:"Главная страница";s:3:"url";s:1:"/";s:6:"layout";s:7:"default";s:21:"workflowNotesFrontend";a:1:{s:6:"status";s:13:"{{ :status }}";}}}
