@@ -167,6 +167,9 @@ layout = "default"
 
 </div>{# operation-form__container box--light #}
 
-{% else %}
-    <p>У вас нет прав для создания операций.</p>
+{% if prefill_products %}
+<script>
+  window.prefill_products = {{ prefill_products | json_encode | raw }};
+  window.prefill_note_id = {{ note_id | json_encode | raw }};
+</script>
 {% endif %}

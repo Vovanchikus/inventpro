@@ -1,0 +1,22 @@
+fields:
+    title:
+        label: Заголовок
+        type: text
+    description:
+        label: Описание
+        type: textarea
+    due_date:
+        label: Срок
+        type: datepicker
+    status:
+        label: Статус
+        type: text
+    operations:
+        label: Операции
+        type: partial
+        path: $/samvol/inventory/controllers/notes/_add_operations.htm
+
+    products:
+        label: "Товары"
+        type: partial
+        path: $/samvol/inventory/controllers/notes/_add_products.htm

@@ -89,15 +89,18 @@
 
       </div>{# bottom-bar__add-category-section #}
 
-      <!-- Notes buttons -->
-      <button type="button" id="createNote" class="button--round button--brand button--inset-shadow">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" fill="currentColor"/></svg>
-        Заметки — Создать
+      <button type="submit" id="createNote" class="button--round button--brand button--inset-shadow" title="Создать заметку">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M6 2h9l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z" fill="currentColor"/>
+        </svg>
+        Заметка
       </button>
 
-      <button type="button" id="addToNote" class="button--round button--dark button--inset-shadow">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21 6h-2v9H5v2h14c1.1 0 2-.9 2-2V6zM3 6v12c0 1.1.9 2 2 2h11v-2H5V6H3zm9-4l-2 2h4l-2-2z" fill="currentColor"/></svg>
-        Добавить в заметку
+      <button type="submit" id="addToNote" class="button--round button--dark button--inset-shadow" title="Добавить в заметку">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        В заметку
       </button>
 
       <button type="submit" id="createOperation" class="button--round button--brand button--inset-shadow">

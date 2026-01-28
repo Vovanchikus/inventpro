@@ -1,0 +1,10 @@
+name: Notes
+form: $/samvol/inventory/models/note/fields.yaml
+modelClass: Samvol\Inventory\Models\Note
+defaultRedirect: samvol/inventory/notes
+create:
+    redirect: "samvol/inventory/notes/update/:id"
+    redirectClose: samvol/inventory/notes
+update:
+    redirect: samvol/inventory/notes
+    redirectClose: samvol/inventory/notes

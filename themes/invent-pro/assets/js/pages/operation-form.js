@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Определяем текущую форму (add или edit)
     // ==============================
     const form = document.querySelector(
-        "#addOperationForm, #editOperationForm"
+        "#addOperationForm, #editOperationForm",
     );
     if (!form) return;
 
@@ -31,10 +31,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const addProductBtn = document.getElementById("add-product");
     const addFromDBBtn = document.getElementById("btnSearchProduct");
     const productsWrapper = document.getElementById(
-        "operation-form__products-wrapper"
+        "operation-form__products-wrapper",
     );
     const documentsWrapper = document.getElementById(
-        "operation-form__documents-wrapper"
+        "operation-form__documents-wrapper",
     );
 
     // ==============================
@@ -86,7 +86,7 @@ document.addEventListener("DOMContentLoaded", () => {
         r.addEventListener("change", () => {
             updateProductButtons();
             updateCounteragentVisibility();
-        })
+        }),
     );
     updateProductButtons();
     updateCounteragentVisibility();
@@ -128,12 +128,12 @@ document.addEventListener("DOMContentLoaded", () => {
     handleRemoveButton(
         documentsWrapper,
         ".operation-form__row--document",
-        ".remove-document-btn"
+        ".remove-document-btn",
     );
     handleRemoveButton(
         productsWrapper,
         ".operation-form__row--product",
-        ".remove-product-btn"
+        ".remove-product-btn",
     );
 
     // ==============================
@@ -226,7 +226,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 rowSelector,
                 rowSelector.includes("product")
                     ? ".remove-product-btn"
-                    : ".remove-document-btn"
+                    : ".remove-document-btn",
             );
 
             formInputsObserver();
@@ -242,12 +242,12 @@ document.addEventListener("DOMContentLoaded", () => {
     attachRowEvents(
         productsWrapper,
         addProductBtn,
-        ".operation-form__row--product"
+        ".operation-form__row--product",
     );
     attachRowEvents(
         documentsWrapper,
         document.getElementById("add-document"),
-        ".operation-form__row--document"
+        ".operation-form__row--document",
     );
 
     // ==============================
@@ -281,7 +281,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 data: { query: invNumber },
                 success: (data) => {
                     const product = data.results?.find(
-                        (p) => p.inv_number === invNumber
+                        (p) => p.inv_number === invNumber,
                     );
                     if (product) {
                         msgDiv.textContent = `На складе: ${product.calculated_quantity} ед.`;
@@ -341,10 +341,10 @@ document.addEventListener("DOMContentLoaded", () => {
     document
         .querySelectorAll('input[name="type_id"]')
         .forEach((r) =>
-            r.addEventListener("change", () => setTimeout(initAutoSumCalc, 50))
+            r.addEventListener("change", () => setTimeout(initAutoSumCalc, 50)),
         );
     addProductBtn?.addEventListener("click", () =>
-        setTimeout(initAutoSumCalc, 50)
+        setTimeout(initAutoSumCalc, 50),
     );
     initAutoSumCalc();
 
@@ -353,12 +353,12 @@ document.addEventListener("DOMContentLoaded", () => {
     // ==============================
     function addProductToOperation(product) {
         let emptyRow = Array.from(
-            productsWrapper.querySelectorAll(".operation-form__row--product")
+            productsWrapper.querySelectorAll(".operation-form__row--product"),
         ).find((row) => row.querySelector('input[name="name[]"]').value === "");
 
         if (!emptyRow) {
             const firstRow = productsWrapper.querySelector(
-                ".operation-form__row--product"
+                ".operation-form__row--product",
             );
             emptyRow = firstRow.cloneNode(true);
             emptyRow.querySelectorAll("input").forEach((i) => (i.value = ""));
@@ -386,12 +386,106 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // ==============================
     // Подтягиваем товары из localStorage
+    // Если в URL есть note_id или сервер передал window.prefill_products,
+    // то приоритет у них — игнорируем старые localStorage и очищаем ключи.
     // ==============================
     const storageKey = isEdit ? "editOperation" : "createOperation";
     const storedProducts = JSON.parse(localStorage.getItem(storageKey) || "[]");
+    const urlHasNote = /[?&]note_id=/.test(window.location.search || "");
+    // Не удаляем сразу локальное хранилище при наличии note_id: если сервер не вернёт prefill,
+    // то используем локально сохранённые `createOperation` как fallback.
+    if (
+        window.prefill_products &&
+        Array.isArray(window.prefill_products) &&
+        window.prefill_products.length
+    ) {
+        try {
+            localStorage.removeItem(storageKey);
+        } catch (e) {}
+    }
+    // Helper: check if form already contains product with same inv_number
+    function formHasProduct(invNumber) {
+        if (!invNumber) return false;
+        const rows = Array.from(
+            productsWrapper.querySelectorAll(".operation-form__row--product"),
+        );
+        return rows.some((row) => {
+            const val = (
+                row.querySelector('input[name="inv_number[]"]')?.value || ""
+            ).trim();
+            return val && val === String(invNumber);
+        });
+    }
+
     if (storedProducts.length) {
-        storedProducts.forEach(addProductToOperation);
-        localStorage.removeItem(storageKey);
+        // Если сервер не предоставил prefill — используем локально сохранённые товары
+        if (
+            !(
+                window.prefill_products &&
+                Array.isArray(window.prefill_products) &&
+                window.prefill_products.length
+            )
+        ) {
+            storedProducts.forEach((p) => {
+                const inv = p.inv_number || p.inv || p.id;
+                if (!formHasProduct(inv)) addProductToOperation(p);
+            });
+            localStorage.removeItem(storageKey);
+        }
+    }
+
+    // ==============================
+    // Prefill from note (server-side variable window.prefill_products)
+    // ==============================
+    try {
+        if (
+            window.prefill_products &&
+            Array.isArray(window.prefill_products) &&
+            window.prefill_products.length
+        ) {
+            window.prefill_products.forEach((p) => {
+                const inv = p.inv_number || p.inv || p.id;
+                if (!formHasProduct(inv)) addProductToOperation(p);
+            });
+            // attach note_id hidden input so backend knows the source note
+            if (window.prefill_note_id) {
+                let existing = form.querySelector('input[name="note_id"]');
+                if (!existing) {
+                    const h = document.createElement("input");
+                    h.type = "hidden";
+                    h.name = "note_id";
+                    h.value = window.prefill_note_id;
+                    form.appendChild(h);
+                }
+            }
+
+            // cleanup to avoid re-inserting on reload
+            try {
+                localStorage.removeItem("createOperation");
+            } catch (e) {}
+            try {
+                localStorage.removeItem("selectedProducts");
+            } catch (e) {}
+        }
+    } catch (e) {}
+
+    // Если в URL передан тип операции (например ?type=приход) — попытаемся выбрать его
+    try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const desiredType = urlParams.get("type");
+        if (desiredType) {
+            document.querySelectorAll('input[name="type_id"]').forEach((r) => {
+                const label = r.nextElementSibling?.textContent
+                    ?.trim()
+                    ?.toLowerCase();
+                if (label === desiredType.trim().toLowerCase()) {
+                    r.checked = true;
+                    r.dispatchEvent(new Event("change"));
+                }
+            });
+        }
+    } catch (e) {
+        // ignore
     }
 
     // ==============================
@@ -402,7 +496,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // создаём подсказку только для этой строки
         let suggestBox = row.querySelector(
-            ".operation-form__input--inv-suggestion"
+            ".operation-form__input--inv-suggestion",
         );
         if (!suggestBox) {
             suggestBox = document.createElement("div");
@@ -437,7 +531,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 const products = result.products || [];
                 const matches = products.filter((p) =>
-                    p.inv_number.startsWith(value)
+                    p.inv_number.startsWith(value),
                 );
 
                 if (!matches.length) {
@@ -456,7 +550,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         data-inv="${p.inv_number}">
                         ${p.name} (${p.inv_number})
                     </div>
-                `
+                `,
                     )
                     .join("");
 
@@ -483,7 +577,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             if (row._showStock) row._showStock();
                         });
                     });
-            }, 300)
+            }, 300),
         );
     }
 
@@ -512,10 +606,10 @@ document.addEventListener("DOMContentLoaded", () => {
             .toLowerCase();
 
         const counteragentBox = document.querySelector(
-            ".operation-form__counteragent"
+            ".operation-form__counteragent",
         );
         const counteragentInput = counteragentBox?.querySelector(
-            'input[name="counteragent"]'
+            'input[name="counteragent"]',
         );
 
         if (!counteragentBox || !counteragentInput) return;

@@ -17,9 +17,12 @@ class OperationInfo extends ComponentBase
     }
 
     public function onRun() {
-        $this->operations = Operation::with('products')
-        ->whereIn('type_id', ['1','2','3'])
-        ->get();
+        $this->operations = Operation::with(['products', 'documents', 'documents.doc_file'])
+            ->whereIn('type_id', [1,2,3])
+            ->whereHas('documents', function($q){
+                $q->whereHas('doc_file');
+            })
+            ->get();
         $this->page['operations'] = $this->operations;
 
         $slug = $this->param('slug');

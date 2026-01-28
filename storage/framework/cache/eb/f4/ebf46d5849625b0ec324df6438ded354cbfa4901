@@ -1,0 +1,50 @@
+1769462123a:1:{s:27:"modals/modal_notes_list.htm";a:5:{s:8:"fileName";s:27:"modals/modal_notes_list.htm";s:7:"content";s:1154:"<div class="notes-list">
+    {% for n in notes %}
+        <div class="note-card" data-id="{{ n.id }}">
+            <h4>{{ n.title ?: 'Без названия' }}</h4>
+            <div class="note-meta">{% if n.due_date %}Срок: {{ n.due_date }}{% endif %}{% if n.status %} | {{ n.status }}{% endif %}</div>
+            <p>{{ n.description }}</p>
+
+            {% if n.products and n.products|length %}
+                <ul class="note-products">
+                    {% for p in n.products %}
+                        <li>
+                            {% if p.inv_number %}<span class="note-prod-inv">{{ p.inv_number }}</span>{% endif %}
+                            <span class="note-prod-name">{{ p.name }}</span>
+                            {% if p.quantity %}<span class="note-prod-qty"> x{{ p.quantity }}</span>{% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+
+            <div class="note-actions">
+                <button class="btn btn-add-to-note">Добавить выбранные</button>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+";s:5:"mtime";i:1768693222;s:6:"markup";s:1152:"<div class="notes-list">
+    {% for n in notes %}
+        <div class="note-card" data-id="{{ n.id }}">
+            <h4>{{ n.title ?: 'Без названия' }}</h4>
+            <div class="note-meta">{% if n.due_date %}Срок: {{ n.due_date }}{% endif %}{% if n.status %} | {{ n.status }}{% endif %}</div>
+            <p>{{ n.description }}</p>
+
+            {% if n.products and n.products|length %}
+                <ul class="note-products">
+                    {% for p in n.products %}
+                        <li>
+                            {% if p.inv_number %}<span class="note-prod-inv">{{ p.inv_number }}</span>{% endif %}
+                            <span class="note-prod-name">{{ p.name }}</span>
+                            {% if p.quantity %}<span class="note-prod-qty"> x{{ p.quantity }}</span>{% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+
+            <div class="note-actions">
+                <button class="btn btn-add-to-note">Добавить выбранные</button>
+            </div>
+        </div>
+    {% endfor %}
+</div>";s:4:"code";N;}}

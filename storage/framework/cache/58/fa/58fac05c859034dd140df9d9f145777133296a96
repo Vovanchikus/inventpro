@@ -100,7 +100,11 @@
 {% endif %}
 
 </aside>
+<<<<<<< HEAD
 ";s:5:"mtime";i:1765119725;s:6:"markup";s:23063:"<aside class="sidebar">
+=======
+";s:5:"mtime";i:1768666525;s:6:"markup";s:23063:"<aside class="sidebar">
+>>>>>>> 8988e962e3a48a0b64b298c311d0f62ba4457e80
 
   <nav class="sidebar-navigation">
     <ul class="sidebar-navigation__list">

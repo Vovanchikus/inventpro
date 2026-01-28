@@ -33,6 +33,20 @@
              Новая операция
         </a>
 
+        <a href="#" id="openCreateNoteHeader" class="button button--md button--outline" style="margin-left:8px">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M6 2h9l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z" fill="currentColor"/>
+            </svg>
+            Создать заметку
+        </a>
+
+        <a href="/add-operation?type=приход" class="button button--md button--muted" style="margin-left:8px">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Создать приход
+        </a>
+
         <form id="importForm" data-request="onImportExcel" enctype="multipart/form-data" data-request-files>
             <input id="importInput" style="display: none" type="file" name="excel_file" accept=".xlsx,.xls,.csv" required>
             <button id="importButton" type="button" class="button button--md button--success">

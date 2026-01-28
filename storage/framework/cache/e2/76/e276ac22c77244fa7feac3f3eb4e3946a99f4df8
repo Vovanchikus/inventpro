@@ -78,7 +78,7 @@
 
   {% endfor %}
 </div>
-";s:5:"mtime";i:1765565361;s:6:"markup";s:17225:"<div id="product-list">
+";s:5:"mtime";i:1768666525;s:6:"markup";s:17225:"<div id="product-list">
   {% for product in products %}
 
     <div class="warehouse__item table-item">

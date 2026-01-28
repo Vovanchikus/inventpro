@@ -1,4 +1,4 @@
-1769629913a:1:{s:17:"add-operation.htm";a:9:{s:8:"fileName";s:17:"add-operation.htm";s:7:"content";s:10328:"title = "Новая операция"
+1769632160a:1:{s:17:"add-operation.htm";a:9:{s:8:"fileName";s:17:"add-operation.htm";s:7:"content";s:10585:"title = "Новая операция"
 url = "/add-operation"
 layout = "default"
 
@@ -167,10 +167,13 @@ layout = "default"
 
 </div>{# operation-form__container box--light #}
 
-{% else %}
-    <p>У вас нет прав для создания операций.</p>
+{% if prefill_products %}
+<script>
+  window.prefill_products = {{ prefill_products | json_encode | raw }};
+  window.prefill_note_id = {{ note_id | json_encode | raw }};
+</script>
 {% endif %}
-";s:5:"mtime";i:1769629309;s:6:"markup";s:10219:"{% if user and user.isInGroup('admin') %}
+";s:5:"mtime";i:1769631050;s:6:"markup";s:10476:"{% if user and user.isInGroup('admin') %}
 
 <div class="container--sm box--light">
 
@@ -332,6 +335,9 @@ layout = "default"
 
 </div>{# operation-form__container box--light #}
 
-{% else %}
-    <p>У вас нет прав для создания операций.</p>
+{% if prefill_products %}
+<script>
+  window.prefill_products = {{ prefill_products | json_encode | raw }};
+  window.prefill_note_id = {{ note_id | json_encode | raw }};
+</script>
 {% endif %}";s:4:"code";N;s:5:"title";s:27:"Новая операция";s:3:"url";s:14:"/add-operation";s:6:"layout";s:7:"default";s:12:"addOperation";a:0:{}}}
