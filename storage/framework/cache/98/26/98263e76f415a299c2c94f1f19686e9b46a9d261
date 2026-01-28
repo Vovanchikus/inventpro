@@ -1,0 +1,104 @@
+1769464660a:1:{s:8:"home.htm";a:8:{s:8:"fileName";s:8:"home.htm";s:7:"content";s:1835:"title = "Главная страница"
+url = "/"
+layout = "default"
+==
+
+
+Главная страница
+
+{% component 'notesList' %}
+
+<section class="notes-block">
+	<h2>Заметки</h2>
+	<div class="notes-grid">
+		{% for note in notes %}
+			<div class="note-card">
+				<h3>{{ note.title ?: 'Без названия' }}</h3>
+				<div class="note-meta">{{ note.due_date ? 'Срок: ' ~ note.due_date : '' }} {{ note.human_status ?: '' }}</div>
+				<p>{{ note.description }}</p>
+				{% if note.products and note.products|length %}
+					<div class="note-products">
+						<strong>Товары в заметке:</strong>
+						<ul>
+						{% for p in note.products %}
+							<li>{{ p.name ?: p.inv_number }} — {{ p.quantity ?: (p.qty ?: 0) }}</li>
+						{% endfor %}
+						</ul>
+					</div>
+				{% endif %}
+				{% if note.operations and note.operations|length %}
+					<div class="note-operations">
+						<strong>Операции:</strong>
+						<ul>
+						{% for op in note.operations %}
+							<li class="op-item {% if op.is_draft %}op-draft{% endif %}">
+								<span class="op-type">{{ op.is_draft ? 'Черновик' : 'Финальная' }}</span>
+								<span class="op-status">{{ op.is_draft ? 'Документ разработан' : (op.documents_count ? 'Документы есть' : '') }}</span>
+								<ul class="op-products">
+								{% for p in op.products %}
+									<li>{{ p.name ?: p.inv_number }} — {{ p.quantity }}</li>
+								{% endfor %}
+								</ul>
+							</li>
+						{% endfor %}
+						</ul>
+					</div>
+				{% endif %}
+				<div class="note-actions">
+					<a href="/add-note?note_id={{ note.id }}" class="btn">Открыть</a>
+				</div>
+			</div>
+		{% else %}
+			<p>Заметок пока нет.</p>
+		{% endfor %}
+	</div>
+</section>
+";s:5:"mtime";i:1768693826;s:6:"markup";s:1751:"Главная страница
+
+{% component 'notesList' %}
+
+<section class="notes-block">
+	<h2>Заметки</h2>
+	<div class="notes-grid">
+		{% for note in notes %}
+			<div class="note-card">
+				<h3>{{ note.title ?: 'Без названия' }}</h3>
+				<div class="note-meta">{{ note.due_date ? 'Срок: ' ~ note.due_date : '' }} {{ note.human_status ?: '' }}</div>
+				<p>{{ note.description }}</p>
+				{% if note.products and note.products|length %}
+					<div class="note-products">
+						<strong>Товары в заметке:</strong>
+						<ul>
+						{% for p in note.products %}
+							<li>{{ p.name ?: p.inv_number }} — {{ p.quantity ?: (p.qty ?: 0) }}</li>
+						{% endfor %}
+						</ul>
+					</div>
+				{% endif %}
+				{% if note.operations and note.operations|length %}
+					<div class="note-operations">
+						<strong>Операции:</strong>
+						<ul>
+						{% for op in note.operations %}
+							<li class="op-item {% if op.is_draft %}op-draft{% endif %}">
+								<span class="op-type">{{ op.is_draft ? 'Черновик' : 'Финальная' }}</span>
+								<span class="op-status">{{ op.is_draft ? 'Документ разработан' : (op.documents_count ? 'Документы есть' : '') }}</span>
+								<ul class="op-products">
+								{% for p in op.products %}
+									<li>{{ p.name ?: p.inv_number }} — {{ p.quantity }}</li>
+								{% endfor %}
+								</ul>
+							</li>
+						{% endfor %}
+						</ul>
+					</div>
+				{% endif %}
+				<div class="note-actions">
+					<a href="/add-note?note_id={{ note.id }}" class="btn">Открыть</a>
+				</div>
+			</div>
+		{% else %}
+			<p>Заметок пока нет.</p>
+		{% endfor %}
+	</div>
+</section>";s:4:"code";N;s:5:"title";s:31:"Главная страница";s:3:"url";s:1:"/";s:6:"layout";s:7:"default";}}

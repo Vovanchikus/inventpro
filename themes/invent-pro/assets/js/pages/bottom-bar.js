@@ -102,6 +102,8 @@ document.addEventListener("DOMContentLoaded", () => {
             window.location.href = "/add-operation";
         });
 
+    // (createNote and addToNote are handled by notes-modal.js: it opens modals and reads localStorage)
+
     // ============================================================
     // 7. Редактирование операции
     // ============================================================
@@ -116,7 +118,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (operationIds.length > 1) {
             toast(
                 "Можно редактировать только товары из одной операции!",
-                "error"
+                "error",
             );
             return;
         }
@@ -160,7 +162,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         el.classList.remove("active");
 
                         const children = el.querySelector(
-                            ":scope > .category-menu__children"
+                            ":scope > .category-menu__children",
                         );
                         if (children) {
                             children.classList.add("hidden");
@@ -173,7 +175,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // Подкатегории
             const children = clickedItem.querySelector(
-                ":scope > .category-menu__children"
+                ":scope > .category-menu__children",
             );
 
             if (children) {

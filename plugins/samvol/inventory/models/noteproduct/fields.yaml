@@ -1,0 +1,10 @@
+fields:
+    quantity:
+        label: К-во в заметке
+        type: number
+    sum:
+        label: Сумма в заметке
+        type: number
+    counteragent:
+        label: Контрагент
+        type: text

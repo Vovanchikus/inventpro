@@ -1,0 +1,9 @@
+columns:
+    id:
+        label: ID
+    title:
+        label: Заголовок
+    due_date:
+        label: Срок
+    status:
+        label: Статус

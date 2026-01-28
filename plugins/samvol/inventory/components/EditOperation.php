@@ -68,19 +68,43 @@ class EditOperation extends ComponentBase
     public function onEditOperation()
     {
         $data = post();
+        $isCreating = empty($data['operation_id']);
+        $noteId = $data['note_id'] ?? null;
 
         // --- Валидация типа и контрагента ---
         if (empty($data['type_id'])) return $this->firstError('type_id', 'Не указан тип операции');
         if (empty($data['counteragent'])) return $this->firstError('counteragent', 'Не указан контрагент');
 
         // --- Валидация документов ---
-        if (empty($data['doc_name']) || !is_array($data['doc_name'])) {
-            return $this->firstError('doc_name', 'Не добавлены документы');
+        // Считаем операцию финальной только если загружен хотя бы один файл PDF.
+        $files = Input::file('doc_file');
+        if ($files && !is_array($files)) {
+            $files = [$files];
         }
-        foreach ($data['doc_name'] as $i => $docName) {
-            if (!$docName) return $this->firstError("doc_name[$i]", 'Обязательное поле');
-            if (empty($data['doc_num'][$i])) return $this->firstError("doc_num[$i]", 'Номер документа обязателен');
-            if (empty($data['doc_date'][$i])) return $this->firstError("doc_date[$i]", 'Укажите дату документа');
+
+        $hasFiles = false;
+        if (is_array($files) && count(array_filter($files))) {
+            $hasFiles = true;
+        } elseif ($files) {
+            $hasFiles = true;
+        }
+
+        // Ранее: при создании новой операции без заметки документы были обязательны.
+        // Теперь требуем документы только если есть загруженные файлы.
+        if ($isCreating && empty($noteId) && !$hasFiles) {
+            // Создание без загруженных файлов — позволяем сохранить как черновик
+        }
+
+        // Проверяем поля документов ТОЛЬКО для тех записей, у которых есть файл
+        if (!empty($data['doc_name']) && is_array($data['doc_name'])) {
+            foreach ($data['doc_name'] as $i => $docName) {
+                if (!$docName) continue;
+                $file = $files[$i] ?? null;
+                if ($file) {
+                    if (empty($data['doc_num'][$i])) return $this->firstError("doc_num[$i]", 'Номер документа обязателен');
+                    if (empty($data['doc_date'][$i])) return $this->firstError("doc_date[$i]", 'Укажите дату документа');
+                }
+            }
         }
 
         // --- Валидация товаров ---
@@ -178,6 +202,16 @@ class EditOperation extends ComponentBase
                 ? Operation::find($data['operation_id'])
                 : new Operation();
 
+
+            // Решим draft/финальная по наличию документов и по noteId
+            $hasDocs = !empty($data['doc_name']) && is_array($data['doc_name']) && count(array_filter($data['doc_name'])) > 0;
+            // Если нет документов и операция привязана к заметке — считаем черновой
+            $operation->is_draft = (!$hasDocs && !empty($noteId));
+            $operation->is_posted = $hasDocs ? true : false;
+
+            // Связываем с заметкой (если передана)
+            $operation->note_id = $noteId ?? null;
+
             $operation->type_id = $data['type_id'];
             $operation->save();
 
@@ -205,64 +239,93 @@ class EditOperation extends ComponentBase
                 }
             }
 
-            // Привязка товаров
-            foreach ($data['name'] as $i => $name) {
-                $inv_number = $data['inv_number'][$i];
-                $unit       = $data['unit'][$i];
-                $price      = floatval($data['price'][$i]);
-                $quantity   = floatval($data['quantity'][$i]);
+            // Привязка товаров — только для финальной операции. Для черновика не трогаем pivot,
+            // чтобы не ломать историю операций.
+            if (!$operation->is_draft) {
+                foreach ($data['name'] as $i => $name) {
+                    $inv_number = $data['inv_number'][$i];
+                    $unit       = $data['unit'][$i];
+                    $price      = floatval($data['price'][$i]);
+                    $quantity   = floatval($data['quantity'][$i]);
 
-                $product = Product::firstOrCreate(
-                    ['inv_number' => $inv_number],
-                    ['name' => $name, 'unit' => $unit, 'price' => $price]
-                );
+                    $product = Product::firstOrCreate(
+                        ['inv_number' => $inv_number],
+                        ['name' => $name, 'unit' => $unit, 'price' => $price]
+                    );
 
-                $pivotSum = round($quantity * $price, 2);
+                    $pivotSum = round($quantity * $price, 2);
 
-                // ========================
-                // ЧАСТИЧНЫЙ ПЕРЕНОС ТОВАРА
-                // ========================
+                    // ========================
+                    // ЧАСТИЧНЫЙ ПЕРЕНОС ТОВАРА
+                    // ========================
 
-                // Ищем товар в старой операции
-                $oldPivot = DB::table('samvol_inventory_operation_products')
-                    ->where('product_id', $product->id)
-                    ->where('operation_id', '!=', $operation->id)
-                    ->first();
+                    // Ищем товар в старой операции
+                    $oldPivot = DB::table('samvol_inventory_operation_products')
+                        ->where('product_id', $product->id)
+                        ->where('operation_id', '!=', $operation->id)
+                        ->first();
 
-                if ($oldPivot) {
-                    $oldQty = floatval($oldPivot->quantity);
-                    $newQty = floatval($quantity);
+                    if ($oldPivot) {
+                        $oldQty = floatval($oldPivot->quantity);
+                        $newQty = floatval($quantity);
 
-                    // Остаток в старой операции
-                    $diff = $oldQty - $newQty;
+                        // Остаток в старой операции
+                        $diff = $oldQty - $newQty;
 
-                    if ($diff > 0) {
-                        // 🔹 Переносим часть → уменьшаем количество в старой операции
-                        DB::table('samvol_inventory_operation_products')
-                            ->where('product_id', $product->id)
-                            ->where('operation_id', $oldPivot->operation_id)
-                            ->update([
-                                'quantity' => $diff,
-                                'sum'      => round($diff * $price, 2),
-                            ]);
+                        if ($diff > 0) {
+                            // 🔹 Переносим часть → уменьшаем количество в старой операции
+                            DB::table('samvol_inventory_operation_products')
+                                ->where('product_id', $product->id)
+                                ->where('operation_id', $oldPivot->operation_id)
+                                ->update([
+                                    'quantity' => $diff,
+                                    'sum'      => round($diff * $price, 2),
+                                ]);
 
-                    } else {
-                        // 🔹 Переносим всё → удаляем старую запись
-                        DB::table('samvol_inventory_operation_products')
-                            ->where('product_id', $product->id)
-                            ->where('operation_id', $oldPivot->operation_id)
-                            ->delete();
+                        } else {
+                            // 🔹 Переносим всё → удаляем старую запись
+                            DB::table('samvol_inventory_operation_products')
+                                ->where('product_id', $product->id)
+                                ->where('operation_id', $oldPivot->operation_id)
+                                ->delete();
+                        }
+                    }
+
+                    // Добавляем товар в текущую операцию (новая запись или обновление)
+                    $operation->products()->syncWithoutDetaching([
+                        $product->id => [
+                            'quantity' => $quantity,
+                            'sum' => $pivotSum,
+                            'counteragent' => $operationCounteragent
+                        ]
+                    ]);
+                }
+            } else {
+                // Для черновой операции — сохраним текущий выбор товаров в заметке (если есть),
+                // вместо записи в pivot
+                if (!empty($noteId) && !empty($data['name']) && is_array($data['name'])) {
+                    $note = \Samvol\Inventory\Models\Note::find($noteId);
+                    if ($note) {
+                        $tmp = [];
+                        foreach ($data['name'] as $i => $name) {
+                            $inv = $data['inv_number'][$i] ?? null;
+                            if (!$inv) continue;
+                            $tmp[] = [
+                                'inv_number' => $inv,
+                                'name' => $name,
+                                'unit' => $data['unit'][$i] ?? null,
+                                'price' => isset($data['price'][$i]) ? floatval($data['price'][$i]) : null,
+                                'quantity' => isset($data['quantity'][$i]) ? floatval($data['quantity'][$i]) : 0,
+                            ];
+                        }
+                        $note->products = $tmp;
+                        $note->save();
                     }
                 }
-
-                // Добавляем товар в текущую операцию (новая запись или обновление)
-                $operation->products()->syncWithoutDetaching([
-                    $product->id => [
-                        'quantity' => $quantity,
-                        'sum' => $pivotSum,
-                        'counteragent' => $operationCounteragent
-                    ]
-                ]);
+            }
+            // После успешного сохранения операций и документов — пересчитываем статус заметки
+            if ($operation->note) {
+                $operation->note->recalcStatus();
             }
 
             DB::commit();

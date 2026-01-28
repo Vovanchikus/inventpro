@@ -1,0 +1,49 @@
+1769464660a:1:{s:13:"warehouse.htm";a:9:{s:8:"fileName";s:13:"warehouse.htm";s:7:"content";s:799:"title = "Склад"
+url = "/warehouse"
+layout = "default"
+
+[warehouse]
+==
+
+<div class="warehouse-table table">
+
+  <div class="warehouse__item table-title">
+  <div class="warehouse__checkbox">
+    <label for="" class="checkbox">
+      <input type="checkbox" name="" id="">
+    </label>
+  </div>
+    <div class="warehouse__left">
+      <div class="warehouse__name">Наименование</div>
+      <div class="warehouse__number">Номенклатурный №</div>
+    </div>
+    <div class="warehouse__unit">Ед.измерения</div>
+    <div class="warehouse__price">Цена</div>
+    <div class="warehouse__quantity">Количество</div>
+    <div class="warehouse__sum">Сумма</div>
+  </div>
+
+  {% partial 'warehouse/warehouse-product' %}
+
+</div>
+";s:5:"mtime";i:1768666525;s:6:"markup";s:714:"<div class="warehouse-table table">
+
+  <div class="warehouse__item table-title">
+  <div class="warehouse__checkbox">
+    <label for="" class="checkbox">
+      <input type="checkbox" name="" id="">
+    </label>
+  </div>
+    <div class="warehouse__left">
+      <div class="warehouse__name">Наименование</div>
+      <div class="warehouse__number">Номенклатурный №</div>
+    </div>
+    <div class="warehouse__unit">Ед.измерения</div>
+    <div class="warehouse__price">Цена</div>
+    <div class="warehouse__quantity">Количество</div>
+    <div class="warehouse__sum">Сумма</div>
+  </div>
+
+  {% partial 'warehouse/warehouse-product' %}
+
+</div>";s:4:"code";N;s:5:"title";s:10:"Склад";s:3:"url";s:10:"/warehouse";s:6:"layout";s:7:"default";s:9:"warehouse";a:0:{}}}

@@ -165,3 +165,10 @@ layout = "default"
   </form>
 
 </div>{# operation-form__container box--light #}
+
+{% if prefill_products %}
+<script>
+  window.prefill_products = {{ prefill_products | json_encode | raw }};
+  window.prefill_note_id = {{ note_id | json_encode | raw }};
+</script>
+{% endif %}

@@ -1,6 +1,6 @@
 plugin:
-    name: 'samvol.inventory::lang.plugin.name'
-    description: 'samvol.inventory::lang.plugin.description'
+    name: "samvol.inventory::lang.plugin.name"
+    description: "samvol.inventory::lang.plugin.description"
     author: Samvol
 navigation:
     inventory:
@@ -17,17 +17,21 @@ navigation:
                 url: samvol/inventory/operations
                 icon: icon-sitemap
             operation_types:
-                label: 'Типы операций'
+                label: "Типы операций"
                 url: samvol/inventory/operationtypes
                 icon: icon-sitemap
             operation_products:
-                label: 'История операций'
+                label: "История операций"
                 url: samvol/inventory/operationproducts
                 icon: icon-sitemap
             documents:
                 label: Документы
                 url: samvol/inventory/documents
                 icon: icon-sitemap
+            notes:
+                label: Заметки
+                url: samvol/inventory/notes
+                icon: icon-sticky-note
             stock_snaphots:
                 label: Снимки
                 url: samvol/inventory/stocksnapshots
@@ -37,6 +41,6 @@ navigation:
                 url: samvol/inventory/categories
                 icon: icon-sitemap
             drugdropcategory:
-                label: 'Настройка категорий'
+                label: "Настройка категорий"
                 url: samvol/inventory/categories/reorder
                 icon: icon-sitemap

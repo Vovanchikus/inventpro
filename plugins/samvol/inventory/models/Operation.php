@@ -12,7 +12,7 @@ class Operation extends Model
 
     public $table = 'samvol_inventory_operations';
 
-    protected $fillable = ['type_id'];
+    protected $fillable = ['type_id', 'is_draft', 'is_posted', 'note_id'];
     protected $slugs = ['slug' => 'id'];
 
     /* -----------------------------------------------------------------
@@ -23,6 +23,10 @@ class Operation extends Model
         'type' => [
             'Samvol\Inventory\Models\OperationType',
             'key' => 'type_id',
+        ],
+        'note' => [
+            'Samvol\\Inventory\\Models\\Note',
+            'key' => 'note_id'
         ]
     ];
 
@@ -53,6 +57,11 @@ class Operation extends Model
      */
     public function beforeSave()
     {
+        // Если операция черновая — не проводить проверок остатков
+        if (!empty($this->is_draft)) {
+            return;
+        }
+
         if (!$this->type || !$this->products) {
             return;
         }
@@ -92,6 +101,11 @@ class Operation extends Model
      */
     public function afterSave()
     {
+        // Если операция черновая — не трогаем pivot и склад
+        if (!empty($this->is_draft)) {
+            return;
+        }
+
         if (!$this->type || !$this->products) {
             return;
         }

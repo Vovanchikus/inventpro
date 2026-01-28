@@ -19,6 +19,101 @@ class AddOperation extends ComponentBase
         ];
     }
 
+    public function onRun()
+    {
+        // Если пришёл note_id в URL, передадим товары из заметки в страницу (не создавая операцию)
+        $noteId = input('note_id') ?: session('note_id');
+        if ($noteId) {
+            $note = \Samvol\Inventory\Models\Note::find($noteId);
+            if ($note) {
+                $prefill = [];
+
+                // Попробуем собрать массив продуктов с полями pivot (quantity, sum)
+                try {
+                    foreach ($note->products as $p) {
+                        $prefill[] = [
+                            'id' => $p->id,
+                            'name' => $p->name,
+                            'inv_number' => $p->inv_number,
+                            'unit' => $p->unit,
+                            'price' => $p->price,
+                            'quantity' => isset($p->pivot->quantity) ? (float)$p->pivot->quantity : null,
+                            'sum' => isset($p->pivot->sum) ? (float)$p->pivot->sum : null,
+                        ];
+                    }
+                } catch (\Exception $e) {
+                    $prefill = [];
+                }
+
+                // Если связанных продуктов нет (в pivot product_id может быть NULL),
+                // попробуем восстановить из JSON-поля notes.products
+                if (empty($prefill)) {
+                    try {
+                        // Сначала попробуем собрать из pivot + products через JOIN
+                        $rows = \DB::table('samvol_inventory_note_products as np')
+                            ->leftJoin('samvol_inventory_products as p', 'np.product_id', '=', 'p.id')
+                            ->where('np.note_id', $note->id)
+                            ->select('np.*', 'p.id as p_id', 'p.name as p_name', 'p.inv_number as p_inv', 'p.unit as p_unit', 'p.price as p_price')
+                            ->get();
+
+                        foreach ($rows as $r) {
+                            $prefill[] = [
+                                'id' => $r->p_id ?? null,
+                                'name' => $r->p_name ?? null,
+                                'inv_number' => $r->p_inv ?? null,
+                                'unit' => $r->p_unit ?? null,
+                                'price' => isset($r->p_price) ? (float)$r->p_price : null,
+                                'quantity' => isset($r->quantity) ? (float)$r->quantity : null,
+                                'sum' => isset($r->sum) ? (float)$r->sum : null,
+                            ];
+                        }
+
+                        // Если pivot пуст — попробуем декодировать сырое JSON поле как запасной вариант
+                        if (empty($prefill)) {
+                            $raw = \DB::table('samvol_inventory_notes')->where('id', $note->id)->value('products');
+                            if ($raw) {
+                                $items = json_decode($raw, true);
+                                if (is_array($items)) {
+                                    foreach ($items as $it) {
+                                        $prefill[] = [
+                                            'inv_number' => $it['inv_number'] ?? $it['inv'] ?? $it['id'] ?? null,
+                                            'name' => $it['name'] ?? null,
+                                            'unit' => $it['unit'] ?? null,
+                                            'price' => isset($it['price']) ? (float)$it['price'] : null,
+                                            'quantity' => isset($it['quantity']) ? (float)$it['quantity'] : (isset($it['qty']) ? (float)$it['qty'] : null),
+                                            'sum' => isset($it['sum']) ? (float)$it['sum'] : null,
+                                        ];
+                                    }
+                                }
+                            }
+                        }
+                    } catch (\Exception $e) {
+                        // noop
+                    }
+                }
+
+                // Логируем для отладки — сколько продуктов найдено и пример
+                try {
+                    // debug logging removed
+                    // Если prefill пуст — выведем сырые pivot-строки для заметки
+                    if (empty($prefill)) {
+                        try {
+                            $rows = \DB::table('samvol_inventory_note_products')->where('note_id', $note->id)->get();
+                            // debug logging removed
+                        } catch (\Exception $e) {
+                            \Log::warning('[samvol] cannot read pivot rows: ' . $e->getMessage());
+                        }
+                    }
+                } catch (\Exception $e) {
+                    // noop
+                }
+
+                $this->page['prefill_products'] = $prefill;
+                $this->page['note_id'] = $note->id;
+            }
+        }
+    }
+
     protected function firstError($field, $message)
     {
         return [
@@ -51,6 +146,90 @@ class AddOperation extends ComponentBase
     public function onAddOperation()
     {
         $data = post();
+        // Логируем пришедшие данные кратко для диагностики
+        try {
+            if (!empty($data['products'])) {
+                // debug logging removed
+            } else {
+                // логируем количество строк формовых полей как индикатор
+                $countNames = is_array($data['name']) ? count($data['name']) : 0;
+                // debug logging removed
+            }
+        } catch (Exception $e) {
+            Log::warning('[samvol] onAddOperation: failed to log incoming data: ' . $e->getMessage());
+        }
+        // Ранняя рекурсивная проверка: ищем вложенные массивы в любом уровне вложенности
+        try {
+            $found = null;
+            $checkRecursive = function($value, $path = '') use (&$checkRecursive, &$found) {
+                if ($found) return true; // уже нашли
+                if (is_array($value)) {
+                    foreach ($value as $k => $v) {
+                        $currentPath = $path === '' ? (string)$k : $path . '[' . $k . ']';
+                        if (is_array($v)) {
+                            $found = $currentPath;
+                            return true;
+                        }
+                        // continue deeper
+                        if (is_array($v) || is_object($v)) {
+                            // only recurse into arrays (objects are typically UploadedFile instances)
+                            if (is_array($v)) {
+                                if ($checkRecursive($v, $currentPath)) return true;
+                            }
+                        }
+                    }
+                }
+                return false;
+            };
+
+            foreach ($data as $key => $val) {
+                if ($checkRecursive($val, $key)) break;
+            }
+
+            if ($found) {
+                Log::warning('[samvol] onAddOperation: nested array detected in field path: ' . $found);
+                return [
+                    'validationErrors' => [
+                        ['field' => (string)$found, 'message' => 'Неподдерживаемая вложенная структура данных']
+                    ],
+                    'toast' => [
+                        'message' => 'Ошибка данных: найден вложенный массив в поле "' . $found . '"',
+                        'type' => 'error',
+                        'timeout' => 7000,
+                        'position' => 'top-center'
+                    ]
+                ];
+            }
+        } catch (Exception $e) {
+            Log::warning('[samvol] onAddOperation nested-check failed: ' . $e->getMessage());
+        }
+        // Protective normalization: if any product input array elements are themselves arrays,
+        // replace them with the first scalar value to avoid nested arrays reaching DB queries
+        // (log occurrences for later inspection).
+        try {
+            $fieldsToCheck = ['name','inv_number','unit','price','quantity','sum'];
+            foreach ($fieldsToCheck as $f) {
+                if (!empty($data[$f]) && is_array($data[$f])) {
+                    foreach ($data[$f] as $i => $val) {
+                        if (is_array($val)) {
+                            // find first scalar inside
+                            $replacement = null;
+                            foreach ($val as $sub) {
+                                if (is_scalar($sub) || $sub === null) { $replacement = $sub; break; }
+                            }
+                            if ($replacement === null) {
+                                // fallback to JSON-encoded string
+                                $replacement = json_encode($val);
+                            }
+                            Log::warning("[samvol] onAddOperation: field {$f}[{$i}] contained nested array; replaced with scalar/encoded.");
+                            $data[$f][$i] = $replacement;
+                        }
+                    }
+                }
+            }
+        } catch (Exception $e) {
+            Log::warning('[samvol] onAddOperation normalization failed: ' . $e->getMessage());
+        }
 
         // --- Тип операции ---
         if (empty($data['type_id'])) {
@@ -69,13 +248,34 @@ class AddOperation extends ComponentBase
         }
 
         // --- Документы ---
-        if (empty($data['doc_name']) || !is_array($data['doc_name'])) {
-            return $this->firstError('doc_name', 'Не добавлены документы');
+        // Считаем операцию финальной только если загружен хотя бы один PDF-файл.
+        $files = Input::file('doc_file');
+        if ($files && !is_array($files)) {
+            $files = [$files];
         }
-        foreach ($data['doc_name'] as $i => $docName) {
-            if (!$docName) return $this->firstError("doc_name[$i]", 'Обязательное поле');
-            if (empty($data['doc_num'][$i])) return $this->firstError("doc_num[$i]", 'Номера нет');
-            if (empty($data['doc_date'][$i])) return $this->firstError("doc_date[$i]", 'Укажите дату');
+
+        $hasFiles = false;
+        if (is_array($files) && count(array_filter($files))) {
+            $hasFiles = true;
+        } elseif ($files) {
+            $hasFiles = true;
+        }
+
+        $hasDocs = $hasFiles;
+
+        // Если файл был загружен для строки — требуем заполненные поля документа.
+        if (is_array($files) && count($files)) {
+            foreach ($files as $i => $f) {
+                if (!$f) continue;
+                // проверяем соответствующие поля в $data
+                $docName = $data['doc_name'][$i] ?? null;
+                $docNum  = $data['doc_num'][$i] ?? null;
+                $docDate = $data['doc_date'][$i] ?? null;
+
+                if (empty($docName)) return $this->firstError("doc_name[$i]", 'Укажите имя документа или удалите файл');
+                if (empty($docNum))  return $this->firstError("doc_num[$i]", 'Укажите номер документа');
+                if (empty($docDate)) return $this->firstError("doc_date[$i]", 'Укажите дату документа');
+            }
         }
 
         // --- Товары обязательно ---
@@ -184,14 +384,29 @@ class AddOperation extends ComponentBase
             ];
         }
 
-        // ================================
-        // СОХРАНЕНИЕ ОПЕРАЦИИ
-        // ================================
+            // ================================
+            // СОХРАНЕНИЕ ОПЕРАЦИИ
+            // ================================
         try {
             DB::beginTransaction();
 
             $operation = new Operation();
             $operation->type_id = $data['type_id'];
+
+            // Если есть документы — финализируем операцию сразу
+            if ($hasDocs) {
+                $operation->is_draft = false;
+                $operation->is_posted = true;
+            } else {
+                $operation->is_draft = true;
+                $operation->is_posted = false;
+            }
+
+            // Привяжем к заметке, если есть
+            if (!empty($data['note_id'])) {
+                $operation->note_id = $data['note_id'];
+            }
+
             $operation->save();
 
             $operationCounteragent = $data['counteragent'] ?? null;
@@ -208,43 +423,118 @@ class AddOperation extends ComponentBase
                 \Log::warning('Файлы не пришли');
             }
 
-            foreach ($data['doc_name'] as $i => $docName) {
-                $uploadedFile = $files[$i] ?? null;
+            // Сохраняем документы только если прислан реальный файл
+            if ($hasDocs && !empty($data['doc_name']) && is_array($data['doc_name'])) {
+                foreach ($data['doc_name'] as $i => $docName) {
+                    if (!$docName) continue;
+                    $uploadedFile = $files[$i] ?? null;
+                    // создаём запись документа только если есть файл
+                    if (!$uploadedFile) continue;
 
-                $document = $operation->documents()->create([
-                    'doc_name' => $docName,
-                    'doc_num'  => $data['doc_num'][$i] ?? '',
-                    'doc_purpose' => $data['doc_purpose'][$i] ?? null,
-                    'doc_date' => $data['doc_date'][$i] ?? null,
-                ]);
+                    $document = $operation->documents()->create([
+                        'doc_name' => $docName,
+                        'doc_num'  => $data['doc_num'][$i] ?? '',
+                        'doc_purpose' => $data['doc_purpose'][$i] ?? null,
+                        'doc_date' => $data['doc_date'][$i] ?? null,
+                    ]);
 
-                if ($uploadedFile) {
-                    $document->doc_file = $uploadedFile; // attachOne автоматически сохранит файл
+                    $document->doc_file = $uploadedFile;
                     $document->save();
                 }
             }
 
 
-            // Товары
-            foreach ($data['name'] as $i => $name) {
+            // Товары — добавляем в pivot ТОЛЬКО для финальной операции
+            if (!$operation->is_draft) {
+                foreach ($data['name'] as $i => $name) {
 
-                $inv_number = $data['inv_number'][$i];
-                $unit       = $data['unit'][$i];
-                $price      = floatval($data['price'][$i]);
-                $quantity   = floatval($data['quantity'][$i]);
+                    $inv_number = $data['inv_number'][$i];
+                    $unit       = $data['unit'][$i];
+                    $price      = floatval($data['price'][$i]);
+                    $quantity   = floatval($data['quantity'][$i]);
 
-                $product = Product::firstOrCreate(
-                    ['inv_number' => $inv_number],
-                    ['name' => $name, 'unit' => $unit, 'price' => $price]
-                );
+                    $product = Product::firstOrCreate(
+                        ['inv_number' => $inv_number],
+                        ['name' => $name, 'unit' => $unit, 'price' => $price]
+                    );
 
-                $pivotSum = round($quantity * $price, 2);
+                    $pivotSum = round($quantity * $price, 2);
 
-                $operation->products()->attach($product->id, [
-                    'quantity'     => $quantity,
-                    'sum'          => $pivotSum,
-                    'counteragent' => $operationCounteragent
-                ]);
+                    // Привязываем товары
+                    $operation->products()->attach($product->id, [
+                        'quantity'     => $quantity,
+                        'sum'          => $pivotSum,
+                        'counteragent' => $operationCounteragent
+                    ]);
+                }
+            } else {
+                // Для черновой операции не трогаем pivot — вместо этого обновим товары в заметке (если она есть)
+                if (!empty($operation->note_id) && !empty($data['name']) && is_array($data['name'])) {
+                    $note = \Samvol\Inventory\Models\Note::find($operation->note_id);
+                    if ($note) {
+                        // Build sync payload: ensure products exist and map by product ID
+                        $sync = [];
+                        foreach ($data['name'] as $i => $name) {
+                            $inv = $data['inv_number'][$i] ?? null;
+                            if (!$inv) continue;
+                            try {
+                                $product = Product::firstOrCreate(
+                                    ['inv_number' => $inv],
+                                    ['name' => $name, 'unit' => $data['unit'][$i] ?? null, 'price' => isset($data['price'][$i]) ? floatval($data['price'][$i]) : null]
+                                );
+                                $pid = $product->id;
+                                $qty = isset($data['quantity'][$i]) ? floatval($data['quantity'][$i]) : 0;
+                                $price = isset($data['price'][$i]) ? floatval($data['price'][$i]) : null;
+                                $sync[$pid] = [
+                                    'quantity' => $qty,
+                                    'sum' => $price !== null ? round($qty * $price, 2) : null,
+                                    'counteragent' => null,
+                                ];
+                            } catch (Exception $e) {
+                                Log::warning('[samvol] onAddOperation: failed to ensure product for note sync: ' . ($inv ?? 'n/a') . ' - ' . $e->getMessage());
+                            }
+                        }
+
+                        try {
+                            if (!empty($sync)) {
+                                $note->products()->sync($sync);
+                            } else {
+                                $note->products()->sync([]);
+                            }
+                        } catch (Exception $e) {
+                            Log::error('[samvol] onAddOperation: note products sync failed: ' . $e->getMessage());
+                            throw $e;
+                        }
+                    }
+                }
+            }
+
+            // После сохранения — если операция draft, не трогаем склад, но обновим статус заметки
+            if ($operation->is_draft) {
+                if (!empty($operation->note_id)) {
+                    $note = \Samvol\Inventory\Models\Note::find($operation->note_id);
+                    if ($note) {
+                        $note->status = 'document_prepared';
+                        $note->save();
+                    }
+                }
+
+                DB::commit();
+
+                return [
+                    'toast' => [
+                        'message' => 'Документ разработан, склад не изменён',
+                        'type' => 'success',
+                        'timeout' => 4000,
+                        'position' => 'top-center'
+                    ]
+                ];
+            }
+
+            // Если операция финальная — вызовем recalcStatus у заметки
+            if (!empty($operation->note_id)) {
+                $note = \Samvol\Inventory\Models\Note::find($operation->note_id);
+                if ($note) $note->recalcStatus();
             }
 
             DB::commit();

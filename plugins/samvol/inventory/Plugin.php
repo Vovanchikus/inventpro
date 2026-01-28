@@ -16,10 +16,17 @@ class Plugin extends PluginBase
             \Samvol\Inventory\Components\Types::class => 'types',
             \Samvol\Inventory\Components\AddOperation::class => 'addOperation',
             \Samvol\Inventory\Components\EditOperation::class => 'editOperation',
+            \Samvol\Inventory\Components\CreateNote::class => 'createNote',
+            \Samvol\Inventory\Components\NotesList::class => 'notesList',
             \Samvol\Inventory\Components\History::class => 'history',
             \Samvol\Inventory\Components\OperationInfo::class => 'operationInfo',
             \Samvol\Inventory\Components\QrProductCode::class => 'qrProductCode',
         ];
+    }
+
+    public function register()
+    {
+        $this->registerConsoleCommand('samvol.dumpnotes', \Samvol\Inventory\Console\DumpNoteProducts::class);
     }
 
 
