@@ -2,10 +2,19 @@ title = "Новая операция"
 url = "/add-operation"
 layout = "default"
 
+[account]
+
 [addOperation]
 ==
+{# Ниже проверка на админа #}
+{% set isAdmin = false %}
+{% for group in user.groups %}
+    {% if group.code == 'admin' %}
+        {% set isAdmin = true %}
+    {% endif %}
+{% endfor %}
 
-{% if user and user.isInGroup('admin') %}
+{% if user and isAdmin %}
 
 <div class="container--sm box--light">
 
@@ -172,4 +181,8 @@ layout = "default"
   window.prefill_products = {{ prefill_products | json_encode | raw }};
   window.prefill_note_id = {{ note_id | json_encode | raw }};
 </script>
+{% endif %}
+
+{% else %}
+    <p>У вас нет прав для добавления новой операцииxxxxx.</p>
 {% endif %}

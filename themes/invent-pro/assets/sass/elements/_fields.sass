@@ -11,7 +11,7 @@
     border: 1px solid $field-border-default
     border-radius: $radius-nm
     background: transparent
-    color: $text-title
+    color: $text-primary
     transition: all $transition
     &:hover
       border-color: $field-border-hover
@@ -50,11 +50,11 @@
   &--error
     color: $text-error
   &--info
-    color: $text-title
+    color: $text-primary
 
 input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:active, input:-webkit-autofill:focus
   -webkit-box-shadow: 0 0 0px 1000px white inset !important
-  -webkit-text-fill-color: $text-title!important
+  -webkit-text-fill-color: $text-primary!important
 
 input::placeholder
   color: $field-placeholder
@@ -78,6 +78,7 @@ input::placeholder
     cursor: pointer
     position: relative
     transition: border-color .2s, background-color .2s
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.16)
 
     &:hover
       border-color: $bg-brand

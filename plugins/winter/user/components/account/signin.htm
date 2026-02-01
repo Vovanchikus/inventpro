@@ -1,14 +1,14 @@
 <h3>{{ 'winter.user::frontend.general.signin' | trans }}</h3>
 
 {{ form_ajax('onSignin') }}
-    <div class="form-group">
-        <label for="userSigninLogin">{{ loginAttributeLabel }}</label>
+    <div class="form-group form-floating">
+        <label for="userSigninLogin" class="form-label">{{ loginAttributeLabel }}</label>
         <input
             name="login"
             type="text"
-            class="form-control"
+            class="form-control form-input"
             id="userSigninLogin"
-            placeholder="{{ 'winter.user::frontend.general.login_placeholder' | trans({attribute: loginAttributeLabel | lower}) }}"
+            placeholder
             autocomplete="username"/>
     </div>
 

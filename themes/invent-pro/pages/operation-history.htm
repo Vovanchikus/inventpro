@@ -5,88 +5,15 @@ layout = "default"
 [history]
 ==
 
-
-<div class="operation-history__box box--light">
-
-  <div class="operation-history__count">Всего таких операций: <span>{{ filteredCount }} </span></div>
-
-  <!-- Форма фильтрации -->
-  <form method="get" class="operation-history__filters">
-
-    <!-- Тип операции -->
-    <div class="custom-select operation-history__filters-select--type" data-name="type">
-      <div class="selected operation-history__filters-selected">
-        {{ request.get('type') ? types.where('id', request.get('type')).first.name : 'Тип операции' }}
-      </div>
-
-      <div class="options operation-history__filters-options dropdown">
-        <div class="option operation-history__filters-option--type" data-value="">Все типы</div>
-        {% for type in types %}
-          <div class="option operation-history__filters-option--type" data-value="{{ type.id }}">
-            {{ type.name }}
-          </div>
-        {% endfor %}
-      </div>
-    </div>
-
-    <!-- Контрагент -->
-    <div class="custom-select operation-history__filters-select--counteragent" data-name="counteragent">
-      <div class="selected operation-history__filters-selected">
-          {{ request.get('counteragent') ?: 'Контрагент' }}
-      </div>
-      <div class="options operation-history__filters-options dropdown">
-        <div class="option operation-history__filters-option" data-value="">Все контрагенты</div>
-        {% for ca in counteragents %}
-          <div class="option operation-history__filters-option--counteragent" data-value="{{ ca }}">
-            {{ ca }}
-          </div>
-        {% endfor %}
-      </div>
-    </div>
-
-    <!-- Год -->
-  <div class="custom-select operation-history__filters-select--year" data-name="year">
-    <div class="selected operation-history__filters-selected">
-        {{ request.get('year') ?: 'Год' }}
-    </div>
-
-    <div class="options operation-history__filters-options dropdown">
-      <div class="option" data-value="">Все годы</div>
-      {% for year in years %}
-        <div class="option operation-history__filters-option--year" data-value="{{ year }}">
-          {{ year }}
-        </div>
-      {% endfor %}
-    </div>
-  </div>
-
-    <input type="hidden" name="type" id="typeInput">
-    <input type="hidden" name="counteragent" id="counteragentInput">
-    <input type="hidden" name="year" id="yearInput">
-
-    <button type="submit" class="button--md button--brand">Применить</button>
-
-  </form>
-
-</div>
+{% partial 'global/main-box' %}
 
 <!-- Таблица истории операций -->
-<div class="operation-history-table table">
+<div class="table-outter">
 
-  <div class="operation-history__item table-title">
-    <div class="operation-history__type">Тип</div>
-    <div class="operation-history__left">
-      <div class="operation-history__name">Наименование</div>
-      <div class="operation-history__number">Инвентарный номер</div>
+  <div class="operation-history-table table">
+    <div id="product-list">
+      {% partial 'operation-history/history-item' histories=histories %}
     </div>
-    <div class="operation-history__price">Цена</div>
-    <div class="operation-history__quantity">Количество</div>
-    <div class="operation-history__date">Дата</div>
-    <div class="operation-history__counteragent">Контрагент</div>
   </div>
-
-  <div id="product-list">
-    {% partial 'operation-history/history-item' histories=histories %}
-  </div>
-
 </div>
+

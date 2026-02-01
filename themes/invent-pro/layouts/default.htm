@@ -1,5 +1,8 @@
 description = "Основной макет Winter CMS"
 
+[session]
+security = "user" ; ограничиваем для незарегистрированных пользователей страницу
+redirect = "login"
 [importExcel]
 [types]
 [notesList]
@@ -18,6 +21,7 @@ description = "Основной макет Winter CMS"
     {# <link rel="icon" type="image/png" href="{{ 'assets/img/winter.png'|theme }}"> #}
 
     <!-- Стили -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/overlayscrollbars/css/OverlayScrollbars.min.css" />
     <link rel="stylesheet" href="{{ 'assets/css/normalize.css'|theme }}?v={{ random(100000,999999) }}">
     <link rel="stylesheet" href="{{ 'assets/css/variables.css'|theme }}?v={{ random(100000,999999) }}">
     <link rel="stylesheet" href="{{ 'assets/css/style.css'|theme }}?v={{ random(100000,999999) }}">
@@ -54,6 +58,8 @@ description = "Основной макет Winter CMS"
         <script src="{{ 'assets/js/core/header-search.js'|theme }}?v={{ random(100000,999999) }}"></script>
         <script src="{{ 'assets/js/core/import-excel.js'|theme }}?v={{ random(100000,999999) }}"></script>
         <script src="{{ 'assets/js/pages/notes-modal.js'|theme }}?v={{ random(100000,999999) }}"></script>
+        <script src="https://cdn.jsdelivr.net/npm/overlayscrollbars/js/OverlayScrollbars.min.js"></script>
+        <script src="{{ 'assets/js/core/scripts.js'|theme }}?v={{ random(100000,999999) }}"></script>
 
 
         {% if this.page.url == '/' %}

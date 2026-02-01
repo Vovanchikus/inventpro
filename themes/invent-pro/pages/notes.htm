@@ -1,0 +1,64 @@
+title = "Нотатки"
+url = "/notes"
+layout = "default"
+
+[notesList]
+status = "{{ :status }}"
+==
+
+{% if user %}
+    <p>Hello {{ user.name }}</p>
+		{% set g = user.groups|first %}
+		{{ g.name }}
+		<a href="nojavascript...;" data-request="onLogout" data-request-data="redirect: '/'">Sign out</a>
+{% else %}
+    <p>Nobody is logged in</p>
+{% endif %}
+
+{# Заметки #}
+
+<section class="notes-block">
+	<h2>Нотатки</h2>
+	<div class="notes-grid">
+		{% for note in notes %}
+			<div class="note-card">
+				<h3>{{ note.title ?: 'Без названия' }}</h3>
+				<div class="note-meta">{{ note.due_date ? 'Срок: ' ~ note.due_date : '' }} {{ note.human_status ?: '' }}</div>
+				<p>{{ note.description }}</p>
+				{% if note.products and note.products|length %}
+					<div class="note-products">
+						<strong>Товари в нотатці:</strong>
+						<ul>
+						{% for p in note.products %}
+							<li>{{ p.name ?: p.inv_number }} — {{ p.quantity ?: (p.qty ?: 0) }}</li>
+						{% endfor %}
+						</ul>
+					</div>
+				{% endif %}
+				{% if note.operations and note.operations|length %}
+					<div class="note-operations">
+						<strong>Операції:</strong>
+						<ul>
+						{% for op in note.operations %}
+							<li class="op-item {% if op.is_draft %}op-draft{% endif %}">
+								<span class="op-type">{{ op.is_draft ? 'Черновик' : 'Фінальна' }}</span>
+								<span class="op-status">{{ op.is_draft ? 'Документ розроблено' : (op.documents_count ? 'Документи є' : '') }}</span>
+								<ul class="op-products">
+								{% for p in op.products %}
+									<li>{{ p.name ?: p.inv_number }} — {{ p.quantity }}</li>
+								{% endfor %}
+								</ul>
+							</li>
+						{% endfor %}
+						</ul>
+					</div>
+				{% endif %}
+				<div class="note-actions">
+					<a href="/add-note?note_id={{ note.id }}" class="btn">Відкрити</a>
+				</div>
+			</div>
+		{% else %}
+			<p>Нотаток поки немає.</p>
+		{% endfor %}
+	</div>
+</section>

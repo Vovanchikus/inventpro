@@ -1,4 +1,4 @@
-1769462123a:1:{s:14:"notes_grid.htm";a:5:{s:8:"fileName";s:14:"notes_grid.htm";s:7:"content";s:1576:"<div class="notes-grid">
+1769718465a:1:{s:14:"notes_grid.htm";a:5:{s:8:"fileName";s:14:"notes_grid.htm";s:7:"content";s:1576:"<div class="notes-grid">
 	{% for note in notes %}
 		<div class="note-card">
 			<h3>{{ note.title ?: 'Без названия' }}</h3>
@@ -40,7 +40,7 @@
 		<p>Заметок пока нет.</p>
 	{% endfor %}
 </div>
-";s:5:"mtime";i:1768693222;s:6:"markup";s:1574:"<div class="notes-grid">
+";s:5:"mtime";i:1769631050;s:6:"markup";s:1574:"<div class="notes-grid">
 	{% for note in notes %}
 		<div class="note-card">
 			<h3>{{ note.title ?: 'Без названия' }}</h3>

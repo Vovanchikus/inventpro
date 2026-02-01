@@ -264,7 +264,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // ==============================================
     function initModalForm(handler) {
         const modalForm = document.querySelector(
-            `.modal .modal-content form[data-request="${handler}"]`
+            `.modal .modal-content form[data-request="${handler}"]`,
         );
         if (!modalForm) return;
 

@@ -2,17 +2,25 @@
 
 .warehouse-box
   position: relative
-  background-color: $bg-box--light
+  background-color: $bg-box
   border-radius: $radius-lg
   box-shadow: $box-light-shadow
+
+.table-outter
+  padding: 8px
+  background-color: $bg-box
+  box-shadow: $box-light-shadow
+  border-radius: $radius-lg
+
+.table
+  border: 1px solid $border-interactive
 
 .table-title
   position: sticky
   top: 0
   left: 0
   height: 74px
-  background-color: #FAFAFA
-  border-radius: 12px 12px 0 0
+  border-radius: 0 0 28px 28px
   &.scrolled
     box-shadow: 0 4px 12px rgba(0,0,0,0.1)
     z-index: 2
@@ -23,31 +31,31 @@
   &__item
     display: grid
     grid-template-areas: "check left unit price quantity sum"
-    grid-template-columns: 18px 4fr 1fr 2fr 2fr 2fr
+    grid-template-columns: 18px 4fr 2fr 2fr 2fr 2fr
     grid-template-rows: 74px auto
     justify-content: space-between
     align-items: center
     gap: 0px 24px
     font-size: 12px
     font-weight: 600
-    color: $text-title
+    color: $text-muted
     padding: 0px 32px
     &.table-item
       position: relative
       font-size: 13px
       font-weight: normal
-      color: $text-body
-      border-bottom: 1px solid #F5F5F5
+      color: $text-muted
+      border-bottom: 1px solid $border-interactive
       &::after
         content: ''
         position: absolute
         left: 12px
-        top: calc( 50% - 11px )
+        top: calc( 50% - 16px )
         opacity: 0
-        width: 3px
-        height: 22px
-        background-color: $bg-brand
-        border-radius: 3px
+        width: 4px
+        height: 32px
+        background-color: $neutral-800
+        border-radius: 4px
         transition: opacity $transition
       &:hover
         &::after
@@ -60,8 +68,7 @@
   &__left
     grid-area: left
     display: inline-block
-    flex-direction: column
-    gap: 4px
+
   &__name
     position: relative
     display: -webkit-box
@@ -69,22 +76,8 @@
     -webkit-box-orient: vertical
     overflow: hidden
     text-overflow: ellipsis
-    color: $text-body
+    color: $text-primary
     transition: all $transition
-    svg
-      position: absolute
-      left: 0
-      visibility: hidden
-      opacity: 0
-      transition: all $transition
-      cursor: pointer
-    &:hover
-      transition: all $transition
-      padding-left: 20px
-      svg
-        visibility: visible
-        opacity: 1
-        pointer-events: auto
 
   &__number
     position: relative
@@ -94,7 +87,7 @@
     line-height: 12px
     margin-top: 4px
     padding: 6px 8px
-    color: $text-body
+    color: $text-muted
     background-color: $neutral-200
     border-radius: 6px
     cursor: pointer
@@ -198,9 +191,9 @@
 
 
 .import
-  border-top: 1px solid $border
-  border-left: 1px solid $border
-  border-right: 1px solid $border
+  border-top: 1px solid $border-block
+  border-left: 1px solid $border-block
+  border-right: 1px solid $border-block
   border-radius: $radius-md
   overflow: hidden
   &__item
@@ -212,14 +205,14 @@
     gap: 0px
     font-size: 12px
     font-weight: 600
-    color: $text-title
+    color: $text-primary
     padding: 0px 24px
     &.table-item
       position: relative
       font-size: 13px
       font-weight: normal
-      color: $text-body
-      border-bottom: 1px solid $border
+      color: $text-muted
+      border-bottom: 1px solid $border-block
       &::after
         content: ''
         position: absolute

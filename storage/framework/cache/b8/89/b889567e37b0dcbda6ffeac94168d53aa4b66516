@@ -1,4 +1,4 @@
-1769464660a:1:{s:12:"add-note.htm";a:8:{s:8:"fileName";s:12:"add-note.htm";s:7:"content";s:2577:"title = "Добавить заметку"
+1769899041a:1:{s:12:"add-note.htm";a:8:{s:8:"fileName";s:12:"add-note.htm";s:7:"content";s:2577:"title = "Добавить заметку"
 url = "/add-note"
 
 [createNote]
@@ -65,7 +65,7 @@ url = "/add-note"
     if (res.note_id) window.location.href = '/notes/' + res.note_id;
   }
 </script>
-";s:5:"mtime";i:1768693222;s:6:"markup";s:2491:"<section class="page-section page-section--centered">
+";s:5:"mtime";i:1769631050;s:6:"markup";s:2491:"<section class="page-section page-section--centered">
   <div class="container">
     <h1>Создать заметку</h1>
 

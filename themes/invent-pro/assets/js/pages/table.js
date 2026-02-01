@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
 
-    const header = document.querySelector(".table-title");
+    const header = document.querySelector(".main-box");
 
     if (!header) return;
 

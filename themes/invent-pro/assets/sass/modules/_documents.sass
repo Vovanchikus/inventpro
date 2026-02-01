@@ -2,7 +2,7 @@
 
 .documents-list
   display: grid
-  grid-template-columns: repeat(3, minmax(349px, 1fr));
+  grid-template-columns: repeat(3, minmax(310px, 1fr));
   gap: 24px 16px
 
 .documents-item
@@ -11,7 +11,7 @@
   flex-direction: column
   gap: 16px
   padding: 16px
-  background-color: $bg-box--light
+  background-color: $bg-box
   box-shadow: $box-light-shadow
   border-radius: $radius-nm
 
@@ -32,7 +32,7 @@
       transform: translateX(-50%)
       width: max-content
       padding: 6px 12px
-      color: $text-light
+      color: $text-inverse
       background-color: $bg-error
       border-radius: 14px
     span
@@ -42,7 +42,7 @@
       text-align: right
       width: 317px
       padding: 6px
-      color: $text-light
+      color: $text-inverse
       background-color: $bg-error
       border-radius: $radius-sm
       visibility: hidden
@@ -82,7 +82,7 @@
     font-size: 12px
     font-weight: 600
     line-height: 16px
-    color: $text-title
+    color: $text-primary
 
   &__counteragent
     font-size: 14px
@@ -93,7 +93,7 @@
     font-size: 18px
     font-weight: 600
     line-height: 18px
-    color: $text-title
+    color: $text-primary
 
   &__type--transfer
     svg
@@ -113,12 +113,12 @@
   &__documents-title, &__product-box-title
     font-size: 16px
     font-weight: 600
-    color: $text-title
+    color: $text-primary
     span
       font-size: 13px
       font-weight: 600
       padding: 4px 12px
-      color: $text-light
+      color: $text-inverse
       background-color: $bg-brand
       border-radius: 16px
       margin-left: 6px
@@ -136,7 +136,7 @@
   &__doc-name
     font-size: 14px
     font-weight: 500
-    color: $text-body
+    color: $text-primary
 
   &__button-see
     display: flex
@@ -145,15 +145,15 @@
     font-size: 12px
     font-weight: 500
     line-height: 14px
-    color: $text-light
+    color: $text-inverse
     padding: 6px 12px
     background-color: $button-brand-bg-default
     border-radius: $radius-sm
     &:hover
-      color: $text-light
+      color: $text-inverse
       background-color: $button-brand-bg-hover
     &:active
-      color: $text-light
+      color: $text-inverse
       background-color: $button-brand-bg-active
 
 
@@ -166,10 +166,10 @@
     padding: 12px
     border-radius: $radius-md
     background-color: $bg-body
-    color: $text-title
+    color: $text-primary
     p
       font-weight: normal
-      color: $text-body
+      color: $text-muted
       line-height: 1.35
 
   &__bottom
@@ -180,7 +180,7 @@
   &__count
     font-size: 16px
     font-weight: 600
-    color: $text-title
+    color: $text-primary
 
   &__product-box
     display: flex

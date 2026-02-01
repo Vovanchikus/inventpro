@@ -1,5 +1,15 @@
-<?php
-class Cms6977d7005f7c0504950353_879ce9aa868b91197320027adf0e1dceClass extends Cms\Classes\PageCode
+<?php 
+use Winter\User\Facades\Auth;
+class Cms697a89a7c0dd9303757981_e8b2dfda12c427dd1c5b7a85fce93199Class extends Cms\Classes\PageCode
 {
+public function onStart()
+{
+    if (Auth::check()) {
+        // авторизованный пользователь
+        return Redirect::to('/warehouse');
+    }
 
+    // гость
+    return Redirect::to('/login');
+}
 }

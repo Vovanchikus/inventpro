@@ -1,11 +1,20 @@
-1769632160a:1:{s:17:"add-operation.htm";a:9:{s:8:"fileName";s:17:"add-operation.htm";s:7:"content";s:10585:"title = "Новая операция"
+1769899041a:1:{s:17:"add-operation.htm";a:10:{s:8:"fileName";s:17:"add-operation.htm";s:7:"content";s:10755:"title = "Новая операция"
 url = "/add-operation"
 layout = "default"
 
+[account]
+
 [addOperation]
 ==
+{# Ниже проверка на админа #}
+{% set isAdmin = false %}
+{% for group in user.groups %}
+    {% if group.code == 'admin' %}
+        {% set isAdmin = true %}
+    {% endif %}
+{% endfor %}
 
-{% if user and user.isInGroup('admin') %}
+{% if user and isAdmin %}
 
 <div class="container--sm box--light">
 
@@ -173,7 +182,19 @@ layout = "default"
   window.prefill_note_id = {{ note_id | json_encode | raw }};
 </script>
 {% endif %}
-";s:5:"mtime";i:1769631050;s:6:"markup";s:10476:"{% if user and user.isInGroup('admin') %}
+
+{% else %}
+    <p>У вас нет прав для добавления новой операцииxxxxx.</p>
+{% endif %}
+";s:5:"mtime";i:1769643033;s:6:"markup";s:10635:"{# Ниже проверка на админа #}
+{% set isAdmin = false %}
+{% for group in user.groups %}
+    {% if group.code == 'admin' %}
+        {% set isAdmin = true %}
+    {% endif %}
+{% endfor %}
+
+{% if user and isAdmin %}
 
 <div class="container--sm box--light">
 
@@ -340,4 +361,8 @@ layout = "default"
   window.prefill_products = {{ prefill_products | json_encode | raw }};
   window.prefill_note_id = {{ note_id | json_encode | raw }};
 </script>
-{% endif %}";s:4:"code";N;s:5:"title";s:27:"Новая операция";s:3:"url";s:14:"/add-operation";s:6:"layout";s:7:"default";s:12:"addOperation";a:0:{}}}
+{% endif %}
+
+{% else %}
+    <p>У вас нет прав для добавления новой операцииxxxxx.</p>
+{% endif %}";s:4:"code";N;s:5:"title";s:27:"Новая операция";s:3:"url";s:14:"/add-operation";s:6:"layout";s:7:"default";s:7:"account";a:0:{}s:12:"addOperation";a:0:{}}}

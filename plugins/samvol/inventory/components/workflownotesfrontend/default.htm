@@ -1,7 +1,0 @@
-{% if notes.count %}
-<ul>
-    {% for note in notes %} {% partial 'workflow/note' note=note %} {% endfor %}
-</ul>
-{% else %}
-<p>Заметок пока нет.</p>
-{% endif %}

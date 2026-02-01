@@ -1,119 +1,54 @@
 @import '../core/vars'
 
 .button
+  display: inline-flex
+  align-items: center
 
-  &--md
-    display: flex
-    justify-content: center
-    align-items: center
+  &--nm
     font-size: 14px
     font-weight: 500
     line-height: 16px
-    padding: 10px 24px
-    border-radius: $radius-md
-    svg
-      margin-right: 8px
-
-  &--sm
-    display: flex
-    justify-content: center
-    align-items: center
-    font-size: 12px
-    line-height: 14px
-    font-weight: 500
-    padding: 8px 16px
-    border-radius: $radius-md
-    svg
-      margin-right: 8px
-
-  &--round
-    display: flex
-    align-items: center
-    font-size: 14px
-    line-height: 16px
-    padding: 12px 16px
-    border-radius: 20px
-    svg
-      margin-right: 8px
-
+    padding: 14px 24px
+    border-radius: $radius-full
 
   &--brand
-    color: $button-brand-text
-    background-color: $button-brand-bg-default
+    color: $text-inverse
+    background: $button-brand-bg-default
     box-shadow: $button-brand-shadow-default
     transition: all $transition
     &:hover
-      color: $button-brand-text
-      background-color: $button-brand-bg-hover
-      box-shadow: $button-brand-shadow-hover
+      background: $button-brand-bg-hover
     &:active
-      color: $button-brand-text
-      background-color: $button-brand-bg-active
-      box-shadow: none
-      transform: scale(0.98)
+      background: $button-brand-bg-active
+      box-shadow: $button-brand-shadow-active
 
-  &--success
-    color: $button-success-text
-    background-color: $button-success-bg-default
-    box-shadow: $button-success-shadow-default
-    transition: all $transition
-    &:hover
-      color: $button-success-text
-      background-color: $button-success-bg-hover
-      box-shadow: $button-success-shadow-hover
-    &:active
-      color: $button-success-text
-      background-color: $button-success-bg-active
-      box-shadow: none
-      transform: scale(0.98)
-
-  &--error
-    color: $button-error-text
-    background-color: $button-error-bg-default
-    box-shadow: $button-error-shadow-default
-    transition: all $transition
-    &:hover
-      background-color: $button-error-bg-hover
-      box-shadow: $button-error-shadow-hover
-    &:active
-      background-color: $button-error-bg-active
-      box-shadow: none
-      transform: scale(0.98)
-
-  &--second
+  &--secondary
     color: $button-second-text
-    background-color: $button-second-bg-default
-    transition: all $transition
+    background: $button-second-bg-default
+    box-shadow: $button-second-shadow-default
     &:hover
-      background-color: $button-second-bg-hover
+      background: $button-second-bg-hover
     &:active
-      background-color: $button-second-bg-active
-      transform: scale(0.98)
-
-    &.remove-document-btn,
-    &.remove-product-btn
-      color: $text-error
-      background-color: transparent
-      &:hover
-        color: $button-error-text
-        background-color: $button-error-bg-hover
-      &:active
-        background-color: $button-error-bg-active
-        transform: scale(0.98)
+      background: $button-second-bg-active
 
 
-  &--dark
-    color: $text-light
-    background-color: $neutral-700
-    transition: all $transition
-    &:hover
-      background-color: #4D4D94
-    &:active
-      background-color: #3F3F79
-      transform: scale(0.98)
+  &--ico-left
+    svg
+      display: inline-flex
+      margin-right: 12px
 
-.button--lg:has(svg)
-  padding: 16px 32px 16px 24px
+  &--ico-right
+    svg
+      display: inline-flex
+      margin-left: 12px
+
+.button--outside
+  padding: 4px
+  border: 1px solid $border-interactive
+  border-radius: $radius-full
+
+.button--nm.button--ico
+  padding: 12px
 
 .button--md:has(svg)
   padding: 10px 24px 10px 20px

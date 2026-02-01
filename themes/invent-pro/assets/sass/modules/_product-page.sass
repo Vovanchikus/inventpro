@@ -5,7 +5,7 @@
   flex-direction: column
   gap: 32px
   padding: 16px
-  background-color: $bg-box--light
+  background-color: $bg-box
   box-shadow: $box-light-shadow
   border-radius: $radius-lg
 
@@ -20,7 +20,7 @@
     gap: 12px
 
     &-arrow
-      color: $text-title
+      color: $text-primary
       transform: rotate(-90deg)
 
   &__button-box
@@ -29,7 +29,7 @@
     gap: 4px
     button
       display: inline-flex
-      color: $text-body
+      color: $text-muted
       padding: 8px
       border-radius: 18px
       transition: background-color $transition
@@ -62,14 +62,14 @@
     font-size: 18px
     font-weight: 500
     line-height: 1.45
-    color: $text-body
+    color: $text-primary
 
     &-title
       display: flex
       align-items: center
       font-size: 14px
       font-weight: 600
-      color: $text-title
+      color: $text-primary
       svg
         cursor: pointer
         margin-right: 8px
@@ -82,7 +82,7 @@
   &__history-title
     font-size: 18px
     font-weight: 600
-    color: $text-title
+    color: $text-primary
 
 .product-page__table
   border: 1px solid $neutral-300
@@ -103,13 +103,13 @@
     gap: 0px 24px
     font-size: 12px
     font-weight: 600
-    color: $text-title
+    color: $text-primary
     padding: 0px 32px
     &.table-row
       position: relative
       font-size: 14px
       font-weight: 500
-      color: $text-body
+      color: $text-muted
       border-top: 1px solid $neutral-300
       &::after
         content: ''

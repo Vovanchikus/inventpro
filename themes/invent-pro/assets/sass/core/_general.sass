@@ -10,7 +10,7 @@
 // @include font('Gilroy', normal, 600, '../fonts/Gilroy/Gilroy-Semibold.woff', 'woff') Пример подключения другого формата
 
 ::placeholder
-  color: $text-light
+  color: $text-secondary
 
 ::selection
   background-color: $bg-brand
@@ -33,7 +33,7 @@ body
   font-size: 14px
   line-height: 1rem
   background-color: $bg-body
-  color: $text-body
+  color: $text-muted
   min-width: 320px
   min-height: 100%
   overflow-x: hidden
@@ -42,19 +42,29 @@ a
   text-decoration: none
   transition: $transition
   &:hover
-    color: $text-brand
+    color: $text-muted
 
 .container
   position: relative
   display: grid
   grid-template-areas: "header header" "aside main" "footer footer"
-  grid-template-columns: 68px 1fr
-  grid-template-rows: 80px auto 64px
-  gap: 48px 32px
+  grid-template-columns: 2fr 10fr
+  grid-template-rows: 96px auto 64px
+  gap: 0 24px
   max-width: 1180px
   width: 100%
-  margin: 32px auto
+  margin: 0px auto
   padding: 0
+
+  &--extra-sm
+    display: flex
+    flex-direction: column
+    justify-content: center
+    align-items: center
+    gap: 48px
+    width: 400px
+    margin: 0 auto
+    padding: 24px
 
   &--sm
     display: flex
@@ -108,13 +118,12 @@ footer
 
 .dropdown
   padding: 4px
-  background-color: $bg-box--light
-  border: 1px solid $border
+  background-color: $grey-bg
   border-radius: $radius-nm
-  box-shadow: $box-light-shadow
+  backdrop-filter: blur(16px)
 
 .box--light
-  background-color: $bg-box--light
+  background-color: $bg-box
   box-shadow: $box-light-shadow
   border-radius: $radius-lg
 

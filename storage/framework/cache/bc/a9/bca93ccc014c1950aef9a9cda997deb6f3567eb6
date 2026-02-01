@@ -1,0 +1,25 @@
+1769638342a:1:{s:14:"login-page.htm";a:10:{s:8:"fileName";s:14:"login-page.htm";s:7:"content";s:513:"title = "Вхід"
+url = "/"
+layout = "empty"
+
+[session]
+security = "guest" ; ограничиваем для зарегистрированных пользователей страницу
+redirect = "warehouse"
+
+[account] ; подключаем формы входа, регистрации и тд. пользователей
+==
+
+<h2>Вхід до системи</h2>
+{% component 'account::signin' %}
+
+
+<h2>Реєстрація в системі</h2>
+{% component 'account::register' %}
+
+
+";s:5:"mtime";i:1769637740;s:6:"markup";s:162:"<h2>Вхід до системи</h2>
+{% component 'account::signin' %}
+
+
+<h2>Реєстрація в системі</h2>
+{% component 'account::register' %}";s:4:"code";N;s:5:"title";s:8:"Вхід";s:3:"url";s:1:"/";s:6:"layout";s:5:"empty";s:7:"session";a:2:{s:8:"security";s:5:"guest";s:8:"redirect";s:9:"warehouse";}s:7:"account";a:0:{}}}

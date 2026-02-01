@@ -1,4 +1,4 @@
-1769462123a:1:{s:27:"modals/modal_notes_list.htm";a:5:{s:8:"fileName";s:27:"modals/modal_notes_list.htm";s:7:"content";s:1154:"<div class="notes-list">
+1769718465a:1:{s:27:"modals/modal_notes_list.htm";a:5:{s:8:"fileName";s:27:"modals/modal_notes_list.htm";s:7:"content";s:1154:"<div class="notes-list">
     {% for n in notes %}
         <div class="note-card" data-id="{{ n.id }}">
             <h4>{{ n.title ?: 'Без названия' }}</h4>
@@ -23,7 +23,7 @@
         </div>
     {% endfor %}
 </div>
-";s:5:"mtime";i:1768693222;s:6:"markup";s:1152:"<div class="notes-list">
+";s:5:"mtime";i:1769631050;s:6:"markup";s:1152:"<div class="notes-list">
     {% for n in notes %}
         <div class="note-card" data-id="{{ n.id }}">
             <h4>{{ n.title ?: 'Без названия' }}</h4>

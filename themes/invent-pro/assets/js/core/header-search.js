@@ -8,8 +8,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // Берём все элементы внутри product-list
     const items = Array.from(
         productList.querySelectorAll(
-            ".warehouse__item, .operation-history__item"
-        )
+            ".warehouse__item, .operation-history__item",
+        ),
     );
 
     const filterItems = () => {
