@@ -1,0 +1,10 @@
+name: OperationTypes
+form: $/samvol/inventory/models/operationtype/fields.yaml
+modelClass: Samvol\Inventory\Models\OperationType
+defaultRedirect: samvol/inventory/operationtypes
+create:
+    redirect: 'samvol/inventory/operationtypes/update/:id'
+    redirectClose: samvol/inventory/operationtypes
+update:
+    redirect: samvol/inventory/operationtypes
+    redirectClose: samvol/inventory/operationtypes

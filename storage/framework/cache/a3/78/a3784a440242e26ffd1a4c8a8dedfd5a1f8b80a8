@@ -1,0 +1,42 @@
+1771239996a:1:{s:22:"modals/create_note.htm";a:5:{s:8:"fileName";s:22:"modals/create_note.htm";s:7:"content";s:918:"<form id="modalCreateNoteForm" class="create-note__form">
+
+    <div class="create-note__inputs">
+        <div class="create-note__title form-floating">
+            <input type="text" name="title" class="form-input" placeholder>
+            <label class="form-label">Назва нотатки</label>
+        </div>
+        <div class="create-note__description form-floating">
+            <textarea name="description" class="form-input" placeholder="Опис нотатки"></textarea>
+        </div>
+        <div class="create-note__due-date form-floating">
+            <input type="date" name="due_date" class="form-input" placeholder>
+            <label class="form-label">Дедлайн</label>
+        </div>
+    </div>
+
+    <div class="create-note__button">
+        <button type="submit" class="button button--brand button--nm button--ico-left">Створити</button>
+    </div>
+
+</form>
+";s:5:"mtime";i:1771196004;s:6:"markup";s:916:"<form id="modalCreateNoteForm" class="create-note__form">
+
+    <div class="create-note__inputs">
+        <div class="create-note__title form-floating">
+            <input type="text" name="title" class="form-input" placeholder>
+            <label class="form-label">Назва нотатки</label>
+        </div>
+        <div class="create-note__description form-floating">
+            <textarea name="description" class="form-input" placeholder="Опис нотатки"></textarea>
+        </div>
+        <div class="create-note__due-date form-floating">
+            <input type="date" name="due_date" class="form-input" placeholder>
+            <label class="form-label">Дедлайн</label>
+        </div>
+    </div>
+
+    <div class="create-note__button">
+        <button type="submit" class="button button--brand button--nm button--ico-left">Створити</button>
+    </div>
+
+</form>";s:4:"code";N;}}

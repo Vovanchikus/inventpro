@@ -1,0 +1,110 @@
+:root {
+    --blue-400: #7499d2;
+    --blue-500: #5b86ca;
+    --blue-600: #3b6ab5;
+
+    --red-400: #ed5a6e;
+    --red-500: #e93850;
+    --red-600: #e61935;
+
+    --green-400: #55bd47;
+    --green-500: #48a53b;
+    --green-600: #3d8b32;
+
+    --grey-bg: rgba(15, 15, 15, 0.48);
+
+    --neutral-100: #fdfdfd;
+    --neutral-200: #f1f1f1;
+    --neutral-300: #ebebeb;
+    --neutral-400: #e6e6e6;
+    --neutral-500: #838383;
+    --neutral-600: #727272;
+    --neutral-700: #fff; /* нет цвета пока что */
+    --neutral-800: #101010;
+    --neutral-900: #353566; /* нет цвета пока что */
+
+    --text-primary: var(--neutral-800);
+    --text-secondary: var(--neutral-500);
+    --text-muted: var(--neutral-600);
+    --text-inverse: var(--neutral-100);
+    --text-brand: var(--blue-500);
+    --text-success: var(--green-500);
+    --text-error: var(--red-500);
+
+    --bg-body: var(--neutral-200);
+    --bg-box: var(--neutral-100);
+    --bg-inbox: var(--neutral-200);
+    --bg-brand: var(--blue-500);
+    --bg-success: var(--green-500);
+    --bg-error: var(--red-500);
+    --border-block: var(--neutral-400);
+    --border-interactive: var(--neutral-300);
+
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-nm: 16px;
+    --radius-lg: 28px;
+    --radius-full: 99px;
+
+    --box-light-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.08);
+
+    --field-border-default: var(--border);
+    --field-border-hover: #d6d6d6;
+    --field-border-focus: var(--neutral-600);
+    --field-border-error: var(--red-500);
+    --field-placeholder: var(--text-muted);
+    --field-placeholder-focus: var(--neutral-600);
+
+    --button-brand-bg-default: linear-gradient(180deg, #323232, #222);
+    --button-brand-bg-hover: linear-gradient(180deg, #4a4a4a, #222);
+    --button-brand-bg-active: linear-gradient(180deg, #323232, #404040);
+    --button-brand-text: var(--text-inverse);
+    --button-brand-shadow-default:
+        0 0 0 1px #333, 0 2px 4px -1px rgba(13, 13, 13, 0.5),
+        inset 0 0.5px 1px 0 rgba(255, 255, 255, 0.15),
+        0 -1px 1.2px 0.35px #121212;
+    --button-brand-shadow-active:
+        0 0 0 1px #333, 0 2px 4px -1px rgba(13, 13, 13, 0.5),
+        inset 0 1px 2px 0 rgba(255, 255, 255, 0.15), 0 -1px 1.2px 0.35px #121212;
+
+    --button-success-bg-default: var(--bg-success);
+    --button-success-bg-hover: var(--green-400);
+    --button-success-bg-active: var(--green-600);
+    --button-success-text: var(--text-inverse);
+    --button-success-shadow-default:
+        0 4px 8px 0 hsl(113 47% 44% / 25%), 0 6px 20px 0 hsl(0 0% 0% / 15%);
+    --button-success-shadow-hover:
+        0 6px 12px 0 hsl(113 47% 44% / 30%), 0 10px 25px 0 hsl(0 0% 0% / 20%);
+
+    --button-error-bg-default: var(--bg-error);
+    --button-error-bg-hover: var(--red-400);
+    --button-error-bg-active: var(--red-600);
+    --button-error-text: var(--text-inverse);
+    --button-error-shadow-default:
+        0 4px 8px 0 hsl(352 80% 57% / 25%), 0 6px 20px 0 hsl(0 0% 0% / 15%);
+    --button-error-shadow-hover:
+        0 6px 12px 0 hsl(352 80% 57% / 30%), 0 10px 25px 0 hsl(0 0% 0% / 20%);
+
+    --button-second-bg-default: #e0e0e0;
+    --button-second-bg-hover: linear-gradient(180deg, #f2f2f2, #ccc);
+    --button-second-bg-active: linear-gradient(180deg, #d9d9d9, #f2f2f2);
+    --button-second-border: 1px solid #cbcbcb;
+    --button-second-text: var(--text-primary);
+    --button-second-shadow-default:
+        0 2px 4px 0 rgba(0, 0, 0, 0.08),
+        inset 0 -2px 4px 0 rgba(137, 137, 137, 0.08), inset 0 1.5px 6px 0 #fff,
+        0 0 0 1px #cbcbcb;
+
+    --label-brand-bg: hsl(217 51% 57% / 32%);
+    --label-brand-text: var(--blue-500);
+
+    --label-success-bg: hsl(113 47% 44% / 32%);
+    --label-success-text: var(--green-500);
+
+    --label-error-bg: hsl(352 80% 57% / 32%);
+    --label-error-text: var(--red-500);
+
+    --fontFamily: "Gilroy-Code", sans-serif;
+
+    --transition: 0.2s ease-out;
+}

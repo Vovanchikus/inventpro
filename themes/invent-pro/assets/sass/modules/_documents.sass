@@ -1,0 +1,172 @@
+@import '../core/vars'
+
+.documents-list
+  display: grid
+  grid-template-columns: repeat(3, minmax(310px, 1fr));
+  gap: 24px 16px
+
+.documents-item
+  position: relative
+  display: flex
+  flex-direction: column
+  gap: 24px
+  padding: 16px
+  background-color: $bg-box
+  box-shadow: $box-light-shadow
+  border-radius: $radius-nm
+
+  &.document__single
+    gap: 32px
+
+  .form-input
+    cursor: pointer
+
+  &__status
+    position: absolute
+    top: 4px
+    right: 4px
+    color: $text-error
+    &.document__single
+      top: -14px
+      left: 50%
+      transform: translateX(-50%)
+      width: max-content
+      padding: 6px 12px
+      color: $text-inverse
+      background-color: $bg-error
+      border-radius: 14px
+    span
+      position: absolute
+      top: calc( 100% - 54px )
+      right: 0
+      display: flex
+      justify-content: end
+      padding: 6px
+      color: $text-inverse
+      background-color: $bg-error
+      border-radius: $radius-sm
+      visibility: hidden
+      opacity: 0
+      pointer-events: none
+      cursor: help
+      transform: translateY(8px)
+      transition: opacity $transition, visibility $transition, transform $transition
+    &:hover
+      span
+        visibility: visible
+        opacity: 1
+        pointer-events: auto
+        transform: translateY(0)
+
+  &__top
+    display: flex
+    justify-content: space-between
+    align-items: center
+    &.document__single
+      width: 100%
+
+    &-left
+      display: flex
+      align-items: center
+      gap: 12px
+
+    &-info
+      display: flex
+      flex-direction: column
+      gap: 8px
+
+  &__date
+    display: flex
+    align-items: center
+    gap: 8px
+    font-size: 12px
+    font-weight: 600
+    line-height: 16px
+    color: $text-primary
+
+  &__counteragent
+    font-size: 14px
+    font-weight: 600
+    line-height: 14px
+
+  &__number
+    font-size: 18px
+    font-weight: 600
+    line-height: 18px
+    color: $text-primary
+
+  &__type--transfer
+    svg
+      transform: rotate(180deg)
+
+  &__middle
+    display: flex
+    flex-direction: column
+    gap: 16px
+    width: 100%
+
+  &__documents-info
+    display: flex
+    flex-direction: column
+    gap: 24px
+
+  &__documents-title, &__product-box-title
+    font-size: 16px
+    font-weight: 600
+    color: $text-primary
+    span
+      padding: 4px 12px
+      margin-left: 6px
+
+  &__doc-list
+    display: flex
+    flex-direction: column
+    gap: 12px
+
+  &__doc-item
+    display: flex
+    justify-content: space-between
+    align-items: center
+
+  &__doc-name
+    font-size: 14px
+    font-weight: 500
+    color: $text-primary
+
+  &__purpose
+    display: flex
+    flex-direction: column
+    gap: 4px
+    font-size: 12px
+    font-weight: 600
+    padding: 12px
+    border-radius: $radius-md
+    background-color: $bg-body
+    color: $text-secondary
+    p
+      font-weight: normal
+      color: $text-primary
+      line-height: 1.35
+
+  &__bottom
+    display: flex
+    justify-content: space-between
+    align-items: center
+    a
+      color: $text-inverse
+
+  &__count
+    font-size: 16px
+    font-weight: 600
+    color: $text-primary
+
+  &__product-box
+    display: flex
+    flex-direction: column
+    gap: 24px
+
+
+
+
+
+

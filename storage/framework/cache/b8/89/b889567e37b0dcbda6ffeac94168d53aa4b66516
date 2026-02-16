@@ -1,0 +1,128 @@
+1771246983a:1:{s:12:"add-note.htm";a:8:{s:8:"fileName";s:12:"add-note.htm";s:7:"content";s:2577:"title = "Добавить заметку"
+url = "/add-note"
+
+[createNote]
+==
+
+<section class="page-section page-section--centered">
+  <div class="container">
+    <h1>Создать заметку</h1>
+
+    <form id="createNoteForm" data-request="onCreateNote" data-request-success="handleNoteCreated">
+      <div class="form-row">
+        <label>Заголовок</label>
+        <input type="text" name="title" />
+      </div>
+      <div class="form-row">
+        <label>Описание</label>
+        <textarea name="description"></textarea>
+      </div>
+      <div class="form-row">
+        <label>Срок</label>
+        <input type="date" name="due_date" />
+      </div>
+      <div class="form-row">
+        <button type="submit" class="btn">Создать заметку</button>
+      </div>
+    </form>
+  </div>
+</section>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function(){
+    // Если есть товары в localStorage под ключом createNote — добавим их в форму при submit
+    const params = new URLSearchParams(window.location.search);
+    const noteId = params.get('note_id');
+
+    // Если пришли через addToNote (redirect) — товары хранятся в addToNote
+    const addToNoteProducts = localStorage.getItem('addToNote');
+    if (noteId && addToNoteProducts) {
+      // отправим автоматически на добавление
+      const products = addToNoteProducts;
+      // вызов AJAX обработчика компонента
+      $.request('onCreateNote', { data: { note_id: noteId, products: products }, success(res){
+        localStorage.removeItem('addToNote');
+        if (res.note_id) window.location.href = '/notes/' + res.note_id;
+      }});
+    }
+
+    // Если на странице есть ключ createNote (создание заметки с товарами) — при сабмите включим товары
+    const form = document.getElementById('createNoteForm');
+    form.addEventListener('submit', function(){
+      const stored = localStorage.getItem('createNote');
+      if (stored) {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'products';
+        input.value = stored;
+        form.appendChild(input);
+      }
+    });
+  });
+
+  function handleNoteCreated(res) {
+    localStorage.removeItem('createNote');
+    if (res.note_id) window.location.href = '/notes/' + res.note_id;
+  }
+</script>
+";s:5:"mtime";i:1769631050;s:6:"markup";s:2491:"<section class="page-section page-section--centered">
+  <div class="container">
+    <h1>Создать заметку</h1>
+
+    <form id="createNoteForm" data-request="onCreateNote" data-request-success="handleNoteCreated">
+      <div class="form-row">
+        <label>Заголовок</label>
+        <input type="text" name="title" />
+      </div>
+      <div class="form-row">
+        <label>Описание</label>
+        <textarea name="description"></textarea>
+      </div>
+      <div class="form-row">
+        <label>Срок</label>
+        <input type="date" name="due_date" />
+      </div>
+      <div class="form-row">
+        <button type="submit" class="btn">Создать заметку</button>
+      </div>
+    </form>
+  </div>
+</section>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function(){
+    // Если есть товары в localStorage под ключом createNote — добавим их в форму при submit
+    const params = new URLSearchParams(window.location.search);
+    const noteId = params.get('note_id');
+
+    // Если пришли через addToNote (redirect) — товары хранятся в addToNote
+    const addToNoteProducts = localStorage.getItem('addToNote');
+    if (noteId && addToNoteProducts) {
+      // отправим автоматически на добавление
+      const products = addToNoteProducts;
+      // вызов AJAX обработчика компонента
+      $.request('onCreateNote', { data: { note_id: noteId, products: products }, success(res){
+        localStorage.removeItem('addToNote');
+        if (res.note_id) window.location.href = '/notes/' + res.note_id;
+      }});
+    }
+
+    // Если на странице есть ключ createNote (создание заметки с товарами) — при сабмите включим товары
+    const form = document.getElementById('createNoteForm');
+    form.addEventListener('submit', function(){
+      const stored = localStorage.getItem('createNote');
+      if (stored) {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'products';
+        input.value = stored;
+        form.appendChild(input);
+      }
+    });
+  });
+
+  function handleNoteCreated(res) {
+    localStorage.removeItem('createNote');
+    if (res.note_id) window.location.href = '/notes/' + res.note_id;
+  }
+</script>";s:4:"code";N;s:5:"title";s:31:"Добавить заметку";s:3:"url";s:9:"/add-note";s:10:"createNote";a:0:{}}}

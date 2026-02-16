@@ -1,0 +1,24 @@
+<!-- prettier-ignore -->
+<?php if ($this->formGetModel()->exists): ?>
+<button
+    class="btn btn-primary"
+    data-control="popup"
+    data-handler="onLoadAddProductWithQuantity"
+    data-request-data="_operation_id: '<?= $this->formGetModel()->id ?>'"
+>
+    Добавить товар
+</button>
+
+<button
+    class="btn btn-secondary"
+    data-control="popup"
+    data-handler="onLoadSelectExistingProduct"
+    data-request-data="_operation_id: '<?= $this->formGetModel()->id ?>'"
+>
+    Выбрать товар
+</button>
+<?php else: ?>
+<button class="btn btn-secondary" disabled title="Сначала сохраните операцию">
+    Добавить товар
+</button>
+<?php endif; ?>

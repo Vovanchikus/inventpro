@@ -1,0 +1,19 @@
+title = "Нотатка"
+url = "/notes/:id"
+layout = "default"
+
+[notesList]
+noteId = "{{ :id }}"
+==
+
+<section class="notes-page">
+    <div class="notes-page__header">
+        <h1 class="notes-page__title">Нотатка</h1>
+    </div>
+
+    {% if note %}
+        {% partial 'notes/item-single' note=note %}
+    {% else %}
+        <div class="notes-empty">Нотатку не знайдено.</div>
+    {% endif %}
+</section>

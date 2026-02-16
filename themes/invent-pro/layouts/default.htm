@@ -1,0 +1,112 @@
+description = "Основной макет Winter CMS"
+
+[session]
+security = "user" ; ограничиваем для незарегистрированных пользователей страницу
+redirect = "login"
+[importExcel]
+[types]
+[notesList]
+[createNote]
+==
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <title>{{ this.page.title }}</title>
+    <meta name="description" content="{{ this.page.meta_description }}">
+    <meta name="title" content="{{ this.page.meta_title }}">
+    <meta name="author" content="Winter CMS">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Winter CMS">
+    {# <link rel="icon" type="image/png" href="{{ 'assets/img/winter.png'|theme }}"> #}
+
+    <!-- Стили -->
+
+    <link rel="stylesheet" href="{{ 'assets/css/lightgallery-bundle.min.css'|theme }}?v={{ random(100000,999999) }}">
+    <link rel="stylesheet" href="{{ 'assets/css/OverlayScrollbars.min.css'|theme }}?v={{ random(100000,999999) }}">
+    <link rel="stylesheet" href="{{ 'assets/css/swiper-bundle.min.css'|theme }}?v={{ random(100000,999999) }}">
+    <link rel="stylesheet" href="{{ 'assets/css/normalize.css'|theme }}?v={{ random(100000,999999) }}">
+    <link rel="stylesheet" href="{{ 'assets/css/variables.css'|theme }}?v={{ random(100000,999999) }}">
+    <link rel="stylesheet" href="{{ 'assets/css/style.css'|theme }}?v={{ random(100000,999999) }}">
+    <link rel="stylesheet" href="{{ 'assets/css/media.css'|theme }}?v={{ random(100000,999999) }}">
+
+    {% styles %}
+</head>
+<body>
+    <div class="container">
+
+        {% partial 'global/header' %}
+
+        {% partial 'global/sidebar' %}
+
+        <main>
+            {% page %}
+        </main>
+
+        {% partial 'global/bottom-bar' %}
+
+
+        {% partial 'modals/modal' %}
+        <!-- Winter framework + Snowboard -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+        {% framework extras %}
+        {% snowboard all %}
+
+        <!-- Мои скрипты -->
+        <script src="{{ 'assets/js/core/button-progress.js'|theme }}?v={{ random(100000,999999) }}"></script>
+        <script src="{{ 'assets/js/core/modal.js'|theme }}?v={{ random(100000,999999) }}"></script>
+        <script src="{{ 'assets/js/core/toast.js'|theme }}?v={{ random(100000,999999) }}"></script>
+        <script src="{{ 'assets/js/core/handlers.js'|theme }}?v={{ random(100000,999999) }}"></script>
+        <script src="{{ 'assets/js/core/header-search.js'|theme }}?v={{ random(100000,999999) }}"></script>
+        <script src="{{ 'assets/js/core/import-excel.js'|theme }}?v={{ random(100000,999999) }}"></script>
+        <script src="{{ 'assets/js/pages/notes-modal.js'|theme }}?v={{ random(100000,999999) }}"></script>
+        <script src="{{ 'assets/js/OverlayScrollbars.min.js'|theme }}?v={{ random(100000,999999) }}"></script>
+        <script src="{{ 'assets/js/core/scripts.js'|theme }}?v={{ random(100000,999999) }}"></script>
+
+
+        {% if this.page.url == '/' %}
+            <script src="{{ 'assets/js/pages/home.js'|theme }}?v={{ random(100000,999999) }}"></script>
+        {% endif %}
+
+        {% if this.page.url == '/add-operation' or this.page.url == '/edit-operation' %}
+            <script src="{{ 'assets/js/pages/operation-form.js'|theme }}?v={{ random(100000,999999) }}"></script>
+        {% endif %}
+
+        {% if this.page.url == '/operation-history' or this.page.url == '/documents' %}
+            <script src="{{ 'assets/js/pages/operation-history.js'|theme }}?v={{ random(100000,999999) }}"></script>
+        {% endif %}
+
+        {% if this.page.url == '/notes' or this.page.url == '/notes/:id' %}
+            <script src="{{ 'assets/js/pages/notes-tabs.js'|theme }}?v={{ random(100000,999999) }}"></script>
+        {% endif %}
+
+        {% if this.page.url == '/notes' %}
+            <script src="{{ 'assets/js/pages/notes-filter.js'|theme }}?v={{ random(100000,999999) }}"></script>
+        {% endif %}
+
+        {% if this.page.url == '/warehouse' or this.page.url == '/documents/:slug' or this.page.url == '/warehouse/:slug' %}
+            <script src="{{ 'assets/js/pages/copy-click.js'|theme }}?v={{ random(100000,999999) }}"></script>
+        {% endif %}
+
+        {% if this.page.id != 'product-page' %}
+            <script src="{{ 'assets/js/pages/table.js'|theme }}?v={{ random(100000,999999) }}"></script>
+        {% endif %}
+
+        {% if this.page.id == 'product-page' %}
+            <script src="{{ 'assets/js/pages/product-page.js'|theme }}?v={{ random(100000,999999) }}"></script>
+            <script src="{{ 'assets/js/swiper-bundle.min.js'|theme }}?v={{ random(100000,999999) }}"></script>
+            <script src="{{ 'assets/js/lightgallery.min.js'|theme }}?v={{ random(100000,999999) }}"></script>
+            <script src="{{ 'assets/js/lg-zoom.min.js'|theme }}?v={{ random(100000,999999) }}"></script>
+        {% endif %}
+
+        {% if this.page.url == '/warehouse' or this.page.url == '/operation-history' %}
+            <script src="{{ 'assets/js/pages/sidebar.js'|theme }}?v={{ random(100000,999999) }}"></script>
+            <script src="{{ 'assets/js/pages/bottom-bar.js'|theme }}?v={{ random(100000,999999) }}"></script>
+        {% endif %}
+
+        {% scripts %}
+
+    </div>
+</body>
+</html>

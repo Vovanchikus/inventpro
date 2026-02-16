@@ -1,0 +1,127 @@
+@import '../core/vars'
+
+.operation-history
+
+  &__filters
+    display: flex
+    justify-content: start
+    align-items: center
+    gap: 8px
+
+    &-title
+      font-size: 16px
+      font-weight: 500
+      line-height: 16px
+      color: $text-secondary
+      margin-right: 16px
+
+    &-select
+      &--type
+        min-width: 159px
+      &--counteragent
+        min-width: 162px
+      &--year
+        min-width: 95px
+
+    &-option
+      padding: 12px 16px
+
+
+.table
+  background-color: $bg-box
+  border-radius: 20px
+
+.operation-history__item.table-title
+  position: sticky
+  height: 74px
+  top: 0
+  left: 0
+  z-index: 10
+
+.operation-history
+
+  &-table
+
+  &__item
+    display: grid
+    grid-template-areas: "check type left price quantity date counteragent"
+    grid-template-columns: 18px 44px 3fr 2fr 2fr 2fr 2fr
+    grid-template-rows: 74px auto
+    align-items: center
+    gap: 0px 24px
+    font-size: 12px
+    font-weight: 600
+    color: $text-muted
+    padding: 0px 32px
+    &.table-item
+      position: relative
+      font-size: 13px
+      font-weight: normal
+      color: $text-muted
+      border-bottom: 1px solid $border-block
+      &::after
+        content: ''
+        position: absolute
+        left: 12px
+        top: calc( 50% - 16px )
+        opacity: 0
+        width: 4px
+        height: 32px
+        background-color: $neutral-800
+        border-radius: 4px
+        transition: opacity $transition
+      &:hover
+        &::after
+          opacity: 1
+
+  &__check
+    grid-area: check
+
+  &__type
+    grid-area: type
+    justify-self: center
+
+  &__left
+    grid-area: left
+    display: inline-block
+
+  &__name
+    position: relative
+    display: -webkit-box
+    -webkit-line-clamp: 1
+    -webkit-box-orient: vertical
+    overflow: hidden
+    text-overflow: ellipsis
+    color: $text-primary
+    transition: all $transition
+
+  &__number
+    position: relative
+    display: inline-block
+    font-size: 12px
+    font-weight: 500
+    line-height: 12px
+    margin-top: 4px
+    padding: 6px 8px
+    color: $text-muted
+    background-color: $neutral-200
+    border-radius: 6px
+    cursor: pointer
+
+  &__price
+    position: relative
+    grid-area: price
+    justify-self: center
+
+  &__quantity
+    grid-area: quantity
+    justify-self: center
+
+  &__date
+    grid-area: date
+    justify-self: center
+
+  &__counteragent
+    grid-area: counteragent
+    justify-self: end
+

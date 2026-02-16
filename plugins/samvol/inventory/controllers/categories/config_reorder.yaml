@@ -1,0 +1,3 @@
+title: Перетаскивание категорий
+modelClass: Samvol\Inventory\Models\Category
+nameFrom: name

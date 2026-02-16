@@ -1,0 +1,132 @@
+@import '../core/vars'
+
+.form-floating
+  position: relative
+
+  .form-input
+    width: 100%
+    padding: 16px 24px
+    font-size: 14px
+    line-height: 16px
+    border: 1px solid $border-interactive
+    border-radius: $radius-nm
+    background: transparent
+    color: $text-primary
+    transition: all $transition
+    &:hover
+      border-color: $field-border-hover
+    &:focus
+      border-color: $field-border-focus
+
+    &:focus + .form-label,
+    &:not(:placeholder-shown) + .form-label
+      top: 0px
+      left: 12px
+      font-size: 12px
+      font-weight: 500
+      padding: 0 4px
+      background-color: #fff
+      color: $text-secondary
+
+  .form-label
+    position: absolute
+    top: 50%
+    left: 24px
+    transform: translateY(-50%)
+    pointer-events: none
+    font-size: 14px
+    color: $field-placeholder
+    transition: all $transition
+
+.error-field
+  border: 1px solid $field-border-error!important
+
+.field-message
+  position: absolute
+  left: 6px
+  bottom: -16px
+  font-size: 12px
+  font-weight: 500
+  &--error
+    color: $text-error
+  &--info
+    color: $text-primary
+
+input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:active, input:-webkit-autofill:focus
+  -webkit-box-shadow: 0 0 0px 1000px white inset !important
+  -webkit-text-fill-color: $text-primary!important
+
+input::placeholder
+  color: $field-placeholder
+
+
+.checkbox
+  position: relative
+  display: inline-flex
+  align-items: center
+  cursor: pointer
+
+  input
+    -webkit-appearance: none
+    appearance: none
+
+    width: 18px
+    height: 18px
+    border: 1px solid $field-border-hover
+    border-radius: 4px
+    background: transparent
+    cursor: pointer
+    position: relative
+    transition: border-color .2s, background-color .2s
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.16)
+
+    &:hover
+      border-color: $bg-brand
+
+    /* Короткая линия галочки */
+    &::before
+      content: ""
+      position: absolute
+      width: 0
+      height: 2px
+      background: white
+      top: 7px
+      left: 3px
+      transform-origin: left center
+      transform: rotate(45deg)
+      border-radius: 2px
+      transition: width .15s ease-out
+      opacity: 0
+
+    /* Длинная линия галочки */
+    &::after
+      content: ""
+      position: absolute
+      width: 0
+      height: 2px
+      background: white
+      top: 10px
+      left: 6px
+      transform-origin: left center
+      transform: rotate(-45deg)
+      border-radius: 2px
+      transition: width .15s ease-out .15s
+      opacity: 0
+
+    /* checked animation */
+    &:checked
+      background: $bg-brand
+      border-color: $bg-brand
+
+      &::before
+        opacity: 1
+        width: 5px  // первая линия (короткая)
+
+      &::after
+        opacity: 1
+        width: 9px  // вторая линия (длинная)
+
+
+
+
+

@@ -1,0 +1,28 @@
+fields:
+    doc_name:
+        label: "Имя документа"
+        span: auto
+        type: text
+    doc_num:
+        label: "Номер документа"
+        span: auto
+        type: text
+    doc_purpose:
+        label: "Мета"
+        span: auto
+        type: text
+    doc_date:
+        label: "Дата документа"
+        mode: datetime
+        span: auto
+        type: datepicker
+    doc_file:
+        label: "Загрузка файлов"
+        mode: file
+        fileTypes: pdf
+        useCaption: true
+        thumbOptions:
+            mode: crop
+            extension: auto
+        span: auto
+        type: fileupload

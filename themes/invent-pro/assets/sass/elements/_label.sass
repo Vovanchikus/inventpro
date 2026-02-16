@@ -1,0 +1,95 @@
+@import '../core/vars'
+
+
+.label
+  &--extra-sm
+    display: inline-flex
+    align-items: center
+    font-size: 14px
+    line-height: 14px
+    font-weight: 600
+    padding: 6px 8px
+    border-radius: $radius-full
+    &.note-op__status
+      display: flex
+      align-items: center
+      font-size: 12px
+      font-weight: 500
+      padding: 4px
+      border-radius: 4px
+      svg
+        margin-right: 6px
+
+  &--sm
+    display: inline-flex
+    font-size: 12px
+    line-height: 12px
+    font-weight: 500
+    padding: 8px 24px
+    border-radius: 14px
+
+  &--nm
+    display: inline-flex
+    font-size: 14px
+    line-height: 14px
+    font-weight: 500
+    padding: 12px 24px
+    border-radius: 24px
+
+
+  &--success
+    color: $label-success-text
+    background-color: $label-success-bg
+
+  &--error
+    color: $label-error-text
+    background-color: $label-error-bg
+
+  &--info
+    color: $label-brand-text
+    background-color: $label-brand-bg
+
+  &--secondary
+    color: $text-primary
+    background-color: #e0e0e0
+    border: 1px solid #dbdbdb
+    box-shadow: $button-second-shadow-default
+
+  &--outline
+    color: $text-secondary
+    background-color: $neutral-200
+    border: 1px solid $border-block
+
+  &--category
+    color: $text-muted
+    border: 1px solid $border-interactive
+
+  &--type-operation
+    display: inline-flex
+    border-radius: $radius-full
+    color: $text-inverse
+
+  &--incoming
+    background: linear-gradient(180deg, #48A53B, #3E8F33)
+    box-shadow: 0 2px 4px 0 rgba(72, 165, 59, 0.24), inset 0 -2px 4px 0 rgba(137, 137, 137, 0.08), inset 0 1.5px 6px 0 rgba(255, 255, 255, 0.64)
+
+  &--write-off
+    background: linear-gradient(180deg, #E93850, #E61935)
+    box-shadow: 0 2px 4px 0 rgba(233, 56, 80, 0.24), inset 0 -2px 4px 0 rgba(137, 137, 137, 0.08), inset 0 1.5px 6px 0 rgba(255, 255, 255, 0.64)
+
+  &--outgoing
+    background: linear-gradient(180deg, #5B86CA, #4274C2)
+    box-shadow: 0 2px 4px 0 rgba(91, 134, 202, 0.24), inset 0 -2px 4px 0 rgba(137, 137, 137, 0.08), inset 0 1.5px 6px 0 rgba(255, 255, 255, 0.64)
+    svg
+      transform: rotate(180deg)
+
+  &--import
+    color: $text-secondary
+    background-color: #e0e0e0
+    border: 1px solid #d9d9d9
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.08), inset 0 -2px 4px 0 rgba(137, 137, 137, 0.08), inset 0 1.5px 6px 0 #fff
+
+  &--type-operation__svg
+    display: flex
+    padding: 12px
+    border-radius: 24px

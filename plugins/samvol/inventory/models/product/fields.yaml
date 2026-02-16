@@ -1,0 +1,29 @@
+fields:
+    category:
+        label: "Выбрать категорию"
+        nameFrom: name
+        type: relation
+        span: auto
+    name:
+        label: "Наименование товара"
+        span: auto
+        type: text
+    inv_number:
+        label: "Инвентарный/Номенклатурный номер"
+        span: auto
+        type: text
+    unit:
+        label: Ед.измерения
+        span: auto
+        type: text
+    slug:
+        label: URL
+        type: text
+        preset: inv_number
+    images:
+        label: "Изображения товара"
+        type: fileupload
+        mode: image
+        imageWidth: 200
+        imageHeight: 200
+        span: full

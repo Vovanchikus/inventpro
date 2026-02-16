@@ -1,0 +1,50 @@
+plugin:
+    name: "samvol.inventory::lang.plugin.name"
+    description: "samvol.inventory::lang.plugin.description"
+    author: Samvol
+navigation:
+    inventory:
+        label: Инвентаризация
+        url: samvol/inventory/products
+        icon: icon-life-ring
+        sideMenu:
+            products:
+                label: Склад
+                url: samvol/inventory/products
+                icon: icon-sitemap
+            operations:
+                label: Операции
+                url: samvol/inventory/operations
+                icon: icon-sitemap
+            operation_types:
+                label: "Типы операций"
+                url: samvol/inventory/operationtypes
+                icon: icon-sitemap
+            operation_products:
+                label: "История операций"
+                url: samvol/inventory/operationproducts
+                icon: icon-sitemap
+            documents:
+                label: Документы
+                url: samvol/inventory/documents
+                icon: icon-sitemap
+            notes:
+                label: Заметки
+                url: samvol/inventory/notes
+                icon: icon-sticky-note
+            stock_snaphots:
+                label: Снимки
+                url: samvol/inventory/stocksnapshots
+                icon: icon-sitemap
+            categories:
+                label: Категории
+                url: samvol/inventory/categories
+                icon: icon-sitemap
+            drugdropcategory:
+                label: "Настройка категорий"
+                url: samvol/inventory/categories/reorder
+                icon: icon-sitemap
+            workflownotes:
+                label: Заметки
+                url: samvol/inventory/workflownotes
+                icon: icon-sitemap

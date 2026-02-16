@@ -1,0 +1,230 @@
+1771193205a:1:{s:14:"notes/item.htm";a:5:{s:8:"fileName";s:14:"notes/item.htm";s:7:"content";s:9389:"<article class="note-card" id="note-card-{{ note.id }}" data-status-key="{{ note.filter_status_key }}" data-created-at="{{ note.created_at_ts }}">
+    <div class="note-card__top">
+        <div class="note-card__header">
+            {% if note.status_label == 'В розробці' %}
+                <div class="note-status {{ note.status_class }}">
+                    <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="7.5" cy="7.5" r="7" stroke="currentColor" stroke-dasharray="3 2"/>
+                    </svg>
+                    {{ note.status_label }}
+                </div>{# note-status #}
+            {% elseif note.status_label == 'Документи готові' %}
+                <div class="note-status {{ note.status_class }}">
+                    <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="7.5" cy="7.5" r="7" stroke="currentColor" stroke-dasharray="3 2"/>
+                        <mask id="path-2-inside-1_106_1232" fill="white">
+                        <path d="M7.49998 2.83342C8.73766 2.83342 9.92464 3.32508 10.7998 4.20025C11.675 5.07542 12.1666 6.2624 12.1666 7.50008C12.1666 8.73776 11.675 9.92474 10.7998 10.7999C9.92464 11.6751 8.73766 12.1667 7.49998 12.1667L7.49998 7.50008V2.83342Z"/>
+                        </mask>
+                        <path d="M7.49998 2.83342C8.73766 2.83342 9.92464 3.32508 10.7998 4.20025C11.675 5.07542 12.1666 6.2624 12.1666 7.50008C12.1666 8.73776 11.675 9.92474 10.7998 10.7999C9.92464 11.6751 8.73766 12.1667 7.49998 12.1667L7.49998 7.50008V2.83342Z" fill="currentColor" stroke="currentColor" stroke-width="2" mask="url(#path-2-inside-1_106_1232)"/>
+                    </svg>
+                    {{ note.status_label }}
+                </div>{# note-status #}
+            {% elseif note.status_label == 'В бухгалтерії' %}
+                <div class="note-status {{ note.status_class }}">
+                    <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="7.5" cy="7.5" r="7" stroke="currentColor" stroke-dasharray="3 2"/>
+                        <path d="M7.49998 2.83342C8.42296 2.83342 9.32521 3.10711 10.0926 3.61989C10.8601 4.13267 11.4582 4.8615 11.8114 5.71423C12.1646 6.56695 12.257 7.50526 12.077 8.4105C11.8969 9.31575 11.4525 10.1473 10.7998 10.7999C10.1472 11.4526 9.31565 11.897 8.4104 12.0771C7.50516 12.2571 6.56685 12.1647 5.71412 11.8115C4.8614 11.4583 4.13257 10.8602 3.61979 10.0927C3.10701 9.32531 2.83331 8.42306 2.83331 7.50008H7.49998V2.83342Z" fill="currentColor"/>
+                    </svg>
+                    {{ note.status_label }}
+                </div>{# note-status #}
+            {% elseif note.status_label == 'Виконано' %}
+                <div class="note-status {{ note.status_class }}">
+                    <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="7.5" cy="7.5" r="7" stroke="currentColor" stroke-dasharray="3 2"/>
+                        <circle cx="7.50001" cy="7.50008" r="4.66667" transform="rotate(-90 7.50001 7.50008)" fill="currentColor"/>
+                    </svg>
+                    {{ note.status_label }}
+                </div>{# note-status #}
+                {% else %}
+                    <div class="note-status {{ note.status_class }}">{{ note.status_label }}</div>{# note-status #}
+            {% endif %}
+            <h3 class="note-card__title">{{ note.title }}</h3>
+            <p class="note-card__description">{{ note.description }}</p>
+        </div>{# note-card__header #}
+        <div class="note-card__body">
+            {% if note.show_products %}
+                <div class="note-section">
+                    <div class="note-section__title">{{ note.products_title }}</div>
+                    <ul class="note-products">
+                            {% for product in note.products %}
+                                <li class="note-products__item">{{ product.name ?: product.inv_number }}</li>
+                            {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+            {% if note.show_operations %}
+                <div class="note-section">
+                    <div class="note-section__title">{{ note.operations_title }}</div>
+                    <div class="note-operations">
+                        {% for op in note.operations %}
+                            <div class="note-op">
+                                {% if op.can_toggle_accounting %}
+                                    <button
+                                        type="button"
+                                        class="note-op__toggle"
+                                        data-request="onToggleAccountingStatus"
+                                        data-request-data="operation_id: {{ op.id }}, note_id: {{ note.id }}"
+                                        data-request-flash
+                                        data-request-lock>
+                                        {{ op.toggle_label }}
+                                    </button>
+                                {% endif %}
+                                <div class="note-op__title">{{ op.title }}</div>
+                                {% if op.status_label == 'Документи готові' %}
+                                    <div class="note-op__status label label--extra-sm label--success">
+                                        <svg width="14" height="14" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <circle cx="7.5" cy="7.5" r="7" stroke="currentColor" stroke-dasharray="3 2"/>
+                                            <mask id="path-2-inside-1_106_1232" fill="white">
+                                            <path d="M7.49998 2.83342C8.73766 2.83342 9.92464 3.32508 10.7998 4.20025C11.675 5.07542 12.1666 6.2624 12.1666 7.50008C12.1666 8.73776 11.675 9.92474 10.7998 10.7999C9.92464 11.6751 8.73766 12.1667 7.49998 12.1667L7.49998 7.50008V2.83342Z"/>
+                                            </mask>
+                                            <path d="M7.49998 2.83342C8.73766 2.83342 9.92464 3.32508 10.7998 4.20025C11.675 5.07542 12.1666 6.2624 12.1666 7.50008C12.1666 8.73776 11.675 9.92474 10.7998 10.7999C9.92464 11.6751 8.73766 12.1667 7.49998 12.1667L7.49998 7.50008V2.83342Z" fill="currentColor" stroke="currentColor" stroke-width="2" mask="url(#path-2-inside-1_106_1232)"/>
+                                        </svg>
+                                        {{ op.status_label }}
+                                    </div>
+                                {% elseif op.status_label == 'В бухгалтерії' %}
+                                    <div class="note-op__status label label--extra-sm label--error">
+                                        <svg width="14" height="14" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <circle cx="7.5" cy="7.5" r="7" stroke="currentColor" stroke-dasharray="3 2"/>
+                                            <path d="M7.49998 2.83342C8.42296 2.83342 9.32521 3.10711 10.0926 3.61989C10.8601 4.13267 11.4582 4.8615 11.8114 5.71423C12.1646 6.56695 12.257 7.50526 12.077 8.4105C11.8969 9.31575 11.4525 10.1473 10.7998 10.7999C10.1472 11.4526 9.31565 11.897 8.4104 12.0771C7.50516 12.2571 6.56685 12.1647 5.71412 11.8115C4.8614 11.4583 4.13257 10.8602 3.61979 10.0927C3.10701 9.32531 2.83331 8.42306 2.83331 7.50008H7.49998V2.83342Z" fill="currentColor"/>
+                                        </svg>
+                                        {{ op.status_label }}
+                                    </div>
+                                {% elseif op.status_label == 'Виконано' %}
+                                    <div class="note-op__status label label--extra-sm label--info">
+                                        <svg width="14" height="14" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <circle cx="7.5" cy="7.5" r="7" stroke="currentColor" stroke-dasharray="3 2"/>
+                                            <circle cx="7.50001" cy="7.50008" r="4.66667" transform="rotate(-90 7.50001 7.50008)" fill="currentColor"/>
+                                        </svg>
+                                        {{ op.status_label }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+        </div>{# note-card__body #}
+    </div>
+    <div class="note-card__actions">
+        {% if note.is_single %}
+            <a href="{{ note.create_operation_url }}" class="button button--nm button--brand">{{ note.create_operation_label }}</a>
+        {% else %}
+            <a href="{{ note.action_url }}" class="button button--nm button--brand">{{ note.action_label }}</a>
+        {% endif %}
+    </div>
+</article>
+";s:5:"mtime";i:1770244300;s:6:"markup";s:9387:"<article class="note-card" id="note-card-{{ note.id }}" data-status-key="{{ note.filter_status_key }}" data-created-at="{{ note.created_at_ts }}">
+    <div class="note-card__top">
+        <div class="note-card__header">
+            {% if note.status_label == 'В розробці' %}
+                <div class="note-status {{ note.status_class }}">
+                    <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="7.5" cy="7.5" r="7" stroke="currentColor" stroke-dasharray="3 2"/>
+                    </svg>
+                    {{ note.status_label }}
+                </div>{# note-status #}
+            {% elseif note.status_label == 'Документи готові' %}
+                <div class="note-status {{ note.status_class }}">
+                    <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="7.5" cy="7.5" r="7" stroke="currentColor" stroke-dasharray="3 2"/>
+                        <mask id="path-2-inside-1_106_1232" fill="white">
+                        <path d="M7.49998 2.83342C8.73766 2.83342 9.92464 3.32508 10.7998 4.20025C11.675 5.07542 12.1666 6.2624 12.1666 7.50008C12.1666 8.73776 11.675 9.92474 10.7998 10.7999C9.92464 11.6751 8.73766 12.1667 7.49998 12.1667L7.49998 7.50008V2.83342Z"/>
+                        </mask>
+                        <path d="M7.49998 2.83342C8.73766 2.83342 9.92464 3.32508 10.7998 4.20025C11.675 5.07542 12.1666 6.2624 12.1666 7.50008C12.1666 8.73776 11.675 9.92474 10.7998 10.7999C9.92464 11.6751 8.73766 12.1667 7.49998 12.1667L7.49998 7.50008V2.83342Z" fill="currentColor" stroke="currentColor" stroke-width="2" mask="url(#path-2-inside-1_106_1232)"/>
+                    </svg>
+                    {{ note.status_label }}
+                </div>{# note-status #}
+            {% elseif note.status_label == 'В бухгалтерії' %}
+                <div class="note-status {{ note.status_class }}">
+                    <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="7.5" cy="7.5" r="7" stroke="currentColor" stroke-dasharray="3 2"/>
+                        <path d="M7.49998 2.83342C8.42296 2.83342 9.32521 3.10711 10.0926 3.61989C10.8601 4.13267 11.4582 4.8615 11.8114 5.71423C12.1646 6.56695 12.257 7.50526 12.077 8.4105C11.8969 9.31575 11.4525 10.1473 10.7998 10.7999C10.1472 11.4526 9.31565 11.897 8.4104 12.0771C7.50516 12.2571 6.56685 12.1647 5.71412 11.8115C4.8614 11.4583 4.13257 10.8602 3.61979 10.0927C3.10701 9.32531 2.83331 8.42306 2.83331 7.50008H7.49998V2.83342Z" fill="currentColor"/>
+                    </svg>
+                    {{ note.status_label }}
+                </div>{# note-status #}
+            {% elseif note.status_label == 'Виконано' %}
+                <div class="note-status {{ note.status_class }}">
+                    <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="7.5" cy="7.5" r="7" stroke="currentColor" stroke-dasharray="3 2"/>
+                        <circle cx="7.50001" cy="7.50008" r="4.66667" transform="rotate(-90 7.50001 7.50008)" fill="currentColor"/>
+                    </svg>
+                    {{ note.status_label }}
+                </div>{# note-status #}
+                {% else %}
+                    <div class="note-status {{ note.status_class }}">{{ note.status_label }}</div>{# note-status #}
+            {% endif %}
+            <h3 class="note-card__title">{{ note.title }}</h3>
+            <p class="note-card__description">{{ note.description }}</p>
+        </div>{# note-card__header #}
+        <div class="note-card__body">
+            {% if note.show_products %}
+                <div class="note-section">
+                    <div class="note-section__title">{{ note.products_title }}</div>
+                    <ul class="note-products">
+                            {% for product in note.products %}
+                                <li class="note-products__item">{{ product.name ?: product.inv_number }}</li>
+                            {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+            {% if note.show_operations %}
+                <div class="note-section">
+                    <div class="note-section__title">{{ note.operations_title }}</div>
+                    <div class="note-operations">
+                        {% for op in note.operations %}
+                            <div class="note-op">
+                                {% if op.can_toggle_accounting %}
+                                    <button
+                                        type="button"
+                                        class="note-op__toggle"
+                                        data-request="onToggleAccountingStatus"
+                                        data-request-data="operation_id: {{ op.id }}, note_id: {{ note.id }}"
+                                        data-request-flash
+                                        data-request-lock>
+                                        {{ op.toggle_label }}
+                                    </button>
+                                {% endif %}
+                                <div class="note-op__title">{{ op.title }}</div>
+                                {% if op.status_label == 'Документи готові' %}
+                                    <div class="note-op__status label label--extra-sm label--success">
+                                        <svg width="14" height="14" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <circle cx="7.5" cy="7.5" r="7" stroke="currentColor" stroke-dasharray="3 2"/>
+                                            <mask id="path-2-inside-1_106_1232" fill="white">
+                                            <path d="M7.49998 2.83342C8.73766 2.83342 9.92464 3.32508 10.7998 4.20025C11.675 5.07542 12.1666 6.2624 12.1666 7.50008C12.1666 8.73776 11.675 9.92474 10.7998 10.7999C9.92464 11.6751 8.73766 12.1667 7.49998 12.1667L7.49998 7.50008V2.83342Z"/>
+                                            </mask>
+                                            <path d="M7.49998 2.83342C8.73766 2.83342 9.92464 3.32508 10.7998 4.20025C11.675 5.07542 12.1666 6.2624 12.1666 7.50008C12.1666 8.73776 11.675 9.92474 10.7998 10.7999C9.92464 11.6751 8.73766 12.1667 7.49998 12.1667L7.49998 7.50008V2.83342Z" fill="currentColor" stroke="currentColor" stroke-width="2" mask="url(#path-2-inside-1_106_1232)"/>
+                                        </svg>
+                                        {{ op.status_label }}
+                                    </div>
+                                {% elseif op.status_label == 'В бухгалтерії' %}
+                                    <div class="note-op__status label label--extra-sm label--error">
+                                        <svg width="14" height="14" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <circle cx="7.5" cy="7.5" r="7" stroke="currentColor" stroke-dasharray="3 2"/>
+                                            <path d="M7.49998 2.83342C8.42296 2.83342 9.32521 3.10711 10.0926 3.61989C10.8601 4.13267 11.4582 4.8615 11.8114 5.71423C12.1646 6.56695 12.257 7.50526 12.077 8.4105C11.8969 9.31575 11.4525 10.1473 10.7998 10.7999C10.1472 11.4526 9.31565 11.897 8.4104 12.0771C7.50516 12.2571 6.56685 12.1647 5.71412 11.8115C4.8614 11.4583 4.13257 10.8602 3.61979 10.0927C3.10701 9.32531 2.83331 8.42306 2.83331 7.50008H7.49998V2.83342Z" fill="currentColor"/>
+                                        </svg>
+                                        {{ op.status_label }}
+                                    </div>
+                                {% elseif op.status_label == 'Виконано' %}
+                                    <div class="note-op__status label label--extra-sm label--info">
+                                        <svg width="14" height="14" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <circle cx="7.5" cy="7.5" r="7" stroke="currentColor" stroke-dasharray="3 2"/>
+                                            <circle cx="7.50001" cy="7.50008" r="4.66667" transform="rotate(-90 7.50001 7.50008)" fill="currentColor"/>
+                                        </svg>
+                                        {{ op.status_label }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+        </div>{# note-card__body #}
+    </div>
+    <div class="note-card__actions">
+        {% if note.is_single %}
+            <a href="{{ note.create_operation_url }}" class="button button--nm button--brand">{{ note.create_operation_label }}</a>
+        {% else %}
+            <a href="{{ note.action_url }}" class="button button--nm button--brand">{{ note.action_label }}</a>
+        {% endif %}
+    </div>
+</article>";s:4:"code";N;}}

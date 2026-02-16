@@ -1,0 +1,18 @@
+columns:
+    slug:
+        label: "URL"
+        type: text
+    type_name:
+        label: Тип операции
+        relation: type
+        select: name
+    first_document:
+        label: Документ
+        type: text
+    first_counteragent:
+        label: Контрагент
+        relation: products
+        select: counteragent
+    created_at:
+        label: Дата
+        type: datetime

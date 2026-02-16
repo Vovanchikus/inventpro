@@ -1,0 +1,93 @@
+1771233464a:1:{s:9:"empty.htm";a:7:{s:8:"fileName";s:9:"empty.htm";s:7:"content";s:1802:"description = "Основной макет Winter CMS"
+
+[session]
+
+==
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <title>{{ this.page.title }}</title>
+    <meta name="description" content="{{ this.page.meta_description }}">
+    <meta name="title" content="{{ this.page.meta_title }}">
+    <meta name="author" content="Winter CMS">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Winter CMS">
+    {# <link rel="icon" type="image/png" href="{{ 'assets/img/winter.png'|theme }}"> #}
+
+    <!-- Стили -->
+    <link rel="stylesheet" href="{{ 'assets/css/normalize.css'|theme }}?v={{ random(100000,999999) }}">
+    <link rel="stylesheet" href="{{ 'assets/css/variables.css'|theme }}?v={{ random(100000,999999) }}">
+    <link rel="stylesheet" href="{{ 'assets/css/style.css'|theme }}?v={{ random(100000,999999) }}">
+    <link rel="stylesheet" href="{{ 'assets/css/media.css'|theme }}?v={{ random(100000,999999) }}">
+
+    {% styles %}
+</head>
+<body>
+    <div class="container">
+
+        <main>
+            {% page %}
+        </main>
+
+        {% partial 'modals/modal' %}
+        <!-- Winter framework + Snowboard -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+        {% framework extras %}
+        {% snowboard all %}
+
+        <!-- Мои скрипты -->
+        <script src="{{ 'assets/js/core/modal.js'|theme }}?v={{ random(100000,999999) }}"></script>
+        <script src="{{ 'assets/js/core/toast.js'|theme }}?v={{ random(100000,999999) }}"></script>
+        <script src="{{ 'assets/js/core/handlers.js'|theme }}?v={{ random(100000,999999) }}"></script>
+
+        {% scripts %}
+
+    </div>
+</body>
+</html>
+";s:5:"mtime";i:1769641190;s:6:"markup";s:1725:"<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <title>{{ this.page.title }}</title>
+    <meta name="description" content="{{ this.page.meta_description }}">
+    <meta name="title" content="{{ this.page.meta_title }}">
+    <meta name="author" content="Winter CMS">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Winter CMS">
+    {# <link rel="icon" type="image/png" href="{{ 'assets/img/winter.png'|theme }}"> #}
+
+    <!-- Стили -->
+    <link rel="stylesheet" href="{{ 'assets/css/normalize.css'|theme }}?v={{ random(100000,999999) }}">
+    <link rel="stylesheet" href="{{ 'assets/css/variables.css'|theme }}?v={{ random(100000,999999) }}">
+    <link rel="stylesheet" href="{{ 'assets/css/style.css'|theme }}?v={{ random(100000,999999) }}">
+    <link rel="stylesheet" href="{{ 'assets/css/media.css'|theme }}?v={{ random(100000,999999) }}">
+
+    {% styles %}
+</head>
+<body>
+    <div class="container">
+
+        <main>
+            {% page %}
+        </main>
+
+        {% partial 'modals/modal' %}
+        <!-- Winter framework + Snowboard -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+        {% framework extras %}
+        {% snowboard all %}
+
+        <!-- Мои скрипты -->
+        <script src="{{ 'assets/js/core/modal.js'|theme }}?v={{ random(100000,999999) }}"></script>
+        <script src="{{ 'assets/js/core/toast.js'|theme }}?v={{ random(100000,999999) }}"></script>
+        <script src="{{ 'assets/js/core/handlers.js'|theme }}?v={{ random(100000,999999) }}"></script>
+
+        {% scripts %}
+
+    </div>
+</body>
+</html>";s:4:"code";N;s:11:"description";s:38:"Основной макет Winter CMS";s:7:"session";a:0:{}}}

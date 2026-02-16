@@ -1,0 +1,81 @@
+@import '../../core/vars'
+
+.sidebar
+  display: flex
+  flex-direction: column
+  align-items: flex-start
+  gap: 24px
+
+.sidebar-navigation
+  width: 100%
+
+  &__list
+    display: flex
+    flex-direction: column
+    justify-content: start
+    align-items: flex-start
+    gap: 6px
+
+  &__item
+    width: 100%
+
+  &__link
+    display: flex
+    align-items: center
+    gap: 16px
+    font-size: 14px
+    font-weight: 500
+    line-height: 20px
+    padding: 14px
+    color: $text-muted
+    border-radius: $radius-md
+    transition: all $transition
+    &:hover, &.active
+      color: $text-primary
+      background-color: $bg-box
+      box-shadow: $box-light-shadow
+
+
+.sidebar-category
+  position: relative
+  padding: 6px
+  background-color: $grey-bg
+  box-shadow: $box-light-shadow
+  border-radius: 34px
+
+  &__button
+    display: flex
+    color: $text-muted
+    padding: 16px
+    border-radius: 28px
+    transition: all $transition
+    &:hover
+      color: $text-muted
+      background-color: $neutral-700
+    &:active
+      color: $text-muted
+      background-color: #4D4D94
+      box-shadow: $button-brand-shadow-default
+    &.active
+      color: $button-brand-text
+      background-color: $button-brand-bg-default
+      box-shadow: $button-brand-shadow-default
+      transition: all $transition
+
+  &__content
+    position: absolute
+    left: calc( 100% + 12px )
+    bottom: -48px
+    width: max-content
+    // padding: 4px
+    background-color: $grey-bg
+    opacity: 0
+    z-index: 10
+    visibility: hidden
+    border-radius: $radius-nm
+    transition: visibility $transition, opacity $transition
+    &.active
+      opacity: 1
+      visibility: visible
+
+

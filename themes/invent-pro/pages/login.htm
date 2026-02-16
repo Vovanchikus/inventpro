@@ -1,0 +1,27 @@
+title = "Вхід"
+url = "/login"
+layout = "empty"
+
+[session]
+security = "guest" ; ограничиваем для зарегистрированных пользователей страницу
+redirect = "warehouse"
+
+[account] ; подключаем формы входа, регистрации и тд. пользователей
+==
+
+<div class="container--extra-sm box--light">
+    <div class="form">
+        <div class="form__title">
+            <h1>Вхід</h1>
+            <p>Тільки для персоналу 38 ДПРП</p>
+        </div>
+        {% component 'account::signin' %}
+    </div>
+</div>
+
+
+
+<h2>Реєстрація в системі</h2>
+{% component 'account::register' %}
+
+

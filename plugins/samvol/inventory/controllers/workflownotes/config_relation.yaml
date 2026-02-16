@@ -1,0 +1,21 @@
+items:
+    label: Товары
+    view:
+        list: $/samvol/inventory/models/workflownoteitem/columns.yaml
+        toolbarButtons: create|delete
+    manage:
+        form: $/samvol/inventory/models/workflownoteitem/fields.yaml
+
+operations:
+    label: Операции
+    view:
+        list:
+            columns:
+                id:
+                    label: ID
+                type:
+                    label: Тип
+                created_at:
+                    label: Дата
+        manage:
+            showSearch: true

@@ -1,0 +1,108 @@
+@import '../../core/vars'
+
+.bottom-bar
+  position: fixed
+  bottom: 50px
+  left: 50%;
+  transform: translateX(-50%)
+  width: max-content
+  display: flex
+  justify-content: space-between
+  align-items: center
+  gap: 32px
+  padding: 8px 8px 8px 16px
+  background-color: $grey-bg
+  border-radius: $radius-full
+  backdrop-filter: blur(16px)
+  opacity: 1
+  transition: all $transition
+  z-index: 4
+  &.hidden
+    opacity: 0
+    bottom: 30px
+    pointer-events: none
+
+
+  &__close
+    height: 24px
+    color: $text-inverse
+    drop-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.12)
+
+  &__left
+    display: flex
+    justify-content: start
+    align-items: center
+    gap: 16px
+
+  &__count-box
+    display: flex
+    justify-content: start
+    align-items: center
+    gap: 6px
+    font-size: 14px
+    font-weight: 500
+    line-height: 16px
+    color: $text-inverse
+
+  &__count
+    padding: 4px 8px
+    min-width: 26px
+    text-align: center
+    border-radius: $radius-full
+
+  &__count-text
+    display: block
+    font-weight: 400
+    text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.12)
+
+  &__button-box
+    display: flex
+    align-items: center
+    gap: 12px
+
+  &__add-category-section
+    position: relative
+
+  &__create
+    position: relative
+
+  &__create-menu
+    position: absolute
+    left: 0
+    bottom: calc( 100% + 14px )
+    display: flex
+    flex-direction: column
+    align-items: start
+    gap: 4px
+    width: 100%
+    opacity: 0
+    visibility: hidden
+    pointer-events: none
+    backdrop-filter: blur(16px)
+    transition: all $transition
+    z-index: 5
+    &.show
+      opacity: 1
+      visibility: visible
+      pointer-events: auto
+
+  &__create-item
+    display: inline-flex
+    align-items: center
+    font-size: 14px
+    line-height: 16px
+    color: $text-inverse
+    width: 100%
+    padding: 12px 16px
+    border-radius: $radius-md
+    transition: background 0.2s
+
+
+    &:hover
+      color: $text-inverse
+      background: linear-gradient(180deg, #a1a1a1, #999)
+      box-shadow: inset 0 1px 2px 0 rgba(255, 255, 255, 0.16), 0 2px 4px 0 rgba(0, 0, 0, 0.05)
+
+    &:active
+      background: linear-gradient(180deg, #878787, #9c9c9c)
+      box-shadow: inset 0 1px 2px 0 rgba(255, 255, 255, 0.16), 0 2px 4px 0 rgba(0, 0, 0, 0.05)

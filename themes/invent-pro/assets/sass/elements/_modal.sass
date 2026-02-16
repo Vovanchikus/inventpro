@@ -1,0 +1,93 @@
+@import '../core/vars'
+
+.modal-overlay
+  position: fixed
+  top: 0
+  left: 0
+  display: flex
+  justify-content: center
+  align-items: flex-start
+  width: 100%
+  height: 100%
+  background: rgba(255, 255, 255, 0.24)
+  backdrop-filter: blur(6px)
+  transition: opacity 0.3s ease, visibility 0.3s ease
+  opacity: 0
+  visibility: hidden
+  z-index: 10
+
+  &.active
+    opacity: 1
+    visibility: visible
+
+.modal-window
+  display: flex
+  flex-direction: column
+  gap: 32px
+  background: rgba(255, 255, 255, 0.9)
+  padding: 48px 32px 24px 32px
+  border-radius: $radius-lg
+  position: relative
+  top: 50px
+  box-shadow: 0 0 16px rgba(0,0,0,0.1)
+  transition: transform 0.3s ease
+  overflow: hidden
+
+
+.modal-header
+  display: flex
+  flex-direction: column
+  justify-content: space-between
+  align-items: center
+  gap: 24px
+
+.modal-header__text
+  display: flex
+  flex-direction: column
+  justify-content: center
+  align-items: center
+  gap: 8px
+
+.modal-title
+  font-size: 24px
+  font-weight: 600
+  line-height: 1
+  color: $text-primary
+
+.modal-subtitle
+  font-size: 14px
+  font-weight: 500
+  line-height: 16px
+  color: $text-muted
+
+.modal-icon-box
+  display: flex
+  justify-content: center
+  align-items: center
+  padding: 12px
+  background: linear-gradient(180deg, #f2f2f2, #fff);
+  border-radius: $radius-full
+
+.modal-icon
+  display: inline-flex
+  padding: 16px
+  background-color: $bg-box
+  border: 1px solid $border-interactive
+  border-radius: $radius-full
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04)
+
+.modal-close
+  position: absolute
+  top: 32px
+  right: 32px
+  cursor: pointer
+  height: 24px
+  color: $text-error
+  opacity: 0.7
+  transition: opacity $transition
+  &:hover
+    opacity: 1
+
+.modal-content
+  max-height: 430px
+  overflow-y: auto

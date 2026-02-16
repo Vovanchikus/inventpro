@@ -1,0 +1,29 @@
+title = "Вхід"
+url = "/"
+layout = "empty"
+
+[session]
+==
+<?php
+use Winter\User\Facades\Auth;
+use Redirect;
+
+function onStart()
+{
+    if (Auth::check()) {
+        // авторизованный пользователь
+        return Redirect::to('/warehouse');
+    }
+
+    // гость
+    return Redirect::to('/login');
+}
+?>
+==
+
+
+{% if user %}
+    <p>Hello {{ user.name }}</p>
+{% else %}
+    <p>Nobody is logged in</p>
+{% endif %}

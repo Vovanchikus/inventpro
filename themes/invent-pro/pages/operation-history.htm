@@ -1,0 +1,19 @@
+title = "История операций"
+url = "/operation-history"
+layout = "default"
+
+[history]
+==
+
+{% partial 'global/main-box' %}
+
+<!-- Таблица истории операций -->
+<div class="table-outter">
+
+  <div class="operation-history-table table">
+    <div id="product-list">
+      {% partial 'operation-history/history-item' histories=histories %}
+    </div>
+  </div>
+</div>
+

@@ -1,0 +1,17 @@
+title = "Склад"
+url = "/warehouse"
+layout = "default"
+
+[warehouse]
+[createNote]
+status = "{{ :status }}"
+==
+
+{% partial 'global/main-box' %}
+
+
+  <div class="table-outter">
+    <div class="warehouse-table table">
+      {% partial 'warehouse/warehouse-product' %}
+    </div>
+  </div>

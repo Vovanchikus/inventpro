@@ -1,0 +1,12 @@
+list: $/samvol/inventory/models/operationproduct/columns.yaml
+modelClass: Samvol\Inventory\Models\OperationProduct
+title: OperationProducts
+noRecordsMessage: 'backend::lang.list.no_records'
+showSetup: true
+showCheckboxes: true
+recordsPerPage: 20
+toolbar:
+    buttons: list_toolbar
+    search:
+        prompt: 'backend::lang.list.search_prompt'
+recordUrl: 'samvol/inventory/operationproducts/update/:id'

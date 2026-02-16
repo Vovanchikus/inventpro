@@ -1,0 +1,22 @@
+columns:
+    operation_id:
+        label: ID
+        type: number
+    operation_type:
+        label: Тип операции
+        type: text
+    first_document:
+        label: Имя документа
+        type: text
+    counteragent:
+        label: Контрагент
+        type: text
+    product_name:
+        label: Наименование продукта
+        type: text
+    product_unit:
+        label: Ед.измерения
+        type: text
+    quantity:
+        label: К-во
+        type: text

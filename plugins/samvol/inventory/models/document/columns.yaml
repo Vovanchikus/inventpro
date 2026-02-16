@@ -1,0 +1,16 @@
+columns:
+    doc_name:
+        label: Имя документа
+        type: text
+    doc_num:
+        label: Номер документа
+        type: number
+    doc_date:
+        label: Дата документа
+        type: date
+    doc_purpose:
+        label: Мета
+        type: text
+    doc_file_flag:
+        label: PDF
+        type: text

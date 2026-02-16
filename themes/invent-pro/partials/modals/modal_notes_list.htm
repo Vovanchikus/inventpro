@@ -1,0 +1,14 @@
+<div class="notes-list">
+    {% for n in notes %}
+        <div class="note-card" data-id="{{ n.id }}">
+            <h4>{{ n.title }}</h4>
+            <div class="note-meta">{{ n.due_date_label }}{% if n.due_date_label and n.status_label %} | {% endif %}{{ n.status_label }}</div>
+            <p>{{ n.description }}</p>
+            <div class="note-meta">Товарів: {{ n.products_count }} | Операцій: {{ n.operations_count }}</div>
+
+            <div class="note-actions">
+                <button class="btn btn-add-to-note">Добавить выбранные</button>
+            </div>
+        </div>
+    {% endfor %}
+</div>

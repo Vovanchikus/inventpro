@@ -1,0 +1,659 @@
+<?php
+
+use Twig\Environment;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Extension\CoreExtension;
+use Twig\Extension\SandboxExtension;
+use Twig\Markup;
+use Twig\Sandbox\SecurityError;
+use Twig\Sandbox\SecurityNotAllowedTagError;
+use Twig\Sandbox\SecurityNotAllowedFilterError;
+use Twig\Sandbox\SecurityNotAllowedFunctionError;
+use Twig\Source;
+use Twig\Template;
+use Twig\TemplateWrapper;
+
+/* C:\OSPanel\domains\inventpro-test\themes\invent-pro\partials\global\main-box.htm */
+class __TwigTemplate_1c5cf5b01b1e2371df4f65826da22adc extends Template
+{
+    private Source $source;
+    /**
+     * @var array<string, Template>
+     */
+    private array $macros = [];
+
+    public function __construct(Environment $env)
+    {
+        parent::__construct($env);
+
+        $this->source = $this->getSourceContext();
+
+        $this->parent = false;
+
+        $this->blocks = [
+        ];
+        $this->sandbox = $this->extensions[SandboxExtension::class];
+        $this->checkSecurity();
+    }
+
+    protected function doDisplay(array $context, array $blocks = []): iterable
+    {
+        $macros = $this->macros;
+        // line 1
+        yield "<div class=\"main-box box--light\">
+
+";
+        // line 3
+        if ((CoreExtension::getAttribute($this->env, $this->source, CoreExtension::getAttribute($this->env, $this->source, ($context["this"] ?? null), "page", [], "any", false, false, true, 3), "url", [], "any", false, false, true, 3) == "/warehouse")) {
+            // line 4
+            yield "
+  <div class=\"main-box__top\">
+
+    <div class=\"button--outside\">
+      <button id=\"warehouseCategory\" class=\"button button--nm button--secondary button--ico\">
+        <svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">
+          <path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M11.6211 2H11.8789C12.2743 1.99999 12.6154 1.99998 12.8963 2.02293C13.1928 2.04715 13.4877 2.10064 13.7715 2.24524C14.1948 2.46095 14.5391 2.80516 14.7548 3.22852C14.8994 3.51231 14.9528 3.80722 14.9771 4.10373C15 4.38466 15 4.72574 15 5.1211V5.3789C15 5.77427 15 6.11534 14.9771 6.39627C14.9528 6.69278 14.8994 6.9877 14.7548 7.27148C14.5391 7.69485 14.1948 8.03905 13.7715 8.25477C13.4877 8.39936 13.1928 8.45285 12.8963 8.47707C12.7752 8.48697 12.643 8.49259 12.5 8.49579V11H17.8789C18.2743 11 18.6154 11 18.8963 11.0229C19.1928 11.0472 19.4877 11.1006 19.7715 11.2452C20.1948 11.461 20.5391 11.8052 20.7548 12.2285C20.8994 12.5123 20.9528 12.8072 20.9771 13.1037C21 13.3846 21 13.7257 21 14.121V15.0042C21.143 15.0074 21.2752 15.013 21.3963 15.0229C21.6928 15.0472 21.9877 15.1006 22.2715 15.2452C22.6948 15.461 23.0391 15.8052 23.2548 16.2285C23.3994 16.5123 23.4528 16.8072 23.4771 17.1037C23.5 17.3847 23.5 17.7257 23.5 18.1211V18.3789C23.5 18.7743 23.5 19.1153 23.4771 19.3963C23.4528 19.6928 23.3994 19.9877 23.2548 20.2715C23.0391 20.6948 22.6948 21.0391 22.2715 21.2548C21.9877 21.3994 21.6928 21.4528 21.3963 21.4771C21.1153 21.5 20.7743 21.5 20.3789 21.5H20.1211C19.7257 21.5 19.3847 21.5 19.1037 21.4771C18.8072 21.4528 18.5123 21.3994 18.2285 21.2548C17.8052 21.0391 17.461 20.6948 17.2452 20.2715C17.1006 19.9877 17.0472 19.6928 17.0229 19.3963C17 19.1153 17 18.7743 17 18.3789V18.1211C17 17.7257 17 17.3847 17.0229 17.1037C17.0472 16.8072 17.1006 16.5123 17.2452 16.2285C17.461 15.8052 17.8052 15.461 18.2285 15.2452C18.5123 15.1006 18.8072 15.0472 19.1037 15.0229C19.2248 15.013 19.3571 15.0074 19.5 15.0042V14.15C19.5 13.7176 19.4994 13.4384 19.4821 13.2259C19.4654 13.0221 19.4372 12.9466 19.4183 12.9095C19.3464 12.7684 19.2316 12.6537 19.0905 12.5817C19.0534 12.5629 18.9779 12.5346 18.7741 12.5179C18.5616 12.5006 18.2824 12.5 17.85 12.5H12.5V15.0042C12.643 15.0074 12.7752 15.013 12.8963 15.0229C13.1928 15.0472 13.4877 15.1006 13.7715 15.2452C14.1948 15.461 14.5391 15.8052 14.7548 16.2285C14.8994 16.5123 14.9528 16.8072 14.9771 17.1037C15 17.3847 15 17.7257 15 18.1211V18.3789C15 18.7743 15 19.1153 14.9771 19.3963C14.9528 19.6928 14.8994 19.9877 14.7548 20.2715C14.5391 20.6948 14.1948 21.0391 13.7715 21.2548C13.4877 21.3994 13.1928 21.4528 12.8963 21.4771C12.6153 21.5 12.2743 21.5 11.8789 21.5H11.6211C11.2257 21.5 10.8847 21.5 10.6037 21.4771C10.3072 21.4528 10.0123 21.3994 9.72852 21.2548C9.30516 21.0391 8.96095 20.6948 8.74524 20.2715C8.60064 19.9877 8.54716 19.6928 8.52293 19.3963C8.49998 19.1154 8.49999 18.7743 8.5 18.379V18.1211C8.49999 17.7258 8.49998 17.3846 8.52293 17.1037C8.54716 16.8072 8.60064 16.5123 8.74524 16.2285C8.96095 15.8052 9.30516 15.461 9.72852 15.2452C10.0123 15.1006 10.3072 15.0472 10.6037 15.0229C10.7248 15.013 10.8571 15.0074 11 15.0042V12.5H5.65C5.21759 12.5 4.93838 12.5006 4.72588 12.5179C4.52213 12.5346 4.44659 12.5629 4.40951 12.5817C4.26839 12.6537 4.15365 12.7684 4.08175 12.9095C4.06285 12.9466 4.03459 13.0221 4.01795 13.2259C4.00059 13.4384 4 13.7176 4 14.15V15.0042C4.14295 15.0074 4.2752 15.013 4.39627 15.0229C4.69278 15.0472 4.9877 15.1006 5.27148 15.2452C5.69485 15.461 6.03905 15.8052 6.25477 16.2285C6.39936 16.5123 6.45285 16.8072 6.47707 17.1037C6.50003 17.3847 6.50002 17.7257 6.5 18.1211V18.3789C6.50002 18.7743 6.50003 19.1153 6.47707 19.3963C6.45285 19.6928 6.39936 19.9877 6.25477 20.2715C6.03905 20.6948 5.69485 21.0391 5.27148 21.2548C4.9877 21.3994 4.69278 21.4528 4.39627 21.4771C4.11534 21.5 3.77427 21.5 3.3789 21.5H3.1211C2.72574 21.5 2.38466 21.5 2.10373 21.4771C1.80722 21.4528 1.51231 21.3994 1.22852 21.2548C0.805159 21.0391 0.460952 20.6948 0.245237 20.2715C0.100642 19.9877 0.0471547 19.6928 0.022929 19.3963C-2.32793e-05 19.1154 -1.22189e-05 18.7743 6.03039e-07 18.3789V18.1211C-1.22189e-05 17.7257 -2.32793e-05 17.3847 0.022929 17.1037C0.0471547 16.8072 0.100642 16.5123 0.245237 16.2285C0.460952 15.8052 0.805159 15.461 1.22852 15.2452C1.51231 15.1006 1.80722 15.0472 2.10373 15.0229C2.22481 15.013 2.35705 15.0074 2.5 15.0042L2.5 14.1211C2.49999 13.7257 2.49998 13.3847 2.52293 13.1037C2.54715 12.8072 2.60064 12.5123 2.74524 12.2285C2.96095 11.8052 3.30516 11.461 3.72852 11.2452C4.01231 11.1006 4.30722 11.0472 4.60373 11.0229C4.88465 11 5.22571 11 5.62105 11H11V8.49579C10.8571 8.49259 10.7248 8.48697 10.6037 8.47707C10.3072 8.45285 10.0123 8.39936 9.72852 8.25477C9.30516 8.03905 8.96095 7.69485 8.74524 7.27148C8.60064 6.9877 8.54716 6.69278 8.52293 6.39627C8.49998 6.11535 8.49999 5.7743 8.5 5.37896V5.12109C8.49999 4.72575 8.49998 4.38465 8.52293 4.10373C8.54716 3.80722 8.60064 3.51231 8.74524 3.22852C8.96095 2.80516 9.30516 2.46095 9.72852 2.24524C10.0123 2.10064 10.3072 2.04715 10.6037 2.02293C10.8847 1.99998 11.2257 1.99999 11.6211 2ZM20.2488 16.5H20.15C19.7176 16.5 19.4384 16.5006 19.2259 16.5179C19.0221 16.5346 18.9466 16.5629 18.9095 16.5817C18.7684 16.6537 18.6537 16.7684 18.5817 16.9095C18.5629 16.9466 18.5346 17.0221 18.5179 17.2259C18.5006 17.4384 18.5 17.7176 18.5 18.15V18.35C18.5 18.7824 18.5006 19.0616 18.5179 19.2741C18.5346 19.4779 18.5629 19.5534 18.5817 19.5905C18.6537 19.7316 18.7684 19.8464 18.9095 19.9183C18.9466 19.9372 19.0221 19.9654 19.2259 19.9821C19.4384 19.9994 19.7176 20 20.15 20H20.35C20.7824 20 21.0616 19.9994 21.2741 19.9821C21.4779 19.9654 21.5534 19.9372 21.5905 19.9183C21.7316 19.8464 21.8464 19.7316 21.9183 19.5905C21.9372 19.5534 21.9654 19.4779 21.9821 19.2741C21.9994 19.0616 22 18.7824 22 18.35V18.15C22 17.7176 21.9994 17.4384 21.9821 17.2259C21.9654 17.0221 21.9372 16.9466 21.9183 16.9095C21.8464 16.7684 21.7316 16.6537 21.5905 16.5817C21.5534 16.5629 21.4779 16.5346 21.2741 16.5179C21.0616 16.5006 20.7824 16.5 20.35 16.5H20.2512C20.2508 16.5 20.2504 16.5 20.25 16.5C20.2496 16.5 20.2492 16.5 20.2488 16.5ZM11.65 16.5H11.85C12.2824 16.5 12.5616 16.5006 12.7741 16.5179C12.9779 16.5346 13.0534 16.5629 13.0905 16.5817C13.2316 16.6537 13.3464 16.7684 13.4183 16.9095C13.4372 16.9466 13.4654 17.0221 13.4821 17.2259C13.4994 17.4384 13.5 17.7176 13.5 18.15V18.35C13.5 18.7824 13.4994 19.0616 13.4821 19.2741C13.4654 19.4779 13.4372 19.5534 13.4183 19.5905C13.3464 19.7316 13.2316 19.8464 13.0905 19.9183C13.0534 19.9372 12.9779 19.9654 12.7741 19.9821C12.5616 19.9994 12.2824 20 11.85 20H11.65C11.2176 20 10.9384 19.9994 10.7259 19.9821C10.5221 19.9654 10.4466 19.9372 10.4095 19.9183C10.2684 19.8464 10.1537 19.7316 10.0817 19.5905C10.0629 19.5534 10.0346 19.4779 10.0179 19.2741C10.0006 19.0616 10 18.7824 10 18.35V18.15C10 17.7176 10.0006 17.4384 10.0179 17.2259C10.0346 17.0221 10.0629 16.9466 10.0817 16.9095C10.1537 16.7684 10.2684 16.6537 10.4095 16.5817C10.4466 16.5629 10.5221 16.5346 10.7259 16.5179C10.9384 16.5006 11.2176 16.5 11.65 16.5ZM3.15 16.5C2.71759 16.5 2.43838 16.5006 2.22588 16.5179C2.02213 16.5346 1.94659 16.5629 1.90951 16.5817C1.76839 16.6537 1.65365 16.7684 1.58175 16.9095C1.56285 16.9466 1.53459 17.0221 1.51795 17.2259C1.50059 17.4384 1.5 17.7176 1.5 18.15V18.35C1.5 18.7824 1.50059 19.0616 1.51795 19.2741C1.53459 19.4779 1.56285 19.5534 1.58175 19.5905C1.65365 19.7316 1.76839 19.8464 1.90951 19.9183C1.94659 19.9372 2.02213 19.9654 2.22588 19.9821C2.43838 19.9994 2.71759 20 3.15 20H3.35C3.78242 20 4.06162 19.9994 4.27413 19.9821C4.47787 19.9654 4.55341 19.9372 4.59049 19.9183C4.73162 19.8464 4.84635 19.7316 4.91826 19.5905C4.93715 19.5534 4.96541 19.4779 4.98206 19.2741C4.99942 19.0616 5 18.7824 5 18.35V18.15C5 17.7176 4.99942 17.4384 4.98206 17.2259C4.96541 17.0221 4.93715 16.9466 4.91826 16.9095C4.84635 16.7684 4.73162 16.6537 4.59049 16.5817C4.55341 16.5629 4.47787 16.5346 4.27413 16.5179C4.06162 16.5006 3.78242 16.5 3.35 16.5L3.25 16.5L3.15 16.5ZM11.85 7L11.75 7L11.65 7C11.2176 7 10.9384 6.99942 10.7259 6.98206C10.5221 6.96541 10.4466 6.93715 10.4095 6.91826C10.2684 6.84635 10.1537 6.73162 10.0817 6.59049C10.0629 6.55341 10.0346 6.47787 10.0179 6.27413C10.0006 6.06162 10 5.78242 10 5.35V5.15C10 4.71759 10.0006 4.43838 10.0179 4.22588C10.0346 4.02213 10.0629 3.94659 10.0817 3.90951C10.1537 3.76839 10.2684 3.65365 10.4095 3.58175C10.4466 3.56285 10.5221 3.53459 10.7259 3.51795C10.9384 3.50059 11.2176 3.5 11.65 3.5H11.85C12.2824 3.5 12.5616 3.50059 12.7741 3.51795C12.9779 3.53459 13.0534 3.56285 13.0905 3.58175C13.2316 3.65365 13.3464 3.76839 13.4183 3.90951C13.4372 3.94659 13.4654 4.02213 13.4821 4.22588C13.4994 4.43838 13.5 4.71759 13.5 5.15V5.35C13.5 5.78242 13.4994 6.06162 13.4821 6.27413C13.4654 6.47787 13.4372 6.55341 13.4183 6.59049C13.3464 6.73162 13.2316 6.84635 13.0905 6.91826C13.0534 6.93715 12.9779 6.96541 12.7741 6.98206C12.5616 6.99942 12.2824 7 11.85 7Z\" fill=\"currentColor\"/>
+        </svg>
+      </button>
+    </div>";
+            // line 14
+            yield "
+    <div class=\"main-box__count\">
+      Всього на складі: <span class=\"label--extra-sm label--secondary\">";
+            // line 16
+            yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape(Twig\Extension\CoreExtension::length($this->env->getCharset(), $this->sandbox->ensureToStringAllowed(($context["products"] ?? null), 16, $this->source)), "html", null, true);
+            yield "</span>
+    </div>
+
+  </div>";
+            // line 20
+            yield "
+  <div class=\"main-box__bottom\">
+
+    <div class=\"warehouse__item table-title\">
+      <div class=\"warehouse__checkbox\">
+        <label for=\"warehouse-select-all\" class=\"checkbox\">
+          <input type=\"checkbox\" id=\"warehouse-select-all\">
+        </label>
+      </div>
+        <div class=\"warehouse__left\">
+          <div class=\"warehouse__name\">Наименование</div>
+          <div class=\"warehouse__number\">Номенклатурный №</div>
+        </div>
+        <div class=\"warehouse__unit\">Ед.измерения</div>
+        <div class=\"warehouse__price\">Цена</div>
+        <div class=\"warehouse__quantity\">Количество</div>
+        <div class=\"warehouse__sum\">Сумма</div>
+      </div>
+
+  </div>
+
+";
+        } elseif ((CoreExtension::getAttribute($this->env, $this->source, CoreExtension::getAttribute($this->env, $this->source,         // line 41
+($context["this"] ?? null), "page", [], "any", false, false, true, 41), "url", [], "any", false, false, true, 41) == "/operation-history")) {
+            // line 42
+            yield "
+  <div class=\"main-box__top\">
+
+   <div class=\"main-box__count\">
+    Всього: <span class=\"label--extra-sm label--secondary\">";
+            // line 46
+            yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->sandbox->ensureToStringAllowed(($context["filteredCount"] ?? null), 46, $this->source), "html", null, true);
+            yield "</span>
+    </div>
+
+     <form method=\"get\" class=\"operation-history__filters\">
+
+      <!-- Тип операции -->
+      <div class=\"custom-select operation-history__filters-select--type\" data-name=\"type\">
+        <div class=\"selected operation-history__filters-selected\">
+          ";
+            // line 54
+            yield (((($tmp = CoreExtension::getAttribute($this->env, $this->source, ($context["request"] ?? null), "get", ["type"], "method", false, false, true, 54)) && $tmp instanceof Markup ? (string) $tmp : $tmp)) ? ($this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->sandbox->ensureToStringAllowed(CoreExtension::getAttribute($this->env, $this->source, CoreExtension::getAttribute($this->env, $this->source, CoreExtension::getAttribute($this->env, $this->source, ($context["types"] ?? null), "where", ["id", CoreExtension::getAttribute($this->env, $this->source, ($context["request"] ?? null), "get", ["type"], "method", false, false, true, 54)], "method", false, false, true, 54), "first", [], "any", false, false, true, 54), "name", [], "any", false, false, true, 54), 54, $this->source), "html", null, true)) : ("Тип операції"));
+            yield "
+        </div>
+
+        <div class=\"options operation-history__filters-options dropdown\">
+          <div class=\"option operation-history__filters-option--type\" data-value=\"\">Все типы</div>
+          ";
+            // line 59
+            $context['_parent'] = $context;
+            $context['_seq'] = CoreExtension::ensureTraversable(($context["types"] ?? null));
+            foreach ($context['_seq'] as $context["_key"] => $context["type"]) {
+                // line 60
+                yield "            <div class=\"option operation-history__filters-option--type\" data-value=\"";
+                yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->sandbox->ensureToStringAllowed(CoreExtension::getAttribute($this->env, $this->source, $context["type"], "id", [], "any", false, false, true, 60), 60, $this->source), "html", null, true);
+                yield "\">
+              ";
+                // line 61
+                yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->sandbox->ensureToStringAllowed(CoreExtension::getAttribute($this->env, $this->source, $context["type"], "name", [], "any", false, false, true, 61), 61, $this->source), "html", null, true);
+                yield "
+            </div>
+          ";
+            }
+            $_parent = $context['_parent'];
+            unset($context['_seq'], $context['_key'], $context['type'], $context['_parent']);
+            $context = array_intersect_key($context, $_parent) + $_parent;
+            // line 64
+            yield "        </div>
+      </div>
+
+      <!-- Контрагент -->
+      <div class=\"custom-select operation-history__filters-select--counteragent\" data-name=\"counteragent\">
+        <div class=\"selected operation-history__filters-selected\">
+            ";
+            // line 70
+            yield ((CoreExtension::getAttribute($this->env, $this->source, ($context["request"] ?? null), "get", ["counteragent"], "method", false, false, true, 70)) ? ($this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->sandbox->ensureToStringAllowed(CoreExtension::getAttribute($this->env, $this->source, ($context["request"] ?? null), "get", ["counteragent"], "method", false, false, true, 70), 70, $this->source), "html", null, true)) : ("Контрагент"));
+            yield "
+        </div>
+        <div class=\"options operation-history__filters-options dropdown\">
+          <div class=\"option operation-history__filters-option\" data-value=\"\">Все контрагенты</div>
+          ";
+            // line 74
+            $context['_parent'] = $context;
+            $context['_seq'] = CoreExtension::ensureTraversable(($context["counteragents"] ?? null));
+            foreach ($context['_seq'] as $context["_key"] => $context["ca"]) {
+                // line 75
+                yield "            <div class=\"option operation-history__filters-option--counteragent\" data-value=\"";
+                yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->sandbox->ensureToStringAllowed($context["ca"], 75, $this->source), "html", null, true);
+                yield "\">
+              ";
+                // line 76
+                yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->sandbox->ensureToStringAllowed($context["ca"], 76, $this->source), "html", null, true);
+                yield "
+            </div>
+          ";
+            }
+            $_parent = $context['_parent'];
+            unset($context['_seq'], $context['_key'], $context['ca'], $context['_parent']);
+            $context = array_intersect_key($context, $_parent) + $_parent;
+            // line 79
+            yield "        </div>
+      </div>
+
+      <!-- Год -->
+    <div class=\"custom-select operation-history__filters-select--year\" data-name=\"year\">
+      <div class=\"selected operation-history__filters-selected\">
+          ";
+            // line 85
+            yield ((CoreExtension::getAttribute($this->env, $this->source, ($context["request"] ?? null), "get", ["year"], "method", false, false, true, 85)) ? ($this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->sandbox->ensureToStringAllowed(CoreExtension::getAttribute($this->env, $this->source, ($context["request"] ?? null), "get", ["year"], "method", false, false, true, 85), 85, $this->source), "html", null, true)) : ("Рік"));
+            yield "
+      </div>
+
+      <div class=\"options operation-history__filters-options dropdown\">
+        <div class=\"option\" data-value=\"\">Всі роки</div>
+        ";
+            // line 90
+            $context['_parent'] = $context;
+            $context['_seq'] = CoreExtension::ensureTraversable(($context["years"] ?? null));
+            foreach ($context['_seq'] as $context["_key"] => $context["year"]) {
+                // line 91
+                yield "          <div class=\"option operation-history__filters-option--year\" data-value=\"";
+                yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->sandbox->ensureToStringAllowed($context["year"], 91, $this->source), "html", null, true);
+                yield "\">
+            ";
+                // line 92
+                yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->sandbox->ensureToStringAllowed($context["year"], 92, $this->source), "html", null, true);
+                yield "
+          </div>
+        ";
+            }
+            $_parent = $context['_parent'];
+            unset($context['_seq'], $context['_key'], $context['year'], $context['_parent']);
+            $context = array_intersect_key($context, $_parent) + $_parent;
+            // line 95
+            yield "      </div>
+    </div>
+
+    <input type=\"hidden\" name=\"type\" id=\"typeInput\">
+    <input type=\"hidden\" name=\"counteragent\" id=\"counteragentInput\">
+    <input type=\"hidden\" name=\"year\" id=\"yearInput\">
+
+    <div class=\"button--outside\">
+      <a href=\"/operation-history\" class=\"button button--nm button--secondary\">Очистити</a>
+    </div>";
+            // line 105
+            yield "
+    <div class=\"button--outside\">
+      <button type=\"submit\" class=\"button button--nm button--brand\">Застосувати</button>
+    </div>
+
+  </form>
+
+  </div>";
+            // line 113
+            yield "
+  <div class=\"main-box__bottom\">
+
+    <div class=\"operation-history__item table-title\">
+      <div class=\"operation-history__check\">
+        <label for=\"\" class=\"checkbox\">
+          <input type=\"checkbox\" class=\"product-check\">
+        </label>
+      </div>
+      <div class=\"operation-history__type\">Тип</div>
+      <div class=\"operation-history__left\">
+        <div class=\"operation-history__name\">Наименование</div>
+        <div class=\"operation-history__number\">Инвентарный номер</div>
+      </div>
+      <div class=\"operation-history__price\">Цена</div>
+      <div class=\"operation-history__quantity\">Количество</div>
+      <div class=\"operation-history__date\">Дата</div>
+      <div class=\"operation-history__counteragent\">Контрагент</div>
+    </div>
+
+  </div>
+
+";
+        } elseif ((CoreExtension::getAttribute($this->env, $this->source, CoreExtension::getAttribute($this->env, $this->source,         // line 135
+($context["this"] ?? null), "page", [], "any", false, false, true, 135), "url", [], "any", false, false, true, 135) == "/documents")) {
+            // line 136
+            yield "
+  <div class=\"main-box__top main-box__top--documents\">
+
+    <form method=\"get\" class=\"operation-history__filters\">
+
+    <!-- Тип операции -->
+    <div class=\"custom-select operation-history__filters-select--type\" data-name=\"type\">
+      <div class=\"selected operation-history__filters-selected\">
+        ";
+            // line 144
+            yield (((($tmp = CoreExtension::getAttribute($this->env, $this->source, ($context["request"] ?? null), "get", ["type"], "method", false, false, true, 144)) && $tmp instanceof Markup ? (string) $tmp : $tmp)) ? ($this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->sandbox->ensureToStringAllowed(CoreExtension::getAttribute($this->env, $this->source, CoreExtension::getAttribute($this->env, $this->source, CoreExtension::getAttribute($this->env, $this->source, ($context["types"] ?? null), "where", ["id", CoreExtension::getAttribute($this->env, $this->source, ($context["request"] ?? null), "get", ["type"], "method", false, false, true, 144)], "method", false, false, true, 144), "first", [], "any", false, false, true, 144), "name", [], "any", false, false, true, 144), 144, $this->source), "html", null, true)) : ("Тип операції"));
+            yield "
+      </div>
+
+      <div class=\"options operation-history__filters-options dropdown\">
+        <div class=\"option operation-history__filters-option--type\" data-value=\"\">Все типы</div>
+        ";
+            // line 149
+            $context['_parent'] = $context;
+            $context['_seq'] = CoreExtension::ensureTraversable(($context["types"] ?? null));
+            foreach ($context['_seq'] as $context["_key"] => $context["type"]) {
+                // line 150
+                yield "          <div class=\"option operation-history__filters-option--type\" data-value=\"";
+                yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->sandbox->ensureToStringAllowed(CoreExtension::getAttribute($this->env, $this->source, $context["type"], "id", [], "any", false, false, true, 150), 150, $this->source), "html", null, true);
+                yield "\">
+            ";
+                // line 151
+                yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->sandbox->ensureToStringAllowed(CoreExtension::getAttribute($this->env, $this->source, $context["type"], "name", [], "any", false, false, true, 151), 151, $this->source), "html", null, true);
+                yield "
+          </div>
+        ";
+            }
+            $_parent = $context['_parent'];
+            unset($context['_seq'], $context['_key'], $context['type'], $context['_parent']);
+            $context = array_intersect_key($context, $_parent) + $_parent;
+            // line 154
+            yield "      </div>
+    </div>
+
+    <!-- Контрагент -->
+    <div class=\"custom-select operation-history__filters-select--counteragent\" data-name=\"counteragent\">
+      <div class=\"selected operation-history__filters-selected\">
+          ";
+            // line 160
+            yield ((CoreExtension::getAttribute($this->env, $this->source, ($context["request"] ?? null), "get", ["counteragent"], "method", false, false, true, 160)) ? ($this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->sandbox->ensureToStringAllowed(CoreExtension::getAttribute($this->env, $this->source, ($context["request"] ?? null), "get", ["counteragent"], "method", false, false, true, 160), 160, $this->source), "html", null, true)) : ("Контрагент"));
+            yield "
+      </div>
+      <div class=\"options operation-history__filters-options dropdown\">
+        <div class=\"option operation-history__filters-option\" data-value=\"\">Все контрагенты</div>
+        ";
+            // line 164
+            $context['_parent'] = $context;
+            $context['_seq'] = CoreExtension::ensureTraversable(($context["counteragents"] ?? null));
+            foreach ($context['_seq'] as $context["_key"] => $context["ca"]) {
+                // line 165
+                yield "          <div class=\"option operation-history__filters-option--counteragent\" data-value=\"";
+                yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->sandbox->ensureToStringAllowed($context["ca"], 165, $this->source), "html", null, true);
+                yield "\">
+            ";
+                // line 166
+                yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->sandbox->ensureToStringAllowed($context["ca"], 166, $this->source), "html", null, true);
+                yield "
+          </div>
+        ";
+            }
+            $_parent = $context['_parent'];
+            unset($context['_seq'], $context['_key'], $context['ca'], $context['_parent']);
+            $context = array_intersect_key($context, $_parent) + $_parent;
+            // line 169
+            yield "      </div>
+    </div>
+
+    <!-- Год -->
+  <div class=\"custom-select operation-history__filters-select--year\" data-name=\"year\">
+    <div class=\"selected operation-history__filters-selected\">
+        ";
+            // line 175
+            yield ((CoreExtension::getAttribute($this->env, $this->source, ($context["request"] ?? null), "get", ["year"], "method", false, false, true, 175)) ? ($this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->sandbox->ensureToStringAllowed(CoreExtension::getAttribute($this->env, $this->source, ($context["request"] ?? null), "get", ["year"], "method", false, false, true, 175), 175, $this->source), "html", null, true)) : ("Рік"));
+            yield "
+    </div>
+
+    <div class=\"options operation-history__filters-options dropdown\">
+      <div class=\"option\" data-value=\"\">Всі роки</div>
+      ";
+            // line 180
+            $context['_parent'] = $context;
+            $context['_seq'] = CoreExtension::ensureTraversable(($context["years"] ?? null));
+            foreach ($context['_seq'] as $context["_key"] => $context["year"]) {
+                // line 181
+                yield "        <div class=\"option operation-history__filters-option--year\" data-value=\"";
+                yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->sandbox->ensureToStringAllowed($context["year"], 181, $this->source), "html", null, true);
+                yield "\">
+          ";
+                // line 182
+                yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->sandbox->ensureToStringAllowed($context["year"], 182, $this->source), "html", null, true);
+                yield "
+        </div>
+      ";
+            }
+            $_parent = $context['_parent'];
+            unset($context['_seq'], $context['_key'], $context['year'], $context['_parent']);
+            $context = array_intersect_key($context, $_parent) + $_parent;
+            // line 185
+            yield "    </div>
+  </div>
+
+  <input type=\"hidden\" name=\"type\" id=\"typeInput\">
+  <input type=\"hidden\" name=\"counteragent\" id=\"counteragentInput\">
+  <input type=\"hidden\" name=\"year\" id=\"yearInput\">
+
+  <div class=\"button--outside\">
+    <a href=\"/documents";
+            // line 193
+            if ((($tmp = CoreExtension::getAttribute($this->env, $this->source, ($context["request"] ?? null), "get", ["status"], "method", false, false, true, 193)) && $tmp instanceof Markup ? (string) $tmp : $tmp)) {
+                yield "?status=";
+                yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->sandbox->ensureToStringAllowed(CoreExtension::getAttribute($this->env, $this->source, ($context["request"] ?? null), "get", ["status"], "method", false, false, true, 193), 193, $this->source), "html", null, true);
+            }
+            yield "\" class=\"button button--nm button--secondary\">Очистити</a>
+  </div>";
+            // line 195
+            yield "
+  <div class=\"button--outside\">
+    <button type=\"submit\" class=\"button button--nm button--brand\">Застосувати</button>
+  </div>
+
+  </form>
+
+  </div>";
+            // line 203
+            yield "
+
+";
+        }
+        // line 206
+        yield "
+</div>";
+        // line 208
+        yield "
+";
+        yield from [];
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public function getTemplateName(): string
+    {
+        return "C:\\OSPanel\\domains\\inventpro-test\\themes\\invent-pro\\partials\\global\\main-box.htm";
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public function isTraitable(): bool
+    {
+        return false;
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public function getDebugInfo(): array
+    {
+        return array (  389 => 208,  386 => 206,  381 => 203,  372 => 195,  365 => 193,  355 => 185,  346 => 182,  341 => 181,  337 => 180,  329 => 175,  321 => 169,  312 => 166,  307 => 165,  303 => 164,  296 => 160,  288 => 154,  279 => 151,  274 => 150,  270 => 149,  262 => 144,  252 => 136,  250 => 135,  226 => 113,  217 => 105,  206 => 95,  197 => 92,  192 => 91,  188 => 90,  180 => 85,  172 => 79,  163 => 76,  158 => 75,  154 => 74,  147 => 70,  139 => 64,  130 => 61,  125 => 60,  121 => 59,  113 => 54,  102 => 46,  96 => 42,  94 => 41,  71 => 20,  65 => 16,  61 => 14,  50 => 4,  48 => 3,  44 => 1,);
+    }
+
+    public function getSourceContext(): Source
+    {
+        return new Source("<div class=\"main-box box--light\">
+
+{% if this.page.url == '/warehouse' %}
+
+  <div class=\"main-box__top\">
+
+    <div class=\"button--outside\">
+      <button id=\"warehouseCategory\" class=\"button button--nm button--secondary button--ico\">
+        <svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">
+          <path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M11.6211 2H11.8789C12.2743 1.99999 12.6154 1.99998 12.8963 2.02293C13.1928 2.04715 13.4877 2.10064 13.7715 2.24524C14.1948 2.46095 14.5391 2.80516 14.7548 3.22852C14.8994 3.51231 14.9528 3.80722 14.9771 4.10373C15 4.38466 15 4.72574 15 5.1211V5.3789C15 5.77427 15 6.11534 14.9771 6.39627C14.9528 6.69278 14.8994 6.9877 14.7548 7.27148C14.5391 7.69485 14.1948 8.03905 13.7715 8.25477C13.4877 8.39936 13.1928 8.45285 12.8963 8.47707C12.7752 8.48697 12.643 8.49259 12.5 8.49579V11H17.8789C18.2743 11 18.6154 11 18.8963 11.0229C19.1928 11.0472 19.4877 11.1006 19.7715 11.2452C20.1948 11.461 20.5391 11.8052 20.7548 12.2285C20.8994 12.5123 20.9528 12.8072 20.9771 13.1037C21 13.3846 21 13.7257 21 14.121V15.0042C21.143 15.0074 21.2752 15.013 21.3963 15.0229C21.6928 15.0472 21.9877 15.1006 22.2715 15.2452C22.6948 15.461 23.0391 15.8052 23.2548 16.2285C23.3994 16.5123 23.4528 16.8072 23.4771 17.1037C23.5 17.3847 23.5 17.7257 23.5 18.1211V18.3789C23.5 18.7743 23.5 19.1153 23.4771 19.3963C23.4528 19.6928 23.3994 19.9877 23.2548 20.2715C23.0391 20.6948 22.6948 21.0391 22.2715 21.2548C21.9877 21.3994 21.6928 21.4528 21.3963 21.4771C21.1153 21.5 20.7743 21.5 20.3789 21.5H20.1211C19.7257 21.5 19.3847 21.5 19.1037 21.4771C18.8072 21.4528 18.5123 21.3994 18.2285 21.2548C17.8052 21.0391 17.461 20.6948 17.2452 20.2715C17.1006 19.9877 17.0472 19.6928 17.0229 19.3963C17 19.1153 17 18.7743 17 18.3789V18.1211C17 17.7257 17 17.3847 17.0229 17.1037C17.0472 16.8072 17.1006 16.5123 17.2452 16.2285C17.461 15.8052 17.8052 15.461 18.2285 15.2452C18.5123 15.1006 18.8072 15.0472 19.1037 15.0229C19.2248 15.013 19.3571 15.0074 19.5 15.0042V14.15C19.5 13.7176 19.4994 13.4384 19.4821 13.2259C19.4654 13.0221 19.4372 12.9466 19.4183 12.9095C19.3464 12.7684 19.2316 12.6537 19.0905 12.5817C19.0534 12.5629 18.9779 12.5346 18.7741 12.5179C18.5616 12.5006 18.2824 12.5 17.85 12.5H12.5V15.0042C12.643 15.0074 12.7752 15.013 12.8963 15.0229C13.1928 15.0472 13.4877 15.1006 13.7715 15.2452C14.1948 15.461 14.5391 15.8052 14.7548 16.2285C14.8994 16.5123 14.9528 16.8072 14.9771 17.1037C15 17.3847 15 17.7257 15 18.1211V18.3789C15 18.7743 15 19.1153 14.9771 19.3963C14.9528 19.6928 14.8994 19.9877 14.7548 20.2715C14.5391 20.6948 14.1948 21.0391 13.7715 21.2548C13.4877 21.3994 13.1928 21.4528 12.8963 21.4771C12.6153 21.5 12.2743 21.5 11.8789 21.5H11.6211C11.2257 21.5 10.8847 21.5 10.6037 21.4771C10.3072 21.4528 10.0123 21.3994 9.72852 21.2548C9.30516 21.0391 8.96095 20.6948 8.74524 20.2715C8.60064 19.9877 8.54716 19.6928 8.52293 19.3963C8.49998 19.1154 8.49999 18.7743 8.5 18.379V18.1211C8.49999 17.7258 8.49998 17.3846 8.52293 17.1037C8.54716 16.8072 8.60064 16.5123 8.74524 16.2285C8.96095 15.8052 9.30516 15.461 9.72852 15.2452C10.0123 15.1006 10.3072 15.0472 10.6037 15.0229C10.7248 15.013 10.8571 15.0074 11 15.0042V12.5H5.65C5.21759 12.5 4.93838 12.5006 4.72588 12.5179C4.52213 12.5346 4.44659 12.5629 4.40951 12.5817C4.26839 12.6537 4.15365 12.7684 4.08175 12.9095C4.06285 12.9466 4.03459 13.0221 4.01795 13.2259C4.00059 13.4384 4 13.7176 4 14.15V15.0042C4.14295 15.0074 4.2752 15.013 4.39627 15.0229C4.69278 15.0472 4.9877 15.1006 5.27148 15.2452C5.69485 15.461 6.03905 15.8052 6.25477 16.2285C6.39936 16.5123 6.45285 16.8072 6.47707 17.1037C6.50003 17.3847 6.50002 17.7257 6.5 18.1211V18.3789C6.50002 18.7743 6.50003 19.1153 6.47707 19.3963C6.45285 19.6928 6.39936 19.9877 6.25477 20.2715C6.03905 20.6948 5.69485 21.0391 5.27148 21.2548C4.9877 21.3994 4.69278 21.4528 4.39627 21.4771C4.11534 21.5 3.77427 21.5 3.3789 21.5H3.1211C2.72574 21.5 2.38466 21.5 2.10373 21.4771C1.80722 21.4528 1.51231 21.3994 1.22852 21.2548C0.805159 21.0391 0.460952 20.6948 0.245237 20.2715C0.100642 19.9877 0.0471547 19.6928 0.022929 19.3963C-2.32793e-05 19.1154 -1.22189e-05 18.7743 6.03039e-07 18.3789V18.1211C-1.22189e-05 17.7257 -2.32793e-05 17.3847 0.022929 17.1037C0.0471547 16.8072 0.100642 16.5123 0.245237 16.2285C0.460952 15.8052 0.805159 15.461 1.22852 15.2452C1.51231 15.1006 1.80722 15.0472 2.10373 15.0229C2.22481 15.013 2.35705 15.0074 2.5 15.0042L2.5 14.1211C2.49999 13.7257 2.49998 13.3847 2.52293 13.1037C2.54715 12.8072 2.60064 12.5123 2.74524 12.2285C2.96095 11.8052 3.30516 11.461 3.72852 11.2452C4.01231 11.1006 4.30722 11.0472 4.60373 11.0229C4.88465 11 5.22571 11 5.62105 11H11V8.49579C10.8571 8.49259 10.7248 8.48697 10.6037 8.47707C10.3072 8.45285 10.0123 8.39936 9.72852 8.25477C9.30516 8.03905 8.96095 7.69485 8.74524 7.27148C8.60064 6.9877 8.54716 6.69278 8.52293 6.39627C8.49998 6.11535 8.49999 5.7743 8.5 5.37896V5.12109C8.49999 4.72575 8.49998 4.38465 8.52293 4.10373C8.54716 3.80722 8.60064 3.51231 8.74524 3.22852C8.96095 2.80516 9.30516 2.46095 9.72852 2.24524C10.0123 2.10064 10.3072 2.04715 10.6037 2.02293C10.8847 1.99998 11.2257 1.99999 11.6211 2ZM20.2488 16.5H20.15C19.7176 16.5 19.4384 16.5006 19.2259 16.5179C19.0221 16.5346 18.9466 16.5629 18.9095 16.5817C18.7684 16.6537 18.6537 16.7684 18.5817 16.9095C18.5629 16.9466 18.5346 17.0221 18.5179 17.2259C18.5006 17.4384 18.5 17.7176 18.5 18.15V18.35C18.5 18.7824 18.5006 19.0616 18.5179 19.2741C18.5346 19.4779 18.5629 19.5534 18.5817 19.5905C18.6537 19.7316 18.7684 19.8464 18.9095 19.9183C18.9466 19.9372 19.0221 19.9654 19.2259 19.9821C19.4384 19.9994 19.7176 20 20.15 20H20.35C20.7824 20 21.0616 19.9994 21.2741 19.9821C21.4779 19.9654 21.5534 19.9372 21.5905 19.9183C21.7316 19.8464 21.8464 19.7316 21.9183 19.5905C21.9372 19.5534 21.9654 19.4779 21.9821 19.2741C21.9994 19.0616 22 18.7824 22 18.35V18.15C22 17.7176 21.9994 17.4384 21.9821 17.2259C21.9654 17.0221 21.9372 16.9466 21.9183 16.9095C21.8464 16.7684 21.7316 16.6537 21.5905 16.5817C21.5534 16.5629 21.4779 16.5346 21.2741 16.5179C21.0616 16.5006 20.7824 16.5 20.35 16.5H20.2512C20.2508 16.5 20.2504 16.5 20.25 16.5C20.2496 16.5 20.2492 16.5 20.2488 16.5ZM11.65 16.5H11.85C12.2824 16.5 12.5616 16.5006 12.7741 16.5179C12.9779 16.5346 13.0534 16.5629 13.0905 16.5817C13.2316 16.6537 13.3464 16.7684 13.4183 16.9095C13.4372 16.9466 13.4654 17.0221 13.4821 17.2259C13.4994 17.4384 13.5 17.7176 13.5 18.15V18.35C13.5 18.7824 13.4994 19.0616 13.4821 19.2741C13.4654 19.4779 13.4372 19.5534 13.4183 19.5905C13.3464 19.7316 13.2316 19.8464 13.0905 19.9183C13.0534 19.9372 12.9779 19.9654 12.7741 19.9821C12.5616 19.9994 12.2824 20 11.85 20H11.65C11.2176 20 10.9384 19.9994 10.7259 19.9821C10.5221 19.9654 10.4466 19.9372 10.4095 19.9183C10.2684 19.8464 10.1537 19.7316 10.0817 19.5905C10.0629 19.5534 10.0346 19.4779 10.0179 19.2741C10.0006 19.0616 10 18.7824 10 18.35V18.15C10 17.7176 10.0006 17.4384 10.0179 17.2259C10.0346 17.0221 10.0629 16.9466 10.0817 16.9095C10.1537 16.7684 10.2684 16.6537 10.4095 16.5817C10.4466 16.5629 10.5221 16.5346 10.7259 16.5179C10.9384 16.5006 11.2176 16.5 11.65 16.5ZM3.15 16.5C2.71759 16.5 2.43838 16.5006 2.22588 16.5179C2.02213 16.5346 1.94659 16.5629 1.90951 16.5817C1.76839 16.6537 1.65365 16.7684 1.58175 16.9095C1.56285 16.9466 1.53459 17.0221 1.51795 17.2259C1.50059 17.4384 1.5 17.7176 1.5 18.15V18.35C1.5 18.7824 1.50059 19.0616 1.51795 19.2741C1.53459 19.4779 1.56285 19.5534 1.58175 19.5905C1.65365 19.7316 1.76839 19.8464 1.90951 19.9183C1.94659 19.9372 2.02213 19.9654 2.22588 19.9821C2.43838 19.9994 2.71759 20 3.15 20H3.35C3.78242 20 4.06162 19.9994 4.27413 19.9821C4.47787 19.9654 4.55341 19.9372 4.59049 19.9183C4.73162 19.8464 4.84635 19.7316 4.91826 19.5905C4.93715 19.5534 4.96541 19.4779 4.98206 19.2741C4.99942 19.0616 5 18.7824 5 18.35V18.15C5 17.7176 4.99942 17.4384 4.98206 17.2259C4.96541 17.0221 4.93715 16.9466 4.91826 16.9095C4.84635 16.7684 4.73162 16.6537 4.59049 16.5817C4.55341 16.5629 4.47787 16.5346 4.27413 16.5179C4.06162 16.5006 3.78242 16.5 3.35 16.5L3.25 16.5L3.15 16.5ZM11.85 7L11.75 7L11.65 7C11.2176 7 10.9384 6.99942 10.7259 6.98206C10.5221 6.96541 10.4466 6.93715 10.4095 6.91826C10.2684 6.84635 10.1537 6.73162 10.0817 6.59049C10.0629 6.55341 10.0346 6.47787 10.0179 6.27413C10.0006 6.06162 10 5.78242 10 5.35V5.15C10 4.71759 10.0006 4.43838 10.0179 4.22588C10.0346 4.02213 10.0629 3.94659 10.0817 3.90951C10.1537 3.76839 10.2684 3.65365 10.4095 3.58175C10.4466 3.56285 10.5221 3.53459 10.7259 3.51795C10.9384 3.50059 11.2176 3.5 11.65 3.5H11.85C12.2824 3.5 12.5616 3.50059 12.7741 3.51795C12.9779 3.53459 13.0534 3.56285 13.0905 3.58175C13.2316 3.65365 13.3464 3.76839 13.4183 3.90951C13.4372 3.94659 13.4654 4.02213 13.4821 4.22588C13.4994 4.43838 13.5 4.71759 13.5 5.15V5.35C13.5 5.78242 13.4994 6.06162 13.4821 6.27413C13.4654 6.47787 13.4372 6.55341 13.4183 6.59049C13.3464 6.73162 13.2316 6.84635 13.0905 6.91826C13.0534 6.93715 12.9779 6.96541 12.7741 6.98206C12.5616 6.99942 12.2824 7 11.85 7Z\" fill=\"currentColor\"/>
+        </svg>
+      </button>
+    </div>{# button--outside #}
+
+    <div class=\"main-box__count\">
+      Всього на складі: <span class=\"label--extra-sm label--secondary\">{{ products|length }}</span>
+    </div>
+
+  </div>{# main-box__top #}
+
+  <div class=\"main-box__bottom\">
+
+    <div class=\"warehouse__item table-title\">
+      <div class=\"warehouse__checkbox\">
+        <label for=\"warehouse-select-all\" class=\"checkbox\">
+          <input type=\"checkbox\" id=\"warehouse-select-all\">
+        </label>
+      </div>
+        <div class=\"warehouse__left\">
+          <div class=\"warehouse__name\">Наименование</div>
+          <div class=\"warehouse__number\">Номенклатурный №</div>
+        </div>
+        <div class=\"warehouse__unit\">Ед.измерения</div>
+        <div class=\"warehouse__price\">Цена</div>
+        <div class=\"warehouse__quantity\">Количество</div>
+        <div class=\"warehouse__sum\">Сумма</div>
+      </div>
+
+  </div>
+
+{% elseif this.page.url == '/operation-history'%}
+
+  <div class=\"main-box__top\">
+
+   <div class=\"main-box__count\">
+    Всього: <span class=\"label--extra-sm label--secondary\">{{ filteredCount }}</span>
+    </div>
+
+     <form method=\"get\" class=\"operation-history__filters\">
+
+      <!-- Тип операции -->
+      <div class=\"custom-select operation-history__filters-select--type\" data-name=\"type\">
+        <div class=\"selected operation-history__filters-selected\">
+          {{ request.get('type') ? types.where('id', request.get('type')).first.name : 'Тип операції' }}
+        </div>
+
+        <div class=\"options operation-history__filters-options dropdown\">
+          <div class=\"option operation-history__filters-option--type\" data-value=\"\">Все типы</div>
+          {% for type in types %}
+            <div class=\"option operation-history__filters-option--type\" data-value=\"{{ type.id }}\">
+              {{ type.name }}
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Контрагент -->
+      <div class=\"custom-select operation-history__filters-select--counteragent\" data-name=\"counteragent\">
+        <div class=\"selected operation-history__filters-selected\">
+            {{ request.get('counteragent') ?: 'Контрагент' }}
+        </div>
+        <div class=\"options operation-history__filters-options dropdown\">
+          <div class=\"option operation-history__filters-option\" data-value=\"\">Все контрагенты</div>
+          {% for ca in counteragents %}
+            <div class=\"option operation-history__filters-option--counteragent\" data-value=\"{{ ca }}\">
+              {{ ca }}
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Год -->
+    <div class=\"custom-select operation-history__filters-select--year\" data-name=\"year\">
+      <div class=\"selected operation-history__filters-selected\">
+          {{ request.get('year') ?: 'Рік' }}
+      </div>
+
+      <div class=\"options operation-history__filters-options dropdown\">
+        <div class=\"option\" data-value=\"\">Всі роки</div>
+        {% for year in years %}
+          <div class=\"option operation-history__filters-option--year\" data-value=\"{{ year }}\">
+            {{ year }}
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <input type=\"hidden\" name=\"type\" id=\"typeInput\">
+    <input type=\"hidden\" name=\"counteragent\" id=\"counteragentInput\">
+    <input type=\"hidden\" name=\"year\" id=\"yearInput\">
+
+    <div class=\"button--outside\">
+      <a href=\"/operation-history\" class=\"button button--nm button--secondary\">Очистити</a>
+    </div>{# button--outside #}
+
+    <div class=\"button--outside\">
+      <button type=\"submit\" class=\"button button--nm button--brand\">Застосувати</button>
+    </div>
+
+  </form>
+
+  </div>{# main-box__top #}
+
+  <div class=\"main-box__bottom\">
+
+    <div class=\"operation-history__item table-title\">
+      <div class=\"operation-history__check\">
+        <label for=\"\" class=\"checkbox\">
+          <input type=\"checkbox\" class=\"product-check\">
+        </label>
+      </div>
+      <div class=\"operation-history__type\">Тип</div>
+      <div class=\"operation-history__left\">
+        <div class=\"operation-history__name\">Наименование</div>
+        <div class=\"operation-history__number\">Инвентарный номер</div>
+      </div>
+      <div class=\"operation-history__price\">Цена</div>
+      <div class=\"operation-history__quantity\">Количество</div>
+      <div class=\"operation-history__date\">Дата</div>
+      <div class=\"operation-history__counteragent\">Контрагент</div>
+    </div>
+
+  </div>
+
+{% elseif this.page.url == '/documents'%}
+
+  <div class=\"main-box__top main-box__top--documents\">
+
+    <form method=\"get\" class=\"operation-history__filters\">
+
+    <!-- Тип операции -->
+    <div class=\"custom-select operation-history__filters-select--type\" data-name=\"type\">
+      <div class=\"selected operation-history__filters-selected\">
+        {{ request.get('type') ? types.where('id', request.get('type')).first.name : 'Тип операції' }}
+      </div>
+
+      <div class=\"options operation-history__filters-options dropdown\">
+        <div class=\"option operation-history__filters-option--type\" data-value=\"\">Все типы</div>
+        {% for type in types %}
+          <div class=\"option operation-history__filters-option--type\" data-value=\"{{ type.id }}\">
+            {{ type.name }}
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Контрагент -->
+    <div class=\"custom-select operation-history__filters-select--counteragent\" data-name=\"counteragent\">
+      <div class=\"selected operation-history__filters-selected\">
+          {{ request.get('counteragent') ?: 'Контрагент' }}
+      </div>
+      <div class=\"options operation-history__filters-options dropdown\">
+        <div class=\"option operation-history__filters-option\" data-value=\"\">Все контрагенты</div>
+        {% for ca in counteragents %}
+          <div class=\"option operation-history__filters-option--counteragent\" data-value=\"{{ ca }}\">
+            {{ ca }}
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Год -->
+  <div class=\"custom-select operation-history__filters-select--year\" data-name=\"year\">
+    <div class=\"selected operation-history__filters-selected\">
+        {{ request.get('year') ?: 'Рік' }}
+    </div>
+
+    <div class=\"options operation-history__filters-options dropdown\">
+      <div class=\"option\" data-value=\"\">Всі роки</div>
+      {% for year in years %}
+        <div class=\"option operation-history__filters-option--year\" data-value=\"{{ year }}\">
+          {{ year }}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <input type=\"hidden\" name=\"type\" id=\"typeInput\">
+  <input type=\"hidden\" name=\"counteragent\" id=\"counteragentInput\">
+  <input type=\"hidden\" name=\"year\" id=\"yearInput\">
+
+  <div class=\"button--outside\">
+    <a href=\"/documents{% if request.get('status') %}?status={{ request.get('status') }}{% endif %}\" class=\"button button--nm button--secondary\">Очистити</a>
+  </div>{# button--outside #}
+
+  <div class=\"button--outside\">
+    <button type=\"submit\" class=\"button button--nm button--brand\">Застосувати</button>
+  </div>
+
+  </form>
+
+  </div>{# main-box__top #}
+
+
+{% endif %}
+
+</div>{# main-box #}
+
+{# overlay-scroll подключается в layout/default.htm через assets/js/core/overlay-scroll.js #}", "C:\\OSPanel\\domains\\inventpro-test\\themes\\invent-pro\\partials\\global\\main-box.htm", "");
+    }
+    
+    public function checkSecurity()
+    {
+        static $tags = ["if" => 3, "for" => 59];
+        static $filters = ["escape" => 16, "length" => 16];
+        static $functions = [];
+
+        try {
+            $this->sandbox->checkSecurity(
+                ['if', 'for'],
+                ['escape', 'length'],
+                [],
+                $this->source
+            );
+        } catch (SecurityError $e) {
+            $e->setSourceContext($this->source);
+
+            if ($e instanceof SecurityNotAllowedTagError && isset($tags[$e->getTagName()])) {
+                $e->setTemplateLine($tags[$e->getTagName()]);
+            } elseif ($e instanceof SecurityNotAllowedFilterError && isset($filters[$e->getFilterName()])) {
+                $e->setTemplateLine($filters[$e->getFilterName()]);
+            } elseif ($e instanceof SecurityNotAllowedFunctionError && isset($functions[$e->getFunctionName()])) {
+                $e->setTemplateLine($functions[$e->getFunctionName()]);
+            }
+
+            throw $e;
+        }
+
+    }
+}

@@ -1,0 +1,20 @@
+columns:
+    category:
+        label: Категория
+        relation: category
+        select: name
+    name:
+        label: Наименование
+        type: text
+    unit:
+        label: Ед. измерения
+        type: text
+    price:
+        label: Цена
+        type: number
+    calculated_quantity:
+        label: К-во на складе
+        type: number
+    calculated_sum:
+        label: Сумма
+        type: number

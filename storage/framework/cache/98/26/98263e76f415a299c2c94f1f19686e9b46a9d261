@@ -1,0 +1,46 @@
+1771246983a:1:{s:8:"home.htm";a:9:{s:8:"fileName";s:8:"home.htm";s:7:"content";s:465:"title = "Вхід"
+url = "/"
+layout = "empty"
+
+[session]
+==
+<?php
+use Winter\User\Facades\Auth;
+use Redirect;
+
+function onStart()
+{
+    if (Auth::check()) {
+        // авторизованный пользователь
+        return Redirect::to('/warehouse');
+    }
+
+    // гость
+    return Redirect::to('/login');
+}
+?>
+==
+
+
+{% if user %}
+    <p>Hello {{ user.name }}</p>
+{% else %}
+    <p>Nobody is logged in</p>
+{% endif %}
+";s:5:"mtime";i:1769638309;s:6:"markup";s:104:"{% if user %}
+    <p>Hello {{ user.name }}</p>
+{% else %}
+    <p>Nobody is logged in</p>
+{% endif %}";s:4:"code";s:272:"use Winter\User\Facades\Auth;
+use Redirect;
+
+function onStart()
+{
+    if (Auth::check()) {
+        // авторизованный пользователь
+        return Redirect::to('/warehouse');
+    }
+
+    // гость
+    return Redirect::to('/login');
+}";s:5:"title";s:8:"Вхід";s:3:"url";s:1:"/";s:6:"layout";s:5:"empty";s:7:"session";a:0:{}}}

@@ -1,0 +1,10 @@
+name: OperationProducts
+form: $/samvol/inventory/models/operationproduct/fields.yaml
+modelClass: Samvol\Inventory\Models\OperationProduct
+defaultRedirect: samvol/inventory/operationproducts
+create:
+    redirect: 'samvol/inventory/operationproducts/update/:id'
+    redirectClose: samvol/inventory/operationproducts
+update:
+    redirect: samvol/inventory/operationproducts
+    redirectClose: samvol/inventory/operationproducts

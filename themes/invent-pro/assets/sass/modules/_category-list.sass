@@ -1,0 +1,114 @@
+@import '../core/vars'
+
+
+.category-menu
+  position: absolute
+  right: 0
+  bottom: calc( 100% + 12px )
+  display: flex
+  justify-content: center
+  align-items: center
+  width: max-content
+  z-index: 11
+  transform: translateY(0)
+  pointer-events: auto
+  visibility: visible
+  opacity: 1
+  transition: visibility $transition, opacity $transition, transform $transition
+
+  &.hidden
+    transform: translateY(16px)
+    visibility: hidden
+    opacity: 0
+    pointer-events: none
+
+  &__overlay
+    position: fixed
+    top: 0
+    left: 0
+    display: flex
+    justify-content: center
+    align-items: flex-start
+    width: 100%
+    height: 100%
+    transition: opacity 0.3s ease, visibility 0.3s ease
+    backdrop-filter: blur(8px)
+    z-index: 3
+    &.hidden
+      opacity: 0;
+      pointer-events: none;
+
+  &__list
+    display: flex
+    flex-direction: column
+    gap: 4px
+    padding: 8px
+    background-color: $grey-bg
+    border-radius: 24px
+    pointer-events: all
+    z-index: 11
+
+  &__item
+    position: relative
+    display: flex
+    justify-content: space-between
+    align-items: center
+    padding: 12px 16px
+    color: $text-inverse
+    cursor: pointer
+    border-radius: $radius-nm
+    transition: all $transition
+    &:hover, &:active, &.active
+      background: linear-gradient(180deg, #a1a1a1, #999)
+      box-shadow: inset 0 1px 2px 0 rgba(255, 255, 255, 0.16), 0 2px 4px 0 rgba(0, 0, 0, 0.05),
+
+    &-left
+      display: flex
+      flex-direction: column
+      justify-content: center
+      align-items: start
+      font-size: 13px
+      font-weight: 500
+      line-height: 15px
+      span
+        font-size: 11px
+        line-height: 11px
+        margin-top: 2px
+        color: #D6D6D6
+
+    &-arrow
+      display: flex
+      margin-left: 24px
+      filter: drop-shadow(0px 2px rgba(0, 0, 0, 0.18))
+      transition: transform $transition
+
+  &__children
+    position: absolute
+    left: calc( 100% + 16px )
+    bottom: -4px
+    width: max-content
+    height: max-content
+    display: flex
+    flex-direction: column
+    padding: 4px
+    background-color: $grey-bg
+    border-radius: $radius-nm
+    transform: translateX(0)
+    transition: all $transition
+    &.hidden
+      transform: translateX(-12px)
+      visibility: hidden
+      opacity: 0
+
+
+.category-menu__list > .category-menu__item:nth-child(9) > .category-menu__children
+  top: -54px
+
+.category-menu__list > .category-menu__item > .category-menu__children
+  top: 0
+
+.category-menu__list > .category-menu__item > .category-menu__children > .category-menu__item > .category-menu__children
+  top: 0
+
+.category-menu__item.active > .category-menu__item-arrow
+  transform: rotate(-180deg)

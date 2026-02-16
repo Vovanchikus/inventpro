@@ -1,0 +1,25 @@
+1771246983a:1:{s:13:"warehouse.htm";a:10:{s:8:"fileName";s:13:"warehouse.htm";s:7:"content";s:304:"title = "Склад"
+url = "/warehouse"
+layout = "default"
+
+[warehouse]
+[createNote]
+status = "{{ :status }}"
+==
+
+{% partial 'global/main-box' %}
+
+
+  <div class="table-outter">
+    <div class="warehouse-table table">
+      {% partial 'warehouse/warehouse-product' %}
+    </div>
+  </div>
+";s:5:"mtime";i:1769707836;s:6:"markup";s:179:"{% partial 'global/main-box' %}
+
+
+  <div class="table-outter">
+    <div class="warehouse-table table">
+      {% partial 'warehouse/warehouse-product' %}
+    </div>
+  </div>";s:4:"code";N;s:5:"title";s:10:"Склад";s:3:"url";s:10:"/warehouse";s:6:"layout";s:7:"default";s:9:"warehouse";a:0:{}s:10:"createNote";a:1:{s:6:"status";s:13:"{{ :status }}";}}}

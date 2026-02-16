@@ -1,0 +1,30 @@
+1771246983a:1:{s:21:"operation-history.htm";a:9:{s:8:"fileName";s:21:"operation-history.htm";s:7:"content";s:414:"title = "История операций"
+url = "/operation-history"
+layout = "default"
+
+[history]
+==
+
+{% partial 'global/main-box' %}
+
+<!-- Таблица истории операций -->
+<div class="table-outter">
+
+  <div class="operation-history-table table">
+    <div id="product-list">
+      {% partial 'operation-history/history-item' histories=histories %}
+    </div>
+  </div>
+</div>
+
+";s:5:"mtime";i:1769978953;s:6:"markup";s:300:"{% partial 'global/main-box' %}
+
+<!-- Таблица истории операций -->
+<div class="table-outter">
+
+  <div class="operation-history-table table">
+    <div id="product-list">
+      {% partial 'operation-history/history-item' histories=histories %}
+    </div>
+  </div>
+</div>";s:4:"code";N;s:5:"title";s:31:"История операций";s:3:"url";s:18:"/operation-history";s:6:"layout";s:7:"default";s:7:"history";a:0:{}}}

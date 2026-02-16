@@ -1,0 +1,133 @@
+@import vars
+@import _mixins
+
+@include font('Gilroy-Code', normal, 400, '../fonts/Gilroy/Gilroy-Regular.woff2')
+@include font('Gilroy-Code', normal, 500, '../fonts/Gilroy/Gilroy-Medium.woff2')
+@include font('Gilroy-Code', normal, 600, '../fonts/Gilroy/Gilroy-Semibold.woff2')
+@include font('Exo2-Code', normal, 400, '../fonts/Exo2/Exo2-Regular.woff2')
+@include font('Exo2-Code', normal, 500, '../fonts/Exo2/Exo2-Medium.woff2')
+@include font('Exo2-Code', normal, 600, '../fonts/Exo2/Exo2-SemiBold.woff2')
+// @include font('Gilroy', normal, 600, '../fonts/Gilroy/Gilroy-Semibold.woff', 'woff') Пример подключения другого формата
+
+::placeholder
+  color: $text-secondary
+
+::selection
+  background-color: $bg-brand
+  color: #fff
+
+input, textarea
+  outline: none
+  &:focus:required:invalid
+    border-color: $red-500
+  &:required:valid
+    border-color: $green-500
+
+html
+  min-height: 100%
+
+body
+  position: relative
+  font-family: $fontFamily
+  font-weight: 400
+  font-size: 14px
+  line-height: 1rem
+  background-color: $bg-body
+  color: $text-muted
+  min-width: 320px
+  min-height: 100%
+  overflow-x: hidden
+
+a
+  text-decoration: none
+  transition: $transition
+  &:hover
+    color: $text-muted
+
+.container
+  position: relative
+  display: grid
+  grid-template-areas: "header header" "aside main" "footer footer"
+  grid-template-columns: 2fr 10fr
+  grid-template-rows: 96px auto 64px
+  gap: 0 24px
+  max-width: 1180px
+  width: 100%
+  margin: 0 auto 64px auto
+  padding: 0
+
+  &--extra-sm
+    display: flex
+    flex-direction: column
+    justify-content: center
+    align-items: center
+    gap: 48px
+    width: 400px
+    margin: 0 auto
+    padding: 24px
+
+  &--sm
+    display: flex
+    flex-direction: column
+    justify-content: center
+    align-items: center
+    gap: 48px
+    width: 640px
+    margin: 0 auto
+    padding: 24px
+
+header
+  grid-area: header
+
+aside
+  grid-area: aside
+  align-self: start
+
+main
+  grid-area: main
+
+footer
+  grid-area: footer
+
+.logo
+  font-size: 18px
+  line-height: 18px
+  span
+    font-weight: 600
+
+.img-zoom
+  position: absolute
+  visibility: hidden
+  opacity: 0
+  width: 100%
+  height: 100%
+  background-color: hsl(0deg 0% 0% / 10%)
+  border-radius: $radius-sm
+  transition: all $transition
+
+  &__icon
+    display: inline-flex
+    justify-content: center
+    align-items: center
+    height: 100%
+    svg
+      box-shadow: 0 0 0 0px hsl(0deg 0% 100% / 13%)
+      transform: scale(0.7)
+      border-radius: 28px
+      transition: box-shadow .5s ease-out, transform .2s ease-out
+
+.dropdown
+  padding: 4px
+  background-color: $grey-bg
+  border-radius: $radius-nm
+  backdrop-filter: blur(16px)
+
+.box--light
+  background-color: $bg-box
+  box-shadow: $box-light-shadow
+  border-radius: $radius-lg
+
+.d-none
+  display: none!important
+
+

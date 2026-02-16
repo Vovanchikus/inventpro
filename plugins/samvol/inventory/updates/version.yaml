@@ -1,0 +1,122 @@
+1.0.1:
+    - "Initialize plugin."
+1.0.2:
+    - "Created table samvol_inventory_products"
+    - builder_table_create_samvol_inventory_products.php
+1.0.3:
+    - "Created table samvol_inventory_operations"
+    - builder_table_create_samvol_inventory_operations.php
+1.0.4:
+    - "Created table samvol_inventory_operation_types"
+    - builder_table_create_samvol_inventory_operation_types.php
+1.0.5:
+    - "Created table samvol_inventory_operation_products"
+    - builder_table_create_samvol_inventory_operation_products.php
+1.0.6:
+    - "Updated table samvol_inventory_operation_products"
+    - builder_table_update_samvol_inventory_operation_products.php
+1.0.7:
+    - "Updated table samvol_inventory_operation_products"
+    - builder_table_update_samvol_inventory_operation_products_2.php
+1.0.8:
+    - "Updated table samvol_inventory_operation_products"
+    - builder_table_update_samvol_inventory_operation_products_3.php
+1.0.9:
+    - "Updated table samvol_inventory_products"
+    - builder_table_update_samvol_inventory_products.php
+1.0.10:
+    - "Created table samvol_inventory_documents"
+    - builder_table_create_samvol_inventory_documents.php
+1.0.11:
+    - "Updated table samvol_inventory_documents"
+    - builder_table_update_samvol_inventory_documents.php
+1.0.12:
+    - "Updated table samvol_inventory_operations"
+    - builder_table_update_samvol_inventory_operations.php
+1.0.13:
+    - "Created table samvol_inventory_stock_snapshots"
+    - builder_table_create_samvol_inventory_stock_snapshots.php
+1.0.14:
+    - "Updated table samvol_inventory_stock_snapshots"
+    - builder_table_update_samvol_inventory_stock_snapshots.php
+1.0.15:
+    - "Updated table samvol_inventory_stock_snapshots"
+    - builder_table_update_samvol_inventory_stock_snapshots_2.php
+1.0.16:
+    - "Updated table samvol_inventory_products"
+    - builder_table_update_samvol_inventory_products_2.php
+1.0.17:
+    - "Updated table samvol_inventory_products"
+    - builder_table_update_samvol_inventory_products_3.php
+1.0.18:
+    - "Updated table samvol_inventory_operations"
+    - builder_table_update_samvol_inventory_operations_2.php
+1.0.19:
+    - "Updated table samvol_inventory_products"
+    - builder_table_update_samvol_inventory_products_4.php
+1.0.20:
+    - "Updated table samvol_inventory_operation_products"
+    - builder_table_update_samvol_inventory_operation_products_10.php
+1.0.21:
+    - "Updated table samvol_inventory_operation_products"
+    - builder_table_update_samvol_inventory_operation_products_11.php
+1.0.22:
+    - "Updated table samvol_inventory_operations"
+    - builder_table_update_samvol_inventory_operations_3.php
+1.0.23:
+    - "Updated table samvol_inventory_operation_products"
+    - builder_table_update_samvol_inventory_operation_products_12.php
+1.0.24:
+    - "Updated table samvol_inventory_operations"
+    - builder_table_update_samvol_inventory_operations_4.php
+1.0.25:
+    - "Updated table samvol_inventory_documents"
+    - builder_table_update_samvol_inventory_documents_2.php
+1.0.26:
+    - "Created table samvol_inventory_categories"
+    - builder_table_create_samvol_inventory_categories.php
+1.0.27:
+    - "Updated table samvol_inventory_categories"
+    - builder_table_update_samvol_inventory_categories.php
+1.0.28:
+    - "Updated table samvol_inventory_categories"
+    - builder_table_update_samvol_inventory_categories_2.php
+1.0.29:
+    - "Updated table samvol_inventory_products"
+    - builder_table_update_samvol_inventory_products_5.php
+1.0.30:
+    - "Updated table samvol_inventory_products"
+    - builder_table_update_samvol_inventory_products_6.php
+1.0.31:
+    - "Updated table samvol_inventory_operations"
+    - builder_table_update_samvol_inventory_operations_5.php
+1.0.32:
+    - "Updated table samvol_inventory_products"
+    - builder_table_update_samvol_inventory_products_7.php
+1.0.33:
+    - "Updated table samvol_inventory_products"
+    - builder_table_update_samvol_inventory_products_8.php
+1.0.34:
+    - "Created table samvol_inventory_product_images"
+    - builder_table_create_samvol_inventory_product_images.php
+1.0.35:
+    - "Drop table samvol_inventory_product_images"
+    - builder_table_delete_samvol_inventory_product_images.php
+1.0.36:
+    - "Created table samvol_inventory_notes"
+    - builder_table_create_samvol_inventory_notes.php
+1.0.37:
+    - "Updated table samvol_inventory_operations (add is_draft/is_posted/note_id)"
+    - builder_table_update_samvol_inventory_operations_add_fields.php
+1.0.38:
+    - "Updated table samvol_inventory_notes (add products json)"
+    - builder_table_update_samvol_inventory_notes_add_products.php
+1.0.39:
+    - "Created table samvol_inventory_note_products"
+    - builder_table_create_samvol_inventory_note_products.php
+1.0.40:
+    - "Migrate note products JSON to pivot"
+    - builder_table_migrate_notes_products_to_pivot.php
+1.0.41:
+    - "Updated table samvol_inventory_operations (add status dates)"
+    - builder_table_update_samvol_inventory_operations_add_status_dates.php

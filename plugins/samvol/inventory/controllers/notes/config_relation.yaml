@@ -1,0 +1,43 @@
+products:
+    label: Товары
+    view:
+        list:
+            columns:
+                name:
+                    label: Наименование
+                    type: text
+                unit:
+                    label: Ед. измерения
+                    type: text
+                pivot[quantity]:
+                    label: К-во в заметке
+                    type: number
+                pivot[sum]:
+                    label: Сумма в заметке
+                    type: number
+        toolbarButtons: create|add|delete
+    manage:
+        list: $/samvol/inventory/models/product/columns.yaml
+        form:
+            fields:
+                name:
+                    label: "Наименование товара"
+                    span: auto
+                    type: text
+                unit:
+                    label: Ед.измерения
+                    span: auto
+                    type: text
+                pivot[quantity]:
+                    label: К-во в заметке
+                    type: number
+    pivot:
+        form: $/samvol/inventory/models/noteproduct/fields.yaml
+
+operations:
+    label: Операции
+    view:
+        list: $/samvol/inventory/models/operation/columns.yaml
+        toolbarButtons: create|add|delete
+    manage:
+        form: $/samvol/inventory/models/operation/fields.yaml

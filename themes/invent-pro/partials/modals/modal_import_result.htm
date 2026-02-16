@@ -1,0 +1,67 @@
+{% if differences|length %}
+<div class="import table">
+    <div class="import__item table-title">
+        <div class="import__select">
+            <label for="" class="checkbox"><input type="checkbox" id="select-all-diffs" /></label>
+        </div>
+        <div class="import__name">Найменування</div>
+        <div class="import__quantity">К-сть на складі</div>
+        <div class="import__quantity-excel">К-сть в Excel</div>
+        <div class="import__price">Ціна на складі</div>
+        <div class="import__price-excel">Ціна в Excel</div>
+        <div class="import__sum">Сума на складі</div>
+        <div class="import__sum-excel">Сума в Excel</div>
+    </div>
+
+    {% for diff in differences %}
+        <div class="import__item table-item">
+            <div class="import__select">
+                <label for="" class="checkbox">
+                    <input type="checkbox"
+                        class="diff-checkbox"
+                        checked
+                        value="{{ diff.inv_number }}"
+                        data-id="{{ diff.id }}"
+                        data-quantity="{{ diff.excel_quantity }}"
+                        data-price="{{ diff.excel_price }}"
+                        data-sum="{{ diff.excel_sum }}" />
+                </label>
+
+                <!-- Скрытые поля для передачи в updates -->
+                <input type="hidden" name="updates[{{ diff.id }}][inv_number]" value="{{ diff.inv_number }}">
+                <input type="hidden" name="updates[{{ diff.id }}][quantity]" value="{{ diff.excel_quantity }}">
+                <input type="hidden" name="updates[{{ diff.id }}][price]" value="{{ diff.excel_price }}">
+                <input type="hidden" name="updates[{{ diff.id }}][sum]" value="{{ diff.excel_sum }}">
+            </div>
+            <div class="import__name">{{ diff.name }}</div>
+            <div class="import__quantity {{ diff.current_quantity != diff.excel_quantity ? 'import__cell--diff' : '' }}">{{ diff.current_quantity }}</div>
+            <div class="import__quantity-excel {{ diff.current_quantity != diff.excel_quantity ? 'import__cell--diff' : '' }}">{{ diff.excel_quantity }}</div>
+            <div class="import__price {{ diff.price != diff.excel_price ? 'import__cell--diff' : '' }}">{{ diff.price }}</div>
+            <div class="import__price-excel {{ diff.price != diff.excel_price ? 'import__cell--diff' : '' }}">{{ diff.excel_price }}</div>
+            <div class="import__sum {{ diff.sum != diff.excel_sum ? 'import__cell--diff' : '' }}">{{ diff.sum }}</div>
+            <div class="import__sum-excel {{ diff.sum != diff.excel_sum ? 'import__cell--diff' : '' }}">{{ diff.excel_sum }}</div>
+        </div>
+    {% endfor %}
+</div>
+
+<div class="import__bottom">
+
+    <button type="button" class="button button--nm button--secondary" id="download-differences">
+        Завантажити файл с відмінностями
+    </button>
+
+    <div class="import__bottom-right">
+        <button type="button" class="button button--nm button--secondary" id="cancel-differences">
+            Відмінити
+        </button>
+        <button type="button" class="button button--nm button--brand" id="apply-differences">
+            Зберегти зміни
+        </button>
+    </div>{# import__bottom-right #}
+</div>{# import__bottom #}
+
+{% else %}
+<div class="alert alert--success">
+    Различий нет. Новых продуктов: {{ newCount }}
+</div>
+{% endif %}

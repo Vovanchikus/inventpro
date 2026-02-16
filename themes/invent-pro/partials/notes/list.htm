@@ -1,0 +1,7 @@
+<div class="notes-list" data-notes-list>
+    {% for note in notes %}
+        {% partial 'notes/item' note=note %}
+    {% else %}
+        <div class="notes-empty">Нотаток поки немає.</div>
+    {% endfor %}
+</div>
