@@ -12,6 +12,19 @@ use Carbon\Carbon;
 
 class AddOperation extends ComponentBase
 {
+    protected function normalizeNumericInput($value)
+    {
+        if ($value === null) {
+            return null;
+        }
+
+        $normalized = trim((string) $value);
+        $normalized = str_replace(["\xC2\xA0", ' '], '', $normalized);
+        $normalized = str_replace(',', '.', $normalized);
+
+        return $normalized;
+    }
+
     public function componentDetails()
     {
         return [
@@ -549,9 +562,9 @@ class AddOperation extends ComponentBase
 
             $inv_number   = $data['inv_number'][$i] ?? null;
             $unit         = $data['unit'][$i] ?? null;
-            $price_raw    = $data['price'][$i] ?? null;
-            $quantity_raw = $data['quantity'][$i] ?? null;
-            $sum_raw      = $data['sum'][$i] ?? null;
+            $price_raw    = $this->normalizeNumericInput($data['price'][$i] ?? null);
+            $quantity_raw = $this->normalizeNumericInput($data['quantity'][$i] ?? null);
+            $sum_raw      = $this->normalizeNumericInput($data['sum'][$i] ?? null);
 
             if (!$name)       $errors[] = ["field" => "name[$i]", "message" => "Обязательное поле"];
             if (!$inv_number) $errors[] = ["field" => "inv_number[$i]", "message" => "Обязательное поле"];
@@ -697,8 +710,8 @@ class AddOperation extends ComponentBase
 
                     $inv_number = $data['inv_number'][$i];
                     $unit       = $data['unit'][$i];
-                    $price      = floatval($data['price'][$i]);
-                    $quantity   = floatval($data['quantity'][$i]);
+                    $price      = floatval($this->normalizeNumericInput($data['price'][$i] ?? null));
+                    $quantity   = floatval($this->normalizeNumericInput($data['quantity'][$i] ?? null));
 
                     $product = Product::firstOrCreate(
                         ['inv_number' => $inv_number],
@@ -727,11 +740,11 @@ class AddOperation extends ComponentBase
                             try {
                                 $product = Product::firstOrCreate(
                                     ['inv_number' => $inv],
-                                    ['name' => $name, 'unit' => $data['unit'][$i] ?? null, 'price' => isset($data['price'][$i]) ? floatval($data['price'][$i]) : null]
+                                    ['name' => $name, 'unit' => $data['unit'][$i] ?? null, 'price' => isset($data['price'][$i]) ? floatval($this->normalizeNumericInput($data['price'][$i])) : null]
                                 );
                                 $pid = $product->id;
-                                $qty = isset($data['quantity'][$i]) ? floatval($data['quantity'][$i]) : 0;
-                                $price = isset($data['price'][$i]) ? floatval($data['price'][$i]) : null;
+                                $qty = isset($data['quantity'][$i]) ? floatval($this->normalizeNumericInput($data['quantity'][$i])) : 0;
+                                $price = isset($data['price'][$i]) ? floatval($this->normalizeNumericInput($data['price'][$i])) : null;
                                 $sync[$pid] = [
                                     'quantity' => $qty,
                                     'sum' => $price !== null ? round($qty * $price, 2) : null,
@@ -765,9 +778,9 @@ class AddOperation extends ComponentBase
                             'name' => $name,
                             'inv_number' => $data['inv_number'][$i] ?? null,
                             'unit' => $data['unit'][$i] ?? null,
-                            'price' => isset($data['price'][$i]) ? (float)$data['price'][$i] : null,
-                            'quantity' => isset($data['quantity'][$i]) ? (float)$data['quantity'][$i] : null,
-                            'sum' => isset($data['sum'][$i]) ? (float)$data['sum'][$i] : null,
+                            'price' => isset($data['price'][$i]) ? (float)$this->normalizeNumericInput($data['price'][$i]) : null,
+                            'quantity' => isset($data['quantity'][$i]) ? (float)$this->normalizeNumericInput($data['quantity'][$i]) : null,
+                            'sum' => isset($data['sum'][$i]) ? (float)$this->normalizeNumericInput($data['sum'][$i]) : null,
                             'counteragent' => $operationCounteragent,
                         ];
                     }

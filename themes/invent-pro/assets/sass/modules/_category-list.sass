@@ -48,6 +48,22 @@
     pointer-events: all
     z-index: 11
 
+  &__quick
+    position: absolute
+    width: max-content
+    padding: 6px
+    top: 0
+    right: calc(100% + 12px)
+    background-color: var(--grey-bg)
+    display: flex
+    flex-direction: column
+    gap: 4px
+    margin-bottom: 8px
+    border-radius: 24px
+
+  &__quick-item
+    flex: 1
+
   &__item
     position: relative
     display: flex
@@ -90,7 +106,8 @@
     height: max-content
     display: flex
     flex-direction: column
-    padding: 4px
+    gap: 4px
+    padding: 6px
     background-color: $grey-bg
     border-radius: $radius-nm
     transform: translateX(0)

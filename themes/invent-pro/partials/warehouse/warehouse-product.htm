@@ -1,7 +1,7 @@
 <div id="product-list">
   {% for product in products %}
 
-    <div class="warehouse__item table-item">
+    <div class="warehouse__item table-item" data-category-id="{{ product.category_id ?: '' }}">
 
       <div class="warehouse__checkbox">
         <label for="" class="checkbox">

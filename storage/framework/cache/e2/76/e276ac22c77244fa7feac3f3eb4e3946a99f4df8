@@ -1,7 +1,7 @@
-1771246794a:1:{s:31:"warehouse/warehouse-product.htm";a:5:{s:8:"fileName";s:31:"warehouse/warehouse-product.htm";s:7:"content";s:14640:"<div id="product-list">
+1771316454a:1:{s:31:"warehouse/warehouse-product.htm";a:5:{s:8:"fileName";s:31:"warehouse/warehouse-product.htm";s:7:"content";s:14691:"<div id="product-list">
   {% for product in products %}
 
-    <div class="warehouse__item table-item">
+    <div class="warehouse__item table-item" data-category-id="{{ product.category_id ?: '' }}">
 
       <div class="warehouse__checkbox">
         <label for="" class="checkbox">
@@ -75,10 +75,10 @@
 
   {% endfor %}
 </div>
-";s:5:"mtime";i:1769693706;s:6:"markup";s:14638:"<div id="product-list">
+";s:5:"mtime";i:1771270606;s:6:"markup";s:14689:"<div id="product-list">
   {% for product in products %}
 
-    <div class="warehouse__item table-item">
+    <div class="warehouse__item table-item" data-category-id="{{ product.category_id ?: '' }}">
 
       <div class="warehouse__checkbox">
         <label for="" class="checkbox">

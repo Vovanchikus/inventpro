@@ -1,4 +1,4 @@
-1771246983a:1:{s:17:"document-item.htm";a:9:{s:8:"fileName";s:17:"document-item.htm";s:7:"content";s:13650:"title = "Страница документа"
+1771317063a:1:{s:17:"document-item.htm";a:9:{s:8:"fileName";s:17:"document-item.htm";s:7:"content";s:13650:"title = "Страница документа"
 url = "/documents/:slug"
 layout = "default"
 
@@ -160,7 +160,7 @@ layout = "default"
 
 
 
-";s:5:"mtime";i:1771015590;s:6:"markup";s:13522:"<div class="documents-item document__single box--light container--sm">
+";s:5:"mtime";i:1771247871;s:6:"markup";s:13522:"<div class="documents-item document__single box--light container--sm">
 
   {% if doc.doc_file_flag %}
     <div class="documents-item__status document__single">

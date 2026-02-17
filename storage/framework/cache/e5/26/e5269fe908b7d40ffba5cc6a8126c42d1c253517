@@ -1,11 +1,11 @@
-1771193205a:1:{s:14:"notes/list.htm";a:5:{s:8:"fileName";s:14:"notes/list.htm";s:7:"content";s:235:"<div class="notes-list" data-notes-list>
+1771316448a:1:{s:14:"notes/list.htm";a:5:{s:8:"fileName";s:14:"notes/list.htm";s:7:"content";s:235:"<div class="notes-list" data-notes-list>
     {% for note in notes %}
         {% partial 'notes/item' note=note %}
     {% else %}
         <div class="notes-empty">Нотаток поки немає.</div>
     {% endfor %}
 </div>
-";s:5:"mtime";i:1770227110;s:6:"markup";s:233:"<div class="notes-list" data-notes-list>
+";s:5:"mtime";i:1771247722;s:6:"markup";s:233:"<div class="notes-list" data-notes-list>
     {% for note in notes %}
         {% partial 'notes/item' note=note %}
     {% else %}

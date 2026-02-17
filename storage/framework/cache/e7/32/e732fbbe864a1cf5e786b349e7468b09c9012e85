@@ -1,4 +1,4 @@
-1771246983a:1:{s:11:"default.htm";a:11:{s:8:"fileName";s:11:"default.htm";s:7:"content";s:5442:"description = "Основной макет Winter CMS"
+1771317063a:1:{s:11:"default.htm";a:11:{s:8:"fileName";s:11:"default.htm";s:7:"content";s:5442:"description = "Основной макет Winter CMS"
 
 [session]
 security = "user" ; ограничиваем для незарегистрированных пользователей страницу
@@ -110,7 +110,7 @@ redirect = "login"
     </div>
 </body>
 </html>
-";s:5:"mtime";i:1771166633;s:6:"markup";s:5158:"<!DOCTYPE html>
+";s:5:"mtime";i:1771247871;s:6:"markup";s:5158:"<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="utf-8">

@@ -1,4 +1,9 @@
 document.addEventListener("DOMContentLoaded", () => {
+    const productPage = document.querySelector(".product-page");
+    const placeholderImagePath =
+        productPage?.dataset.placeholderImage ||
+        "/themes/invent-pro/assets/img/icon/no-pictures.svg";
+
     function escapeHtml(text) {
         return String(text || "")
             .replaceAll("&", "&amp;")
@@ -51,6 +56,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (!mainWrapper || !thumbsWrapper) return;
 
+        if (!images.length) {
+            const placeholderImg = escapeHtml(placeholderImagePath);
+            mainWrapper.innerHTML = `
+                <div class="swiper-slide">
+                    <img src="${placeholderImg}" alt="No image available">
+                </div>
+            `;
+
+            thumbsWrapper.innerHTML = `
+                <div class="swiper-slide">
+                    <img src="${placeholderImg}" alt="No image available">
+                </div>
+            `;
+
+            if (typeof window.initProductPageSlider === "function") {
+                window.initProductPageSlider();
+            }
+
+            return;
+        }
+
         mainWrapper.innerHTML = images
             .map(
                 (image) => `
@@ -78,7 +104,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    const productPage = document.querySelector(".product-page");
     const productId = Number(productPage?.dataset.productId);
     const form = productId
         ? document.getElementById(`uploadImageForm_${productId}`)
@@ -136,11 +161,10 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         function updateStateFromResponse(response) {
-            if (!response) return;
-            const nextImages = normalizeImages(response.images || []);
-            if (nextImages.length || imagesState.length === 0) {
-                imagesState = nextImages;
-            }
+            if (!response || !Array.isArray(response.images)) return;
+
+            const nextImages = normalizeImages(response.images);
+            imagesState = nextImages;
             renderSlider(imagesState);
         }
 
@@ -151,6 +175,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     order: imagesState.map((image) => image.id),
                 },
             });
+
+            if (response && response.error) {
+                throw new Error(response.error);
+            }
+
             updateStateFromResponse(response);
             return response;
         }
@@ -355,6 +384,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             moved,
                         );
 
+                        renderSlider(imagesState);
                         rerenderModalListAnimated(previousRects);
                         try {
                             await saveOrder();

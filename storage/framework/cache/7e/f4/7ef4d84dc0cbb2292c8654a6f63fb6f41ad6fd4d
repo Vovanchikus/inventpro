@@ -1,4 +1,4 @@
-1771246983a:1:{s:21:"operation-history.htm";a:9:{s:8:"fileName";s:21:"operation-history.htm";s:7:"content";s:414:"title = "История операций"
+1771317063a:1:{s:21:"operation-history.htm";a:9:{s:8:"fileName";s:21:"operation-history.htm";s:7:"content";s:414:"title = "История операций"
 url = "/operation-history"
 layout = "default"
 
@@ -17,7 +17,7 @@ layout = "default"
   </div>
 </div>
 
-";s:5:"mtime";i:1769978953;s:6:"markup";s:300:"{% partial 'global/main-box' %}
+";s:5:"mtime";i:1769723740;s:6:"markup";s:300:"{% partial 'global/main-box' %}
 
 <!-- Таблица истории операций -->
 <div class="table-outter">

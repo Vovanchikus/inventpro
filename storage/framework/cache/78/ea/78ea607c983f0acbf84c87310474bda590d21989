@@ -1,4 +1,4 @@
-1771246983a:1:{s:9:"notes.htm";a:9:{s:8:"fileName";s:9:"notes.htm";s:7:"content";s:1991:"title = "Нотатки"
+1771317063a:1:{s:9:"notes.htm";a:9:{s:8:"fileName";s:9:"notes.htm";s:7:"content";s:1991:"title = "Нотатки"
 url = "/notes"
 layout = "default"
 
@@ -41,7 +41,7 @@ status = "{{ :status }}"
 
     {% partial 'notes/list' notes=notes %}
 </section>
-";s:5:"mtime";i:1770228923;s:6:"markup";s:1880:"<section class="notes-page">
+";s:5:"mtime";i:1771247871;s:6:"markup";s:1880:"<section class="notes-page">
 
     <div class="notes-page__top">
 

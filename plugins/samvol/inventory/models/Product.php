@@ -36,7 +36,10 @@ class Product extends Model
     ];
 
     public $attachMany = [
-        'images' => File::class
+        'images' => [
+            File::class,
+            'order' => 'sort_order',
+        ]
     ];
 
     /**
@@ -44,6 +47,10 @@ class Product extends Model
      */
     public function getCalculatedQuantityAttribute()
     {
+        if (array_key_exists('calculated_quantity', $this->attributes)) {
+            return max((float) $this->attributes['calculated_quantity'], 0);
+        }
+
         $total = DB::table('samvol_inventory_operation_products as op')
             ->join('samvol_inventory_operations as o', 'op.operation_id', '=', 'o.id')
             ->join('samvol_inventory_operation_types as t', 'o.type_id', '=', 't.id')
@@ -68,6 +75,10 @@ class Product extends Model
      */
     public function getCalculatedSumAttribute()
     {
+        if (array_key_exists('calculated_sum', $this->attributes)) {
+            return max((float) $this->attributes['calculated_sum'], 0);
+        }
+
         $total = DB::table('samvol_inventory_operation_products as op')
             ->join('samvol_inventory_operations as o', 'op.operation_id', '=', 'o.id')
             ->join('samvol_inventory_operation_types as t', 'o.type_id', '=', 't.id')

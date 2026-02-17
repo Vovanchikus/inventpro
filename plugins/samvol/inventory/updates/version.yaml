@@ -120,3 +120,6 @@
 1.0.41:
     - "Updated table samvol_inventory_operations (add status dates)"
     - builder_table_update_samvol_inventory_operations_add_status_dates.php
+1.0.42:
+    - "Updated table samvol_inventory_operations (add draft_products)"
+    - builder_table_update_samvol_inventory_operations_add_draft_products.php

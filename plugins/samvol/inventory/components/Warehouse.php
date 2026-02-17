@@ -8,7 +8,6 @@ use Input;
 use Validator;
 use ValidationException;
 use Storage;
-use Illuminate\Support\Facades\DB as DBFacade;
 
 class Warehouse extends ComponentBase
 {
@@ -86,6 +85,17 @@ class Warehouse extends ComponentBase
         $productId = post('product_id');
         $order = post('order');
 
+        if (!is_array($order) && is_string($order)) {
+            $decoded = json_decode($order, true);
+            if (is_array($decoded)) {
+                $order = $decoded;
+            } else {
+                $order = array_filter(array_map('trim', explode(',', $order)), function ($value) {
+                    return $value !== '';
+                });
+            }
+        }
+
         $product = Product::find($productId);
 
         if (!$product || !is_array($order)) {
@@ -106,15 +116,14 @@ class Warehouse extends ComponentBase
             return ['error' => 'Список изображений для сортировки пуст'];
         }
 
-        $attachmentType = $product->getMorphClass();
-
         foreach ($filteredOrder as $index => $fileId) {
-            DBFacade::table('system_files')
-                ->where('id', $fileId)
-                ->where('attachment_type', $attachmentType)
-                ->where('attachment_id', $product->id)
-                ->where('field', 'images')
-                ->update(['sort_order' => $index + 1]);
+            $image = $product->images()->where('id', $fileId)->first();
+            if (!$image) {
+                continue;
+            }
+
+            $image->sort_order = $index + 1;
+            $image->save();
         }
 
         return [
@@ -195,13 +204,61 @@ class Warehouse extends ComponentBase
                 'price',
                 'category_id',
             ])
-            ->with('category.parent.parent.parent') // подгружаем родителей до нужной глубины
             ->orderBy('name')
             ->get();
 
+        if ($this->products->isNotEmpty()) {
+            $productIds = $this->products->pluck('id')->all();
+
+            $balances = DB::table('samvol_inventory_operation_products as op')
+                ->join('samvol_inventory_operations as o', 'op.operation_id', '=', 'o.id')
+                ->join('samvol_inventory_operation_types as t', 'o.type_id', '=', 't.id')
+                ->whereIn('op.product_id', $productIds)
+                ->groupBy('op.product_id')
+                ->selectRaw(
+                    "op.product_id,
+                    GREATEST(SUM(CASE
+                        WHEN LOWER(t.name) = 'приход' THEN op.quantity
+                        WHEN LOWER(t.name) = 'передача' THEN -op.quantity
+                        WHEN LOWER(t.name) = 'списание' THEN -op.quantity
+                        WHEN LOWER(t.name) = 'импорт' THEN op.quantity
+                        WHEN LOWER(t.name) = 'импорт приход' THEN op.quantity
+                        WHEN LOWER(t.name) = 'импорт расход' THEN -op.quantity
+                        ELSE 0
+                    END), 0) as calculated_quantity,
+                    GREATEST(SUM(CASE
+                        WHEN LOWER(t.name) = 'приход' THEN op.sum
+                        WHEN LOWER(t.name) = 'передача' THEN -op.sum
+                        WHEN LOWER(t.name) = 'списание' THEN -op.sum
+                        WHEN LOWER(t.name) = 'импорт' THEN op.sum
+                        WHEN LOWER(t.name) = 'импорт приход' THEN op.sum
+                        WHEN LOWER(t.name) = 'импорт расход' THEN -op.sum
+                        ELSE 0
+                    END), 0) as calculated_sum"
+                )
+                ->get()
+                ->keyBy('product_id');
+
+            $this->products->each(function (Product $product) use ($balances) {
+                $balance = $balances->get($product->id);
+
+                $product->setAttribute('calculated_quantity', $balance ? (float) $balance->calculated_quantity : 0);
+                $product->setAttribute('calculated_sum', $balance ? (float) $balance->calculated_sum : 0);
+            });
+        }
+
         $this->categories = Category::query()
-            ->select(['id', 'name', 'desc', 'parent_id', 'nest_left'])
-            ->with('children')
+            ->select(['id', 'name', 'desc', 'parent_id', 'nest_left', 'nest_depth'])
+            ->with([
+                'children' => function ($query) {
+                    $query->select(['id', 'name', 'desc', 'parent_id', 'nest_left'])
+                        ->orderBy('nest_left');
+                },
+                'children.children' => function ($query) {
+                    $query->select(['id', 'name', 'desc', 'parent_id', 'nest_left'])
+                        ->orderBy('nest_left');
+                },
+            ])
             ->whereNull('parent_id')
             ->orderBy('nest_left')
             ->get();

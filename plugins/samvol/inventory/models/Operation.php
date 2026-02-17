@@ -176,6 +176,10 @@ class Operation extends Model
      */
     public function getFirstCounteragentAttribute()
     {
+        if (array_key_exists('first_counteragent', $this->attributes)) {
+            return $this->attributes['first_counteragent'];
+        }
+
         $product = $this->products->first();
         $counteragent = $product?->pivot?->counteragent;
 
@@ -261,6 +265,10 @@ class Operation extends Model
      */
     public function getCardDocumentNumberAttribute()
     {
+        if (array_key_exists('card_document_number', $this->attributes)) {
+            return $this->attributes['card_document_number'];
+        }
+
         return $this->first_document_number;
     }
 
@@ -269,6 +277,10 @@ class Operation extends Model
      */
     public function getCardDocumentDateAttribute()
     {
+        if (array_key_exists('card_document_date', $this->attributes)) {
+            return $this->attributes['card_document_date'];
+        }
+
         return $this->first_document_date;
     }
 
@@ -277,6 +289,10 @@ class Operation extends Model
      */
     public function getCardDocumentPurposeAttribute()
     {
+        if (array_key_exists('card_document_purpose', $this->attributes)) {
+            return $this->attributes['card_document_purpose'];
+        }
+
         return $this->first_document_purpose;
     }
 
@@ -285,6 +301,14 @@ class Operation extends Model
      */
     public function getItemsCountAttribute()
     {
+        if (array_key_exists('items_count', $this->attributes)) {
+            return (int) $this->attributes['items_count'];
+        }
+
+        if (array_key_exists('products_count', $this->attributes)) {
+            return (int) $this->attributes['products_count'];
+        }
+
         $count = 0;
 
         try {

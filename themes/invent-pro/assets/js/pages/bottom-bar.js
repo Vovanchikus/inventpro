@@ -45,7 +45,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const countEl = document.getElementById("bottomBarCount");
 
     const categoryMenu = document.getElementById("categoryMenu");
-    const categoryOverlay = document.querySelector(".category-menu__overlay");
+    const categoryOverlay = document.getElementById("categoryMenuOverlay");
 
     const createOperationToggle = document.getElementById(
         "createOperationDropdownToggle",
@@ -55,6 +55,35 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
     const hasCategoryMenu = !!categoryMenu;
+    const warehouseCategoryBtn = document.getElementById("warehouseCategory");
+    const warehouseCategoryMenu = document.getElementById(
+        "warehouseCategoryMenu",
+    );
+    const hasWarehouseCategoryFilter =
+        !!warehouseCategoryBtn && !!warehouseCategoryMenu;
+    let selectedWarehouseCategoryId = "";
+
+    function showCategoryOverlay() {
+        categoryOverlay?.classList.remove("hidden");
+    }
+
+    function hideCategoryOverlayIfNoOpenMenus() {
+        const isCategoryMenuOpen =
+            hasCategoryMenu && !categoryMenu.classList.contains("hidden");
+        const isWarehouseMenuOpen =
+            hasWarehouseCategoryFilter &&
+            !warehouseCategoryMenu.classList.contains("hidden");
+
+        if (!isCategoryMenuOpen && !isWarehouseMenuOpen) {
+            categoryOverlay?.classList.add("hidden");
+        }
+    }
+
+    function closeWarehouseCategoryMenu() {
+        if (!hasWarehouseCategoryFilter) return;
+        warehouseCategoryMenu.classList.add("hidden");
+        hideCategoryOverlayIfNoOpenMenus();
+    }
 
     // ============================================================
     // 4. Сброс меню категорий (БЕЗОПАСНО)
@@ -69,6 +98,68 @@ document.addEventListener("DOMContentLoaded", () => {
         categoryMenu
             .querySelectorAll(".category-menu__children")
             .forEach((el) => el.classList.add("hidden"));
+    }
+
+    function resetWarehouseCategoryMenu() {
+        if (!hasWarehouseCategoryFilter) return;
+
+        warehouseCategoryMenu
+            .querySelectorAll(".category-menu__item.active")
+            .forEach((el) => el.classList.remove("active"));
+
+        warehouseCategoryMenu
+            .querySelectorAll(".category-menu__children")
+            .forEach((el) => el.classList.add("hidden"));
+    }
+
+    function applyWarehouseCategoryFilter() {
+        const rows = document.querySelectorAll(
+            "#product-list .warehouse__item",
+        );
+        const hasFilter =
+            !!selectedWarehouseCategoryId &&
+            selectedWarehouseCategoryId !== "__all__";
+
+        if (selectedWarehouseCategoryId === "__none__") {
+            rows.forEach((row) => {
+                const categoryId = (row.dataset.categoryId || "").toString();
+                row.style.display = categoryId ? "none" : "";
+            });
+            return;
+        }
+
+        const selectedItem = hasFilter
+            ? warehouseCategoryMenu.querySelector(
+                  `.category-menu__item[data-id="${selectedWarehouseCategoryId}"]`,
+              )
+            : null;
+
+        const allowedCategoryIds = new Set();
+
+        if (hasFilter && selectedItem) {
+            allowedCategoryIds.add(selectedWarehouseCategoryId);
+
+            selectedItem
+                .querySelectorAll(".category-menu__item[data-id]")
+                .forEach((item) => {
+                    const id = (item.dataset.id || "").toString();
+                    if (id) {
+                        allowedCategoryIds.add(id);
+                    }
+                });
+        }
+
+        rows.forEach((row) => {
+            if (!hasFilter) {
+                row.style.display = "";
+                return;
+            }
+
+            const categoryId = (row.dataset.categoryId || "").toString();
+            row.style.display = allowedCategoryIds.has(categoryId)
+                ? ""
+                : "none";
+        });
     }
 
     // ============================================================
@@ -164,8 +255,81 @@ document.addEventListener("DOMContentLoaded", () => {
 
         resetCategoryMenu();
         categoryMenu.classList.remove("hidden");
-        categoryOverlay?.classList.remove("hidden");
+        showCategoryOverlay();
     });
+
+    if (hasWarehouseCategoryFilter) {
+        warehouseCategoryBtn.addEventListener("click", (event) => {
+            event.preventDefault();
+
+            const isHidden = warehouseCategoryMenu.classList.contains("hidden");
+
+            if (isHidden) {
+                if (hasCategoryMenu) {
+                    categoryMenu.classList.add("hidden");
+                    resetCategoryMenu();
+                }
+
+                warehouseCategoryMenu.classList.remove("hidden");
+                showCategoryOverlay();
+                return;
+            }
+
+            closeWarehouseCategoryMenu();
+        });
+
+        warehouseCategoryMenu.addEventListener("click", (event) => {
+            const clickedItem = event.target.closest(".category-menu__item");
+            if (!clickedItem) return;
+
+            const children = clickedItem.querySelector(
+                ":scope > .category-menu__children",
+            );
+
+            const clickedArrow = event.target.closest(
+                ".category-menu__item-arrow",
+            );
+
+            if (children && clickedArrow) {
+                clickedItem.classList.toggle("active");
+                children.classList.toggle("hidden");
+                return;
+            }
+
+            const categoryId = (clickedItem.dataset.id || "").toString();
+
+            warehouseCategoryMenu
+                .querySelectorAll(".category-menu__item.active")
+                .forEach((el) => el.classList.remove("active"));
+
+            if (!categoryId || categoryId === "__all__") {
+                selectedWarehouseCategoryId = "__all__";
+                applyWarehouseCategoryFilter();
+                closeWarehouseCategoryMenu();
+                return;
+            }
+
+            selectedWarehouseCategoryId = categoryId;
+            clickedItem.classList.add("active");
+
+            applyWarehouseCategoryFilter();
+            closeWarehouseCategoryMenu();
+        });
+
+        document.addEventListener("click", (event) => {
+            if (warehouseCategoryMenu.classList.contains("hidden")) return;
+
+            const target = event.target;
+            if (
+                warehouseCategoryBtn.contains(target) ||
+                warehouseCategoryMenu.contains(target)
+            ) {
+                return;
+            }
+
+            closeWarehouseCategoryMenu();
+        });
+    }
 
     // ============================================================
     // 9. Назначение категории (ИСПРАВЛЕНО)
@@ -263,7 +427,8 @@ document.addEventListener("DOMContentLoaded", () => {
             resetCategoryMenu();
         }
 
-        categoryOverlay?.classList.add("hidden");
+        closeWarehouseCategoryMenu();
+        hideCategoryOverlayIfNoOpenMenus();
         createOperationMenu?.classList.remove("show");
     });
 
@@ -275,7 +440,8 @@ document.addEventListener("DOMContentLoaded", () => {
             categoryMenu.classList.add("hidden");
             resetCategoryMenu();
         }
-        categoryOverlay.classList.add("hidden");
+        closeWarehouseCategoryMenu();
+        hideCategoryOverlayIfNoOpenMenus();
     });
 
     // ============================================================

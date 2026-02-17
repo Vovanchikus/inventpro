@@ -9,7 +9,7 @@ slug = "{{ :slug }}"
 [qrProductCode]
 ==
 
-<div class="product-page" data-product-id="{{ product.id }}">
+<div class="product-page" data-product-id="{{ product.id }}" data-placeholder-image="{{ 'assets/img/icon/no-pictures.svg'|theme }}">
 
     <div class="product-page__top">
 
@@ -86,6 +86,7 @@ slug = "{{ :slug }}"
 
             <div class="swiper ip-slider__main">
                 <div class="swiper-wrapper">
+                {% if product.images|length %}
                     {% for image in product.images %}
                         <div class="swiper-slide" data-image-id="{{ image.id }}">
                         <a href="{{ image.getPath() }}" class="ip-slider__lightbox" data-image-id="{{ image.id }}" data-lg-size="{{ image.width }}-{{ image.height }}">
@@ -93,25 +94,32 @@ slug = "{{ :slug }}"
                         </a>
                         </div>
                     {% endfor %}
+                    {% else %}
+                        <div class="swiper-slide">
+                            <img src="{{ 'assets/img/icon/no-pictures.svg'|theme }}" alt="No image available" style="width: 436px; border: none;">
+                        </div>
+                {% endif %}
+
                 </div>
-
-                <div class="ip-slider__nav ip-slider__nav--prev"></div>
-                <div class="ip-slider__nav ip-slider__nav--next"></div>
+                {% if product.images|length %}
+                    <div class="ip-slider__nav ip-slider__nav--prev"></div>
+                    <div class="ip-slider__nav ip-slider__nav--next"></div>
+                {% endif %}
             </div>
-
+            {% if product.images|length %}
             <div class="swiper ip-slider__thumbs">
                 <div class="swiper-wrapper">
-                    {% for image in product.images %}
-                        <div class="swiper-slide" data-image-id="{{ image.id }}">
-                            <img
-                                src="{{ image.getPath() }}"
-                                alt="{{ product.name }} thumb {{ loop.index }}"
-                            >
-                        </div>
-                    {% endfor %}
+                        {% for image in product.images %}
+                            <div class="swiper-slide" data-image-id="{{ image.id }}">
+                                <img
+                                    src="{{ image.getPath() }}"
+                                    alt="{{ product.name }} thumb {{ loop.index }}"
+                                >
+                            </div>
+                        {% endfor %}
                 </div>
             </div>
-
+            {% endif %}
         </div>
 
 

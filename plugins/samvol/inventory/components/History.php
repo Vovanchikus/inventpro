@@ -6,6 +6,7 @@ use Samvol\Inventory\Models\OperationType;
 use Samvol\Inventory\Models\Document;
 use Samvol\Inventory\Models\Product;
 use Carbon\Carbon;
+use DB;
 
 class History extends ComponentBase
 {
@@ -58,11 +59,24 @@ class History extends ComponentBase
          | 3. Базовый запрос истории
          |-------------------------------------------------------
          */
-        $query = OperationProduct::with([
+        $documentsMetaSub = Document::query()
+            ->selectRaw('operation_id, MIN(id) as first_doc_id, MAX(doc_date) as latest_doc_date')
+            ->groupBy('operation_id');
+
+        $query = OperationProduct::query()
+        ->select([
+            'samvol_inventory_operation_products.*',
+            DB::raw('first_doc.doc_date as first_doc_date'),
+            DB::raw('doc_meta.latest_doc_date as latest_doc_date'),
+        ])
+        ->leftJoinSub($documentsMetaSub, 'doc_meta', function ($join) {
+            $join->on('doc_meta.operation_id', '=', 'samvol_inventory_operation_products.operation_id');
+        })
+        ->leftJoin('samvol_inventory_documents as first_doc', 'first_doc.id', '=', 'doc_meta.first_doc_id')
+        ->with([
             'product:id,name,unit,inv_number,price',
             'operation:id,type_id',
             'operation.type:id,name',
-            'operation.documents:id,operation_id,doc_date,doc_name,doc_num'
         ])
         ->whereDoesntHave('operation', function ($q) {
             $q->whereIn('type_id', [6, 7]);
@@ -98,17 +112,15 @@ class History extends ComponentBase
             });
         }
 
-        // 6. Получаем историю и сортируем по последнему документу
-        $histories = $query->get()->sortByDesc(function($item) {
-            $lastDoc = $item->operation->documents->sortByDesc('doc_date')->first();
-            return $lastDoc ? $lastDoc->doc_date : null;
-        });
+        // 6. Получаем историю в порядке последних документов
+        $histories = $query
+            ->orderByDesc('latest_doc_date')
+            ->get();
 
         // 7. Дата документа (первый документ операции)
         $histories->each(function ($item) {
-            $firstDoc = $item->operation->documents->sortBy('id')->first();
-            $item->doc_date = $firstDoc && $firstDoc->doc_date
-                ? Carbon::parse($firstDoc->doc_date)->format('d.m.Y')
+            $item->doc_date = $item->first_doc_date
+                ? Carbon::parse($item->first_doc_date)->format('d.m.Y')
                 : null;
         });
 

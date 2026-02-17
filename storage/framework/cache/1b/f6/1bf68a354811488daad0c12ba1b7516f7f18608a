@@ -1,4 +1,4 @@
-1771246983a:1:{s:13:"note-item.htm";a:9:{s:8:"fileName";s:13:"note-item.htm";s:7:"content";s:445:"title = "Нотатка"
+1771317063a:1:{s:13:"note-item.htm";a:9:{s:8:"fileName";s:13:"note-item.htm";s:7:"content";s:445:"title = "Нотатка"
 url = "/notes/:id"
 layout = "default"
 
@@ -17,7 +17,7 @@ noteId = "{{ :id }}"
         <div class="notes-empty">Нотатку не знайдено.</div>
     {% endif %}
 </section>
-";s:5:"mtime";i:1770239330;s:6:"markup";s:334:"<section class="notes-page">
+";s:5:"mtime";i:1771247722;s:6:"markup";s:334:"<section class="notes-page">
     <div class="notes-page__header">
         <h1 class="notes-page__title">Нотатка</h1>
     </div>

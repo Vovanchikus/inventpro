@@ -33,6 +33,19 @@ class EditOperation extends ComponentBase
         ];
     }
 
+    protected function normalizeNumericInput($value)
+    {
+        if ($value === null) {
+            return null;
+        }
+
+        $normalized = trim((string) $value);
+        $normalized = str_replace(["\xC2\xA0", ' '], '', $normalized);
+        $normalized = str_replace(',', '.', $normalized);
+
+        return $normalized;
+    }
+
     protected function firstError($field, $message)
     {
         return [
@@ -152,9 +165,9 @@ class EditOperation extends ComponentBase
         foreach ($data['name'] as $i => $name) {
             $inv_number   = $data['inv_number'][$i] ?? null;
             $unit         = $data['unit'][$i] ?? null;
-            $price_raw    = $data['price'][$i] ?? null;
-            $quantity_raw = $data['quantity'][$i] ?? null;
-            $sum_raw      = $data['sum'][$i] ?? null;
+            $price_raw    = $this->normalizeNumericInput($data['price'][$i] ?? null);
+            $quantity_raw = $this->normalizeNumericInput($data['quantity'][$i] ?? null);
+            $sum_raw      = $this->normalizeNumericInput($data['sum'][$i] ?? null);
 
             if (!$name)       $errors[] = ["field" => "name[$i]", "message" => "Обязательное поле"];
             if (!$inv_number) $errors[] = ["field" => "inv_number[$i]", "message" => "Обязательное поле"];
@@ -264,8 +277,8 @@ class EditOperation extends ComponentBase
                 foreach ($data['name'] as $i => $name) {
                     $inv_number = $data['inv_number'][$i];
                     $unit       = $data['unit'][$i];
-                    $price      = floatval($data['price'][$i]);
-                    $quantity   = floatval($data['quantity'][$i]);
+                    $price      = floatval($this->normalizeNumericInput($data['price'][$i] ?? null));
+                    $quantity   = floatval($this->normalizeNumericInput($data['quantity'][$i] ?? null));
 
                     $product = Product::firstOrCreate(
                         ['inv_number' => $inv_number],
@@ -333,8 +346,8 @@ class EditOperation extends ComponentBase
                                 'inv_number' => $inv,
                                 'name' => $name,
                                 'unit' => $data['unit'][$i] ?? null,
-                                'price' => isset($data['price'][$i]) ? floatval($data['price'][$i]) : null,
-                                'quantity' => isset($data['quantity'][$i]) ? floatval($data['quantity'][$i]) : 0,
+                                'price' => isset($data['price'][$i]) ? floatval($this->normalizeNumericInput($data['price'][$i])) : null,
+                                'quantity' => isset($data['quantity'][$i]) ? floatval($this->normalizeNumericInput($data['quantity'][$i])) : 0,
                             ];
                         }
                         $note->products = $tmp;

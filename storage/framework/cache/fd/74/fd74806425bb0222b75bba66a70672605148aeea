@@ -1,4 +1,4 @@
-1771193205a:1:{s:14:"notes/item.htm";a:5:{s:8:"fileName";s:14:"notes/item.htm";s:7:"content";s:9389:"<article class="note-card" id="note-card-{{ note.id }}" data-status-key="{{ note.filter_status_key }}" data-created-at="{{ note.created_at_ts }}">
+1771316448a:1:{s:14:"notes/item.htm";a:5:{s:8:"fileName";s:14:"notes/item.htm";s:7:"content";s:9389:"<article class="note-card" id="note-card-{{ note.id }}" data-status-key="{{ note.filter_status_key }}" data-created-at="{{ note.created_at_ts }}">
     <div class="note-card__top">
         <div class="note-card__header">
             {% if note.status_label == 'В розробці' %}
@@ -113,7 +113,7 @@
         {% endif %}
     </div>
 </article>
-";s:5:"mtime";i:1770244300;s:6:"markup";s:9387:"<article class="note-card" id="note-card-{{ note.id }}" data-status-key="{{ note.filter_status_key }}" data-created-at="{{ note.created_at_ts }}">
+";s:5:"mtime";i:1771247722;s:6:"markup";s:9387:"<article class="note-card" id="note-card-{{ note.id }}" data-status-key="{{ note.filter_status_key }}" data-created-at="{{ note.created_at_ts }}">
     <div class="note-card__top">
         <div class="note-card__header">
             {% if note.status_label == 'В розробці' %}

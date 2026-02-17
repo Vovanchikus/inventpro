@@ -1,6 +1,6 @@
 <?php 
 use Winter\User\Facades\Auth;
-class Cms698201121f650973088718_b40becf3cdf68dc787dd2f9969c210b4Class extends Cms\Classes\PageCode
+class Cms69935c2a1dbbb543030197_00bde93c88c8dfd6f214f302c72d91b5Class extends Cms\Classes\PageCode
 {
 public function onStart()
 {

@@ -1,6 +1,6 @@
-1771246983a:1:{s:21:"global/bottom-bar.htm";a:5:{s:8:"fileName";s:21:"global/bottom-bar.htm";s:7:"content";s:11346:"{% if this.page.url != '/add-operation' %}
+1771317063a:1:{s:21:"global/bottom-bar.htm";a:5:{s:8:"fileName";s:21:"global/bottom-bar.htm";s:7:"content";s:11371:"{% if this.page.url != '/add-operation' %}
 
-<div class="category-menu__overlay hidden"></div>
+<div id="categoryMenuOverlay" class="category-menu__overlay hidden"></div>
 
 <div id="bottomBar" class="bottom-bar hidden">
 
@@ -137,9 +137,9 @@
 </div>{# bottom-bar #}
 
 {% endif %}
-";s:5:"mtime";i:1770039567;s:6:"markup";s:11344:"{% if this.page.url != '/add-operation' %}
+";s:5:"mtime";i:1771274712;s:6:"markup";s:11369:"{% if this.page.url != '/add-operation' %}
 
-<div class="category-menu__overlay hidden"></div>
+<div id="categoryMenuOverlay" class="category-menu__overlay hidden"></div>
 
 <div id="bottomBar" class="bottom-bar hidden">
 

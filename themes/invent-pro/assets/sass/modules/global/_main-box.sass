@@ -5,7 +5,7 @@
   top: 0
   left: 0
   margin-bottom: 32px
-  z-index: 2
+  z-index: 4
   &.scrolled
     background-color: $bg-box
     box-shadow: 0 4px 12px rgba(0,0,0,0.1)
@@ -37,3 +37,11 @@
 .main-box__top
   &.main-box__top--documents
     justify-content: end
+
+  .button--outside:has(#warehouseCategoryMenu)
+    position: relative
+
+  #warehouseCategoryMenu
+    top: calc( 100% - 64px )
+    left: calc( 100% + 160px )
+    bottom: auto

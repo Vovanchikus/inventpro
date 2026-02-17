@@ -1,4 +1,4 @@
-1771246983a:1:{s:17:"add-operation.htm";a:10:{s:8:"fileName";s:17:"add-operation.htm";s:7:"content";s:12393:"title = "Новая операция"
+1771317063a:1:{s:17:"add-operation.htm";a:10:{s:8:"fileName";s:17:"add-operation.htm";s:7:"content";s:12393:"title = "Новая операция"
 url = "/add-operation"
 layout = "default"
 
@@ -224,7 +224,7 @@ layout = "default"
 {% else %}
     <p>У вас нет прав для добавления новой операции.</p>
 {% endif %}
-";s:5:"mtime";i:1771018027;s:6:"markup";s:12273:"{# Ниже проверка на админа #}
+";s:5:"mtime";i:1771247871;s:6:"markup";s:12273:"{# Ниже проверка на админа #}
 {% set isAdmin = false %}
 {% for group in user.groups %}
     {% if group.code == 'admin' %}
