@@ -13,6 +13,7 @@ class Warehouse extends ComponentBase
 {
     public $products;
     public $categories;
+    public $stockProductsCount = 0;
 
     public function componentDetails()
     {
@@ -245,7 +246,24 @@ class Warehouse extends ComponentBase
                 $product->setAttribute('calculated_quantity', $balance ? (float) $balance->calculated_quantity : 0);
                 $product->setAttribute('calculated_sum', $balance ? (float) $balance->calculated_sum : 0);
             });
+
+            $this->products = $this->products
+                ->sortBy([
+                    function (Product $product) {
+                        return ($product->calculated_quantity > 0) ? 0 : 1;
+                    },
+                    function (Product $product) {
+                        return mb_strtolower((string) ($product->name ?? ''), 'UTF-8');
+                    },
+                ])
+                ->values();
         }
+
+        $this->stockProductsCount = $this->products
+            ->filter(function (Product $product) {
+                return $product->calculated_quantity > 0;
+            })
+            ->count();
 
         $this->categories = Category::query()
             ->select(['id', 'name', 'desc', 'parent_id', 'nest_left', 'nest_depth'])
@@ -265,6 +283,7 @@ class Warehouse extends ComponentBase
 
         $this->page['products']   = $this->products;
         $this->page['categories'] = $this->categories;
+        $this->page['stockProductsCount'] = $this->stockProductsCount;
     }
 
 

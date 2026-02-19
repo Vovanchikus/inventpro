@@ -29,6 +29,8 @@
   border-radius: $radius-lg
   position: relative
   top: 50px
+  max-width: 90%
+  max-height: 90%
   box-shadow: 0 0 16px rgba(0,0,0,0.1)
   transition: transform 0.3s ease
   overflow: hidden
@@ -47,6 +49,18 @@
   justify-content: center
   align-items: center
   gap: 8px
+  transition: opacity .22s ease, transform .22s ease, filter .22s ease
+  will-change: opacity, transform, filter
+
+  &.is-switching-out
+    opacity: .18
+    transform: translateY(-6px) scale(.985)
+    filter: blur(2px)
+
+  &.is-switching-in
+    opacity: 0
+    transform: translateY(8px) scale(.99)
+    filter: blur(2px)
 
 .modal-title
   font-size: 24px
@@ -91,3 +105,22 @@
 .modal-content
   max-height: 430px
   overflow-y: auto
+
+.modal-window--import
+  .modal-content
+    max-height: min(68vh, 680px)
+    overflow-y: auto
+    overflow-x: hidden
+    padding-right: 4px
+
+  .table
+    overflow: visible
+
+  .table-title
+    position: sticky
+    top: 0
+    z-index: 4
+    background: $bg-box
+
+    &.scrolled
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1)

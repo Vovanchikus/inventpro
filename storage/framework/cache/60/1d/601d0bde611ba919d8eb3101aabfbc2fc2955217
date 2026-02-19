@@ -1,0 +1,620 @@
+1771492865a:1:{s:30:"modals/modal_import_result.htm";a:5:{s:8:"fileName";s:30:"modals/modal_import_result.htm";s:7:"content";s:18732:"<input type="hidden" id="import-download-report" value="{{ downloadReportEncoded|default('') }}">
+
+{% set hasDiff = differences|length %}
+{% set hasNew = newProducts|default([])|length %}
+{% set hasMissing = missingProducts|default([])|length %}
+{% set hasAmbiguous = ambiguousMatches|default([])|length %}
+{% set hasSplit = splitCandidates|default([])|length %}
+{% set tabsCount = (hasDiff ? 1 : 0) + (hasNew ? 1 : 0) + (hasMissing ? 1 : 0) + (hasAmbiguous ? 1 : 0) + (hasSplit ? 1 : 0) %}
+
+{% if tabsCount > 0 %}
+<div id="import-tabs" class="notes-filter" style="margin: 0 0 14px;">
+    {% if hasDiff %}
+        <button type="button" class="notes-filter__tab import-tab-btn is-active"
+                data-tab-target="differences"
+                data-tab-title="Відмінності зі складом"
+                data-tab-subtitle="Позиції з різницею у кількості, ціні, сумі або інвентарному номері.">
+            <span class="notes-filter__label">Відмінності</span>
+            <span class="notes-filter__count label--extra-sm label--secondary" data-count>{{ differences|length }}</span>
+        </button>
+    {% endif %}
+    {% if hasNew %}
+        <button type="button" class="notes-filter__tab import-tab-btn {{ not hasDiff ? 'is-active' : '' }}"
+                data-tab-target="new"
+                data-tab-title="Нові позиції"
+                data-tab-subtitle="Товари, яких не було в БД та які будуть додані після підтвердження.">
+            <span class="notes-filter__label">Нові</span>
+            <span class="notes-filter__count label--extra-sm label--secondary" data-count>{{ newProducts|length }}</span>
+        </button>
+    {% endif %}
+    {% if hasMissing %}
+        <button type="button" class="notes-filter__tab import-tab-btn {{ (not hasDiff and not hasNew) ? 'is-active' : '' }}"
+                data-tab-target="missing"
+                data-tab-title="Позиції, що зникли"
+                data-tab-subtitle="Товари, що є в БД, але відсутні у поточному Excel, включно з нульовими залишками.">
+            <span class="notes-filter__label">Відсутні в Excel</span>
+            <span class="notes-filter__count label--extra-sm label--secondary" data-count>{{ missingProducts|length }}</span>
+        </button>
+    {% endif %}
+    {% if hasAmbiguous %}
+        <button type="button" class="notes-filter__tab import-tab-btn {{ (not hasDiff and not hasNew and not hasMissing) ? 'is-active' : '' }}"
+                data-tab-target="ambiguous"
+                data-tab-title="Ручна перевірка"
+                data-tab-subtitle="Оберіть вручну правильний товар у БД для неоднозначних інвентарних номерів.">
+            <span class="notes-filter__label">Ручна перевірка</span>
+            <span class="notes-filter__count label--extra-sm label--secondary" data-count>{{ ambiguousMatches|length }}</span>
+        </button>
+    {% endif %}
+    {% if hasSplit %}
+        <button type="button" class="notes-filter__tab import-tab-btn {{ (not hasDiff and not hasNew and not hasMissing and not hasAmbiguous) ? 'is-active' : '' }}"
+                data-tab-target="split"
+                data-tab-title="Розподіл операцій"
+                data-tab-subtitle="Оберіть для кожної нової позиції операцію приходу, яка має бути до неї прив'язана.">
+            <span class="notes-filter__label">Розподіл операцій</span>
+            <span class="notes-filter__count label--extra-sm label--secondary" data-count>{{ splitCandidates|length }}</span>
+        </button>
+    {% endif %}
+</div>
+{% endif %}
+
+{% if differences|length %}
+<div class="import-modal-section" data-tab-key="differences" data-modal-title="Відмінності зі складом" data-modal-subtitle="Позиції з різницею у кількості, ціні, сумі або інвентарному номері.">
+<div class="table" style="margin-bottom: 16px; border-radius: var(--radius-md);">
+    <div class="warehouse__item table-title" style="background: var(--bg-box); border-radius: 0; width: 100%;">
+        <div class="warehouse__checkbox">
+            <label for="" class="checkbox"><input type="checkbox" id="select-all-diffs" /></label>
+        </div>
+        <div class="warehouse__left">
+            <div class="warehouse__name">Найменування</div>
+            <div class="warehouse__number">Номенклатурний №</div>
+        </div>
+        <div class="warehouse__unit">К-сть (Склад / Excel)</div>
+        <div class="warehouse__price">Ціна (Склад / Excel)</div>
+        <div class="warehouse__quantity">Сума (Склад / Excel)</div>
+        <div class="warehouse__sum">Статус</div>
+    </div>
+
+    {% for diff in differences %}
+        <div class="warehouse__item table-item diff-row"
+             data-name="{{ diff.name }}"
+             data-current-quantity="{{ diff.current_quantity }}"
+             data-excel-quantity="{{ diff.excel_quantity }}"
+             data-current-price="{{ diff.price }}"
+             data-excel-price="{{ diff.excel_price }}"
+             data-current-sum="{{ diff.sum }}"
+             data-excel-sum="{{ diff.excel_sum }}">
+            <div class="warehouse__checkbox">
+                <label for="" class="checkbox">
+                    <input type="checkbox"
+                        class="diff-checkbox"
+                        checked
+                        value="{{ diff.inv_number }}"
+                        data-id="{{ diff.id }}"
+                        data-quantity="{{ diff.excel_quantity }}"
+                        data-price="{{ diff.excel_price }}"
+                        data-sum="{{ diff.excel_sum }}" />
+                </label>
+
+                <!-- Скрытые поля для передачи в updates -->
+                <input type="hidden" name="updates[{{ diff.id }}][inv_number]" value="{{ diff.inv_number }}">
+                <input type="hidden" name="updates[{{ diff.id }}][excel_inv_number]" value="{{ diff.excel_inv_number|default(diff.inv_number) }}">
+                <input type="hidden" name="updates[{{ diff.id }}][quantity]" value="{{ diff.excel_quantity }}">
+                <input type="hidden" name="updates[{{ diff.id }}][price]" value="{{ diff.excel_price }}">
+                <input type="hidden" name="updates[{{ diff.id }}][sum]" value="{{ diff.excel_sum }}">
+            </div>
+            <div class="warehouse__left {{ diff.inv_changed ? 'import__cell--diff' : '' }}">
+                <div class="warehouse__name">{{ diff.name }}</div>
+                <div class="warehouse__number">{{ diff.inv_number }}</div>
+                {% if diff.inv_changed and diff.excel_inv_number is not empty %}
+                    <div style="font-size:12px; color: var(--text-secondary);">
+                        {{ diff.inv_number }} → {{ diff.excel_inv_number }}
+                    </div>
+                {% endif %}
+            </div>
+            <div class="warehouse__unit {{ diff.current_quantity != diff.excel_quantity ? 'import__cell--diff' : '' }}">{{ diff.current_quantity }} → {{ diff.excel_quantity }}</div>
+            <div class="warehouse__price {{ diff.price != diff.excel_price ? 'import__cell--diff' : '' }}">{{ diff.price }} → {{ diff.excel_price }}</div>
+            <div class="warehouse__quantity {{ diff.sum != diff.excel_sum ? 'import__cell--diff' : '' }}">{{ diff.sum }} → {{ diff.excel_sum }}</div>
+            <div class="warehouse__sum {{ (diff.current_quantity != diff.excel_quantity or diff.price != diff.excel_price or diff.sum != diff.excel_sum or diff.inv_changed) ? 'import__cell--diff' : '' }}">
+                Є зміни
+            </div>
+        </div>
+    {% endfor %}
+</div>
+</div>
+{% endif %}
+
+{% if newProducts|default([])|length %}
+<div class="import-modal-section" data-tab-key="new" data-modal-title="Нові позиції" data-modal-subtitle="Товари, яких не було в БД та які будуть додані після підтвердження.">
+<div class="table" style="margin-bottom: 16px; border-radius: var(--radius-md);">
+    <div class="warehouse__item table-title" style="background: var(--bg-box); border-radius: 0; width: 100%;">
+        <div class="warehouse__checkbox"></div>
+        <div class="warehouse__left">
+            <div class="warehouse__name">Наименование</div>
+            <div class="warehouse__number">Номенклатурный №</div>
+        </div>
+        <div class="warehouse__unit">Ед.измерения</div>
+        <div class="warehouse__price">Цена</div>
+        <div class="warehouse__quantity">Количество</div>
+        <div class="warehouse__sum">Сумма</div>
+    </div>
+
+    {% for item in newProducts %}
+        <div class="warehouse__item table-item">
+            <div class="warehouse__checkbox"></div>
+            <div class="warehouse__left">
+                <div class="warehouse__name">{{ item.name }}</div>
+                <div class="warehouse__number">{{ item.inv_number ?: '-' }}</div>
+            </div>
+            <div class="warehouse__unit">{{ item.unit ?: '-' }}</div>
+            <div class="warehouse__price">{{ item.excel_price }}</div>
+            <div class="warehouse__quantity">{{ item.excel_quantity }}</div>
+            <div class="warehouse__sum">{{ item.excel_sum }}</div>
+        </div>
+    {% endfor %}
+</div>
+</div>
+{% endif %}
+
+{% if missingProducts|default([])|length %}
+<div class="import-modal-section" data-tab-key="missing" data-modal-title="Позиції, що зникли" data-modal-subtitle="Товари, що є в БД, але відсутні у поточному Excel, включно з нульовими залишками.">
+<div class="table" style="margin-bottom: 16px; border-radius: var(--radius-md);">
+    <div class="warehouse__item table-title" style="background: var(--bg-box); border-radius: 0; width: 100%;">
+        <div class="warehouse__checkbox"></div>
+        <div class="warehouse__left">
+            <div class="warehouse__name">Наименование</div>
+            <div class="warehouse__number">Номенклатурный №</div>
+        </div>
+        <div class="warehouse__unit">Ед.измерения</div>
+        <div class="warehouse__price">Цена</div>
+        <div class="warehouse__quantity">Количество</div>
+        <div class="warehouse__sum">Сумма</div>
+    </div>
+
+    {% for item in missingProducts %}
+        <div class="warehouse__item table-item">
+            <div class="warehouse__checkbox"></div>
+            <div class="warehouse__left">
+                <div class="warehouse__name">{{ item.name }}</div>
+                <div class="warehouse__number">{{ item.inv_number ?: '-' }}</div>
+            </div>
+            <div class="warehouse__unit">{{ item.unit ?: '-' }}</div>
+            <div class="warehouse__price">{{ item.current_price }}</div>
+            <div class="warehouse__quantity">{{ item.current_quantity }}</div>
+            <div class="warehouse__sum">{{ item.current_sum }}</div>
+        </div>
+    {% endfor %}
+</div>
+</div>
+{% endif %}
+
+{% if ambiguousMatches|default([])|length %}
+<div class="import-modal-section" data-tab-key="ambiguous" data-modal-title="Ручна перевірка" data-modal-subtitle="Оберіть вручну правильний товар у БД для неоднозначних інвентарних номерів.">
+<div class="import table" style="margin-bottom: 16px;">
+    <div class="import__item table-title">
+        <div class="import__name" style="grid-column: 1 / -1;">Потрібна ручна перевірка (неоднозначне співпадіння) — оберіть відповідний товар у БД</div>
+    </div>
+
+    {% for item in ambiguousMatches %}
+        <div class="import__item table-item ambiguous-item"
+             data-index="{{ loop.index0 }}"
+             data-excel-name="{{ item.excel_name|e }}"
+             data-excel-inv="{{ item.excel_inv_number|e }}"
+             data-excel-quantity="{{ item.excel_quantity|default(0) }}"
+             data-excel-price="{{ item.excel_price|default(0) }}"
+             data-excel-sum="{{ item.excel_sum|default(0) }}">
+            <div class="import__name">
+                {{ item.excel_name }} ({{ item.excel_inv_number }})
+                <div style="font-size:12px; color: var(--text-secondary);">
+                    К-сть: {{ item.excel_quantity|default(0) }}, Ціна: {{ item.excel_price|default(0) }}, Сума: {{ item.excel_sum|default(0) }}
+                </div>
+            </div>
+            <div class="import__quantity" style="white-space: normal;">
+                {% if item.candidates|length %}
+                    {% for candidate in item.candidates %}
+                        <label class="checkbox" style="display:block; margin-bottom: 6px;">
+                            <input
+                                type="radio"
+                                class="ambiguous-choice"
+                                name="ambiguous_choice_{{ loop.parent.index0 }}"
+                                value="{{ candidate.id }}"
+                                data-product-id="{{ candidate.id }}"
+                                data-product-name="{{ candidate.name|e }}"
+                                data-product-inv="{{ candidate.inv_number|e }}"
+                            />
+                            <span>{{ candidate.name }} ({{ candidate.inv_number }})</span>
+                        </label>
+                    {% endfor %}
+                {% else %}
+                    <div>Немає кандидатів</div>
+                {% endif %}
+            </div>
+        </div>
+    {% endfor %}
+</div>
+</div>
+{% endif %}
+
+{% if splitCandidates|default([])|length %}
+<div class="import-modal-section" data-tab-key="split" data-modal-title="Розподіл операцій" data-modal-subtitle="Оберіть, яку операцію застосувати до кожної нової позиції після розділення.">
+<div class="table" style="margin-bottom: 16px; border-radius: var(--radius-md);">
+    <div class="warehouse__item table-title" style="background: var(--bg-box); border-radius: 0; width: 100%;">
+        <div class="warehouse__checkbox"></div>
+        <div class="warehouse__left">
+            <div class="warehouse__name">Нова позиція</div>
+            <div class="warehouse__number">Базова позиція</div>
+        </div>
+        <div class="warehouse__unit">К-сть</div>
+        <div class="warehouse__price">Ціна</div>
+        <div class="warehouse__quantity">Операція</div>
+        <div class="warehouse__sum">Документ</div>
+    </div>
+
+    {% for candidate in splitCandidates %}
+        {% for row in candidate.rows %}
+            <div class="warehouse__item table-item split-item"
+                 data-base-product-id="{{ candidate.base_product_id }}"
+                 data-excel-inv="{{ row.excel_inv_number|e }}">
+                <div class="warehouse__checkbox"></div>
+                <div class="warehouse__left">
+                    <div class="warehouse__name">{{ candidate.base_name }}</div>
+                    <div class="warehouse__number">{{ candidate.base_inv_number }} → {{ row.excel_inv_number }}</div>
+                </div>
+                <div class="warehouse__unit">{{ row.excel_quantity }}</div>
+                <div class="warehouse__price">{{ row.excel_price }}</div>
+                <div class="warehouse__quantity" style="white-space: normal; width: 100%;">
+                    <select class="split-operation-select" style="width:100%; min-width: 240px;"
+                            data-base-product-id="{{ candidate.base_product_id }}"
+                            data-excel-inv="{{ row.excel_inv_number|e }}">
+                        <option value="">Оберіть операцію</option>
+                        {% for op in candidate.operations %}
+                            <option value="{{ op.operation_id }}"
+                                data-op-qty="{{ op.quantity }}"
+                                data-op-sum="{{ op.sum }}"
+                                data-op-doc="{{ op.doc_num ?: '-' }}"
+                                data-op-date="{{ op.doc_date ?: '-' }}">
+                                #{{ op.operation_id }} • {{ op.operation_type }} • {{ op.doc_num ?: 'без №' }} • {{ op.doc_date ?: 'без дати' }} • К-сть: {{ op.quantity }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="warehouse__sum split-operation-doc">—</div>
+            </div>
+        {% endfor %}
+    {% endfor %}
+</div>
+</div>
+{% endif %}
+
+{% if not differences|length and not newProducts|default([])|length and not missingProducts|default([])|length and not ambiguousMatches|default([])|length and not splitCandidates|default([])|length %}
+<div class="alert alert--success">
+    Различий нет. Новых продуктов: {{ newCount }}
+</div>
+{% endif %}
+
+<div class="import__bottom">
+
+    <button type="button" class="button button--nm button--secondary" id="download-differences">
+        Завантажити файл с відмінностями
+    </button>
+
+    <div class="import__bottom-right">
+        <button type="button" class="button button--nm button--secondary" id="cancel-differences">
+            Відмінити
+        </button>
+        {% if differences|length or newProducts|default([])|length or ambiguousMatches|default([])|length or splitCandidates|default([])|length %}
+        <button type="button" class="button button--nm button--brand" id="apply-differences" data-final-label="Зберегти зміни" data-next-label="Далі">
+            {{ tabsCount > 1 ? 'Далі' : 'Зберегти зміни' }}
+        </button>
+        {% endif %}
+    </div>{# import__bottom-right #}
+</div>{# import__bottom #}
+";s:5:"mtime";i:1771440823;s:6:"markup";s:18730:"<input type="hidden" id="import-download-report" value="{{ downloadReportEncoded|default('') }}">
+
+{% set hasDiff = differences|length %}
+{% set hasNew = newProducts|default([])|length %}
+{% set hasMissing = missingProducts|default([])|length %}
+{% set hasAmbiguous = ambiguousMatches|default([])|length %}
+{% set hasSplit = splitCandidates|default([])|length %}
+{% set tabsCount = (hasDiff ? 1 : 0) + (hasNew ? 1 : 0) + (hasMissing ? 1 : 0) + (hasAmbiguous ? 1 : 0) + (hasSplit ? 1 : 0) %}
+
+{% if tabsCount > 0 %}
+<div id="import-tabs" class="notes-filter" style="margin: 0 0 14px;">
+    {% if hasDiff %}
+        <button type="button" class="notes-filter__tab import-tab-btn is-active"
+                data-tab-target="differences"
+                data-tab-title="Відмінності зі складом"
+                data-tab-subtitle="Позиції з різницею у кількості, ціні, сумі або інвентарному номері.">
+            <span class="notes-filter__label">Відмінності</span>
+            <span class="notes-filter__count label--extra-sm label--secondary" data-count>{{ differences|length }}</span>
+        </button>
+    {% endif %}
+    {% if hasNew %}
+        <button type="button" class="notes-filter__tab import-tab-btn {{ not hasDiff ? 'is-active' : '' }}"
+                data-tab-target="new"
+                data-tab-title="Нові позиції"
+                data-tab-subtitle="Товари, яких не було в БД та які будуть додані після підтвердження.">
+            <span class="notes-filter__label">Нові</span>
+            <span class="notes-filter__count label--extra-sm label--secondary" data-count>{{ newProducts|length }}</span>
+        </button>
+    {% endif %}
+    {% if hasMissing %}
+        <button type="button" class="notes-filter__tab import-tab-btn {{ (not hasDiff and not hasNew) ? 'is-active' : '' }}"
+                data-tab-target="missing"
+                data-tab-title="Позиції, що зникли"
+                data-tab-subtitle="Товари, що є в БД, але відсутні у поточному Excel, включно з нульовими залишками.">
+            <span class="notes-filter__label">Відсутні в Excel</span>
+            <span class="notes-filter__count label--extra-sm label--secondary" data-count>{{ missingProducts|length }}</span>
+        </button>
+    {% endif %}
+    {% if hasAmbiguous %}
+        <button type="button" class="notes-filter__tab import-tab-btn {{ (not hasDiff and not hasNew and not hasMissing) ? 'is-active' : '' }}"
+                data-tab-target="ambiguous"
+                data-tab-title="Ручна перевірка"
+                data-tab-subtitle="Оберіть вручну правильний товар у БД для неоднозначних інвентарних номерів.">
+            <span class="notes-filter__label">Ручна перевірка</span>
+            <span class="notes-filter__count label--extra-sm label--secondary" data-count>{{ ambiguousMatches|length }}</span>
+        </button>
+    {% endif %}
+    {% if hasSplit %}
+        <button type="button" class="notes-filter__tab import-tab-btn {{ (not hasDiff and not hasNew and not hasMissing and not hasAmbiguous) ? 'is-active' : '' }}"
+                data-tab-target="split"
+                data-tab-title="Розподіл операцій"
+                data-tab-subtitle="Оберіть для кожної нової позиції операцію приходу, яка має бути до неї прив'язана.">
+            <span class="notes-filter__label">Розподіл операцій</span>
+            <span class="notes-filter__count label--extra-sm label--secondary" data-count>{{ splitCandidates|length }}</span>
+        </button>
+    {% endif %}
+</div>
+{% endif %}
+
+{% if differences|length %}
+<div class="import-modal-section" data-tab-key="differences" data-modal-title="Відмінності зі складом" data-modal-subtitle="Позиції з різницею у кількості, ціні, сумі або інвентарному номері.">
+<div class="table" style="margin-bottom: 16px; border-radius: var(--radius-md);">
+    <div class="warehouse__item table-title" style="background: var(--bg-box); border-radius: 0; width: 100%;">
+        <div class="warehouse__checkbox">
+            <label for="" class="checkbox"><input type="checkbox" id="select-all-diffs" /></label>
+        </div>
+        <div class="warehouse__left">
+            <div class="warehouse__name">Найменування</div>
+            <div class="warehouse__number">Номенклатурний №</div>
+        </div>
+        <div class="warehouse__unit">К-сть (Склад / Excel)</div>
+        <div class="warehouse__price">Ціна (Склад / Excel)</div>
+        <div class="warehouse__quantity">Сума (Склад / Excel)</div>
+        <div class="warehouse__sum">Статус</div>
+    </div>
+
+    {% for diff in differences %}
+        <div class="warehouse__item table-item diff-row"
+             data-name="{{ diff.name }}"
+             data-current-quantity="{{ diff.current_quantity }}"
+             data-excel-quantity="{{ diff.excel_quantity }}"
+             data-current-price="{{ diff.price }}"
+             data-excel-price="{{ diff.excel_price }}"
+             data-current-sum="{{ diff.sum }}"
+             data-excel-sum="{{ diff.excel_sum }}">
+            <div class="warehouse__checkbox">
+                <label for="" class="checkbox">
+                    <input type="checkbox"
+                        class="diff-checkbox"
+                        checked
+                        value="{{ diff.inv_number }}"
+                        data-id="{{ diff.id }}"
+                        data-quantity="{{ diff.excel_quantity }}"
+                        data-price="{{ diff.excel_price }}"
+                        data-sum="{{ diff.excel_sum }}" />
+                </label>
+
+                <!-- Скрытые поля для передачи в updates -->
+                <input type="hidden" name="updates[{{ diff.id }}][inv_number]" value="{{ diff.inv_number }}">
+                <input type="hidden" name="updates[{{ diff.id }}][excel_inv_number]" value="{{ diff.excel_inv_number|default(diff.inv_number) }}">
+                <input type="hidden" name="updates[{{ diff.id }}][quantity]" value="{{ diff.excel_quantity }}">
+                <input type="hidden" name="updates[{{ diff.id }}][price]" value="{{ diff.excel_price }}">
+                <input type="hidden" name="updates[{{ diff.id }}][sum]" value="{{ diff.excel_sum }}">
+            </div>
+            <div class="warehouse__left {{ diff.inv_changed ? 'import__cell--diff' : '' }}">
+                <div class="warehouse__name">{{ diff.name }}</div>
+                <div class="warehouse__number">{{ diff.inv_number }}</div>
+                {% if diff.inv_changed and diff.excel_inv_number is not empty %}
+                    <div style="font-size:12px; color: var(--text-secondary);">
+                        {{ diff.inv_number }} → {{ diff.excel_inv_number }}
+                    </div>
+                {% endif %}
+            </div>
+            <div class="warehouse__unit {{ diff.current_quantity != diff.excel_quantity ? 'import__cell--diff' : '' }}">{{ diff.current_quantity }} → {{ diff.excel_quantity }}</div>
+            <div class="warehouse__price {{ diff.price != diff.excel_price ? 'import__cell--diff' : '' }}">{{ diff.price }} → {{ diff.excel_price }}</div>
+            <div class="warehouse__quantity {{ diff.sum != diff.excel_sum ? 'import__cell--diff' : '' }}">{{ diff.sum }} → {{ diff.excel_sum }}</div>
+            <div class="warehouse__sum {{ (diff.current_quantity != diff.excel_quantity or diff.price != diff.excel_price or diff.sum != diff.excel_sum or diff.inv_changed) ? 'import__cell--diff' : '' }}">
+                Є зміни
+            </div>
+        </div>
+    {% endfor %}
+</div>
+</div>
+{% endif %}
+
+{% if newProducts|default([])|length %}
+<div class="import-modal-section" data-tab-key="new" data-modal-title="Нові позиції" data-modal-subtitle="Товари, яких не було в БД та які будуть додані після підтвердження.">
+<div class="table" style="margin-bottom: 16px; border-radius: var(--radius-md);">
+    <div class="warehouse__item table-title" style="background: var(--bg-box); border-radius: 0; width: 100%;">
+        <div class="warehouse__checkbox"></div>
+        <div class="warehouse__left">
+            <div class="warehouse__name">Наименование</div>
+            <div class="warehouse__number">Номенклатурный №</div>
+        </div>
+        <div class="warehouse__unit">Ед.измерения</div>
+        <div class="warehouse__price">Цена</div>
+        <div class="warehouse__quantity">Количество</div>
+        <div class="warehouse__sum">Сумма</div>
+    </div>
+
+    {% for item in newProducts %}
+        <div class="warehouse__item table-item">
+            <div class="warehouse__checkbox"></div>
+            <div class="warehouse__left">
+                <div class="warehouse__name">{{ item.name }}</div>
+                <div class="warehouse__number">{{ item.inv_number ?: '-' }}</div>
+            </div>
+            <div class="warehouse__unit">{{ item.unit ?: '-' }}</div>
+            <div class="warehouse__price">{{ item.excel_price }}</div>
+            <div class="warehouse__quantity">{{ item.excel_quantity }}</div>
+            <div class="warehouse__sum">{{ item.excel_sum }}</div>
+        </div>
+    {% endfor %}
+</div>
+</div>
+{% endif %}
+
+{% if missingProducts|default([])|length %}
+<div class="import-modal-section" data-tab-key="missing" data-modal-title="Позиції, що зникли" data-modal-subtitle="Товари, що є в БД, але відсутні у поточному Excel, включно з нульовими залишками.">
+<div class="table" style="margin-bottom: 16px; border-radius: var(--radius-md);">
+    <div class="warehouse__item table-title" style="background: var(--bg-box); border-radius: 0; width: 100%;">
+        <div class="warehouse__checkbox"></div>
+        <div class="warehouse__left">
+            <div class="warehouse__name">Наименование</div>
+            <div class="warehouse__number">Номенклатурный №</div>
+        </div>
+        <div class="warehouse__unit">Ед.измерения</div>
+        <div class="warehouse__price">Цена</div>
+        <div class="warehouse__quantity">Количество</div>
+        <div class="warehouse__sum">Сумма</div>
+    </div>
+
+    {% for item in missingProducts %}
+        <div class="warehouse__item table-item">
+            <div class="warehouse__checkbox"></div>
+            <div class="warehouse__left">
+                <div class="warehouse__name">{{ item.name }}</div>
+                <div class="warehouse__number">{{ item.inv_number ?: '-' }}</div>
+            </div>
+            <div class="warehouse__unit">{{ item.unit ?: '-' }}</div>
+            <div class="warehouse__price">{{ item.current_price }}</div>
+            <div class="warehouse__quantity">{{ item.current_quantity }}</div>
+            <div class="warehouse__sum">{{ item.current_sum }}</div>
+        </div>
+    {% endfor %}
+</div>
+</div>
+{% endif %}
+
+{% if ambiguousMatches|default([])|length %}
+<div class="import-modal-section" data-tab-key="ambiguous" data-modal-title="Ручна перевірка" data-modal-subtitle="Оберіть вручну правильний товар у БД для неоднозначних інвентарних номерів.">
+<div class="import table" style="margin-bottom: 16px;">
+    <div class="import__item table-title">
+        <div class="import__name" style="grid-column: 1 / -1;">Потрібна ручна перевірка (неоднозначне співпадіння) — оберіть відповідний товар у БД</div>
+    </div>
+
+    {% for item in ambiguousMatches %}
+        <div class="import__item table-item ambiguous-item"
+             data-index="{{ loop.index0 }}"
+             data-excel-name="{{ item.excel_name|e }}"
+             data-excel-inv="{{ item.excel_inv_number|e }}"
+             data-excel-quantity="{{ item.excel_quantity|default(0) }}"
+             data-excel-price="{{ item.excel_price|default(0) }}"
+             data-excel-sum="{{ item.excel_sum|default(0) }}">
+            <div class="import__name">
+                {{ item.excel_name }} ({{ item.excel_inv_number }})
+                <div style="font-size:12px; color: var(--text-secondary);">
+                    К-сть: {{ item.excel_quantity|default(0) }}, Ціна: {{ item.excel_price|default(0) }}, Сума: {{ item.excel_sum|default(0) }}
+                </div>
+            </div>
+            <div class="import__quantity" style="white-space: normal;">
+                {% if item.candidates|length %}
+                    {% for candidate in item.candidates %}
+                        <label class="checkbox" style="display:block; margin-bottom: 6px;">
+                            <input
+                                type="radio"
+                                class="ambiguous-choice"
+                                name="ambiguous_choice_{{ loop.parent.index0 }}"
+                                value="{{ candidate.id }}"
+                                data-product-id="{{ candidate.id }}"
+                                data-product-name="{{ candidate.name|e }}"
+                                data-product-inv="{{ candidate.inv_number|e }}"
+                            />
+                            <span>{{ candidate.name }} ({{ candidate.inv_number }})</span>
+                        </label>
+                    {% endfor %}
+                {% else %}
+                    <div>Немає кандидатів</div>
+                {% endif %}
+            </div>
+        </div>
+    {% endfor %}
+</div>
+</div>
+{% endif %}
+
+{% if splitCandidates|default([])|length %}
+<div class="import-modal-section" data-tab-key="split" data-modal-title="Розподіл операцій" data-modal-subtitle="Оберіть, яку операцію застосувати до кожної нової позиції після розділення.">
+<div class="table" style="margin-bottom: 16px; border-radius: var(--radius-md);">
+    <div class="warehouse__item table-title" style="background: var(--bg-box); border-radius: 0; width: 100%;">
+        <div class="warehouse__checkbox"></div>
+        <div class="warehouse__left">
+            <div class="warehouse__name">Нова позиція</div>
+            <div class="warehouse__number">Базова позиція</div>
+        </div>
+        <div class="warehouse__unit">К-сть</div>
+        <div class="warehouse__price">Ціна</div>
+        <div class="warehouse__quantity">Операція</div>
+        <div class="warehouse__sum">Документ</div>
+    </div>
+
+    {% for candidate in splitCandidates %}
+        {% for row in candidate.rows %}
+            <div class="warehouse__item table-item split-item"
+                 data-base-product-id="{{ candidate.base_product_id }}"
+                 data-excel-inv="{{ row.excel_inv_number|e }}">
+                <div class="warehouse__checkbox"></div>
+                <div class="warehouse__left">
+                    <div class="warehouse__name">{{ candidate.base_name }}</div>
+                    <div class="warehouse__number">{{ candidate.base_inv_number }} → {{ row.excel_inv_number }}</div>
+                </div>
+                <div class="warehouse__unit">{{ row.excel_quantity }}</div>
+                <div class="warehouse__price">{{ row.excel_price }}</div>
+                <div class="warehouse__quantity" style="white-space: normal; width: 100%;">
+                    <select class="split-operation-select" style="width:100%; min-width: 240px;"
+                            data-base-product-id="{{ candidate.base_product_id }}"
+                            data-excel-inv="{{ row.excel_inv_number|e }}">
+                        <option value="">Оберіть операцію</option>
+                        {% for op in candidate.operations %}
+                            <option value="{{ op.operation_id }}"
+                                data-op-qty="{{ op.quantity }}"
+                                data-op-sum="{{ op.sum }}"
+                                data-op-doc="{{ op.doc_num ?: '-' }}"
+                                data-op-date="{{ op.doc_date ?: '-' }}">
+                                #{{ op.operation_id }} • {{ op.operation_type }} • {{ op.doc_num ?: 'без №' }} • {{ op.doc_date ?: 'без дати' }} • К-сть: {{ op.quantity }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="warehouse__sum split-operation-doc">—</div>
+            </div>
+        {% endfor %}
+    {% endfor %}
+</div>
+</div>
+{% endif %}
+
+{% if not differences|length and not newProducts|default([])|length and not missingProducts|default([])|length and not ambiguousMatches|default([])|length and not splitCandidates|default([])|length %}
+<div class="alert alert--success">
+    Различий нет. Новых продуктов: {{ newCount }}
+</div>
+{% endif %}
+
+<div class="import__bottom">
+
+    <button type="button" class="button button--nm button--secondary" id="download-differences">
+        Завантажити файл с відмінностями
+    </button>
+
+    <div class="import__bottom-right">
+        <button type="button" class="button button--nm button--secondary" id="cancel-differences">
+            Відмінити
+        </button>
+        {% if differences|length or newProducts|default([])|length or ambiguousMatches|default([])|length or splitCandidates|default([])|length %}
+        <button type="button" class="button button--nm button--brand" id="apply-differences" data-final-label="Зберегти зміни" data-next-label="Далі">
+            {{ tabsCount > 1 ? 'Далі' : 'Зберегти зміни' }}
+        </button>
+        {% endif %}
+    </div>{# import__bottom-right #}
+</div>{# import__bottom #}";s:4:"code";N;}}

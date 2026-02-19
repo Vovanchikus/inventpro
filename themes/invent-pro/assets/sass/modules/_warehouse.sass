@@ -262,7 +262,7 @@
     justify-self: end
 
   &__cell--diff
-    padding: 6px 10px
+    padding: 6px 10px !important
     border-radius: $radius-sm
     background-color: rgba(255, 205, 64, 0.18)
     color: $text-primary
@@ -278,3 +278,27 @@
     &-right
       display: flex
       gap: 12px
+
+
+.import-modal-section
+  .warehouse__number
+    &:hover
+      padding-left: 8px
+
+  .warehouse__unit,
+  .warehouse__price,
+  .warehouse__quantity,
+  .warehouse__sum
+    &:hover
+      padding-left: 0
+
+  .warehouse__number,
+  .warehouse__unit,
+  .warehouse__price,
+  .warehouse__quantity,
+  .warehouse__sum
+    &:hover
+      svg
+        visibility: hidden
+        opacity: 0
+        pointer-events: none

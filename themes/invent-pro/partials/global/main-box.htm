@@ -66,7 +66,7 @@
     </div>{# button--outside #}
 
     <div class="main-box__count">
-      Всього на складі: <span class="label--extra-sm label--secondary">{{ products|length }}</span>
+      Всього на складі: <span class="label--extra-sm label--secondary">{{ stockProductsCount|default(0) }}</span>
     </div>
 
   </div>{# main-box__top #}

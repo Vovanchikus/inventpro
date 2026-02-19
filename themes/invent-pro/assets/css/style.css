@@ -847,7 +847,7 @@ footer {
   justify-self: end;
 }
 .import__cell--diff {
-  padding: 6px 10px;
+  padding: 6px 10px !important;
   border-radius: var(--radius-sm);
   background-color: rgba(255, 205, 64, 0.18);
   color: var(--text-primary);
@@ -862,6 +862,25 @@ footer {
 .import__bottom-right {
   display: flex;
   gap: 12px;
+}
+
+.import-modal-section .warehouse__number:hover {
+  padding-left: 8px;
+}
+.import-modal-section .warehouse__unit:hover,
+.import-modal-section .warehouse__price:hover,
+.import-modal-section .warehouse__quantity:hover,
+.import-modal-section .warehouse__sum:hover {
+  padding-left: 0;
+}
+.import-modal-section .warehouse__number:hover svg,
+.import-modal-section .warehouse__unit:hover svg,
+.import-modal-section .warehouse__price:hover svg,
+.import-modal-section .warehouse__quantity:hover svg,
+.import-modal-section .warehouse__sum:hover svg {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
 }
 
 .operation-history__filters {
@@ -2380,6 +2399,8 @@ footer {
   border-radius: var(--radius-lg);
   position: relative;
   top: 50px;
+  max-width: 90%;
+  max-height: 90%;
   box-shadow: 0 0 16px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease;
   overflow: hidden;
@@ -2399,6 +2420,18 @@ footer {
   justify-content: center;
   align-items: center;
   gap: 8px;
+  transition: opacity 0.22s ease, transform 0.22s ease, filter 0.22s ease;
+  will-change: opacity, transform, filter;
+}
+.modal-header__text.is-switching-out {
+  opacity: 0.18;
+  transform: translateY(-6px) scale(0.985);
+  filter: blur(2px);
+}
+.modal-header__text.is-switching-in {
+  opacity: 0;
+  transform: translateY(8px) scale(0.99);
+  filter: blur(2px);
 }
 
 .modal-title {
@@ -2450,6 +2483,25 @@ footer {
 .modal-content {
   max-height: 430px;
   overflow-y: auto;
+}
+
+.modal-window--import .modal-content {
+  max-height: min(68vh, 680px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 4px;
+}
+.modal-window--import .table {
+  overflow: visible;
+}
+.modal-window--import .table-title {
+  position: sticky;
+  top: 0;
+  z-index: 4;
+  background: var(--bg-box);
+}
+.modal-window--import .table-title.scrolled {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .toast {
