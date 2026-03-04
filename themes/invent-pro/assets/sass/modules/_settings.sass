@@ -1,0 +1,167 @@
+@import '../core/vars'
+
+.settings-page
+  display: flex
+  flex-direction: column
+  gap: 48px
+  padding: 24px
+
+  &__top
+    display: flex
+    flex-direction: column
+    gap: 24px
+
+  &__title
+    font-size: 24px
+    font-weight: 600
+    line-height: 1
+    color: $text-primary
+
+  &__tabs
+    gap: 20px
+
+  &__empty
+    color: $text-muted
+    font-size: 14px
+
+.settings-doc
+  display: flex
+  flex-direction: column
+  gap: 32px
+
+  &__people
+    display: flex
+    flex-direction: column
+    gap: 32px
+
+  &__section
+    display: flex
+    flex-direction: column
+    gap: 16px
+
+  &__section-title
+    font-size: 18px
+    font-weight: 600
+    color: $text-primary
+
+  &__field-block
+    display: flex
+    flex-direction: column
+    gap: 10px
+
+  &__field-row
+    display: flex
+    align-items: center
+    gap: 16px
+    flex-wrap: wrap
+
+  &__label
+    color: $text-primary
+    font-size: 16px
+    font-weight: 600
+
+  &__input
+    &.form-input
+      width: 240px
+    &.settings-doc__input--commission-order-details
+      width: 300px
+
+    &--year
+      width: 88px
+
+  &__role
+    display: flex
+    flex-direction: column
+    gap: 16px
+
+  &__role-title
+    color: $text-muted
+    font-size: 14px
+    font-weight: 600
+    line-height: 1
+    font-weight: 500
+
+  &__cards
+    display: flex
+    justify-content: start
+    flex-wrap: wrap
+    gap: 12px
+
+.settings-person
+  border: 1px solid $border-block
+  border-radius: $radius-nm
+  background: $bg-box
+  padding: 16px
+  min-height: 124px
+  display: flex
+  flex-direction: column
+  gap: 16px
+  min-width: 290px
+  max-width: 350px
+
+  &.is-selected
+    border-color: $field-border-focus
+    box-shadow: $box-light-shadow
+
+  &__top
+    display: flex
+    align-items: center
+    justify-content: space-between
+    gap: 24px
+
+  &__name
+    color: $text-primary
+    font-size: 16px
+    font-weight: 600
+
+  &__actions
+    display: inline-flex
+    align-items: center
+    gap: 6px
+
+  &__action
+
+  &__position
+    color: $text-muted
+    font-size: 14px
+    line-height: 1.4
+    width: calc(100% - 32px)
+
+  &__add
+    align-self: center
+
+
+.settings-modal
+  display: flex
+  flex-direction: column
+  gap: 14px
+  max-width: 580px
+
+  &__confirm-text
+    color: $text-primary
+    font-size: 14px
+    line-height: 1.4
+
+  &__field
+    display: flex
+    flex-direction: column
+    gap: 8px
+
+  &__label
+    color: $text-primary
+    font-size: 14px
+    font-weight: 500
+
+  &__input
+    width: 100%
+
+    &--textarea
+      min-height: 96px
+      resize: vertical
+
+  &__actions
+    align-self: center
+    display: flex
+    justify-content: flex-end
+    gap: 16px
+    margin: 4px

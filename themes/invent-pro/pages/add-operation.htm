@@ -24,6 +24,7 @@ layout = "default"
 
     <input type="hidden" name="note_id" value="{{ note_id }}">
     <input type="hidden" name="operation_id" value="{{ operation_id }}">
+    <input type="hidden" name="generate_doc_mode" value="1">
 
     <div class="operation-form__type-box">
       {% for type in types|slice(0, 3) %}

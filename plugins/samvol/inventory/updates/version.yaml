@@ -123,3 +123,27 @@
 1.0.42:
     - "Updated table samvol_inventory_operations (add draft_products)"
     - builder_table_update_samvol_inventory_operations_add_draft_products.php
+1.0.43:
+    - "Created table samvol_inventory_document_generations"
+    - builder_table_create_samvol_inventory_document_generations.php
+1.0.44:
+    - "Created table samvol_inventory_doc_template_settings"
+    - builder_table_create_samvol_inventory_doc_template_settings.php
+1.0.45:
+    - "Created table samvol_inventory_doc_template_people"
+    - builder_table_create_samvol_inventory_doc_template_people.php
+1.0.46:
+    - "Created table samvol_inventory_organizations"
+    - builder_table_create_samvol_inventory_organizations.php
+1.0.47:
+    - "Updated table users (organization fields)"
+    - builder_table_update_users_add_organization_fields.php
+1.0.48:
+    - "Created table samvol_inventory_api_refresh_tokens"
+    - builder_table_create_samvol_inventory_api_refresh_tokens.php
+1.0.49:
+    - "Updated inventory entities with mobile API fields"
+    - builder_table_update_samvol_inventory_mobile_fields.php
+1.0.50:
+    - "Updated operations and documents with organization scope"
+    - builder_table_update_samvol_inventory_org_scope.php

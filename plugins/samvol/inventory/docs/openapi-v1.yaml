@@ -1,0 +1,247 @@
+openapi: 3.0.3
+info:
+    title: InventPro Mobile API
+    version: 1.0.0
+    description: API v1 for React Native / React PWA clients.
+servers:
+    - url: /api/v1
+paths:
+    /docs:
+        get:
+            summary: Swagger UI page
+            responses:
+                "200":
+                    description: HTML documentation page
+    /auth/login:
+        post:
+            summary: Login
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            required: [password]
+                            properties:
+                                login: { type: string }
+                                email: { type: string, format: email }
+                                password: { type: string }
+            responses:
+                "200":
+                    description: Access and refresh token pair
+    /auth/register:
+        post:
+            summary: Register
+            responses:
+                "201":
+                    description: Created
+    /auth/refresh:
+        post:
+            summary: Rotate tokens by refresh token
+            responses:
+                "200":
+                    description: New token pair
+    /auth/me:
+        get:
+            security:
+                - bearerAuth: []
+            summary: Current user
+            responses:
+                "200":
+                    description: User info
+    /auth/logout:
+        post:
+            security:
+                - bearerAuth: []
+            summary: Revoke current refresh session
+            responses:
+                "200":
+                    description: Revoked
+    /products:
+        get:
+            security:
+                - bearerAuth: []
+            summary: List products
+            parameters:
+                - in: query
+                  name: page
+                  schema: { type: integer }
+                - in: query
+                  name: per_page
+                  schema: { type: integer, maximum: 100 }
+                - in: query
+                  name: q
+                  schema: { type: string }
+                - in: query
+                  name: category_id
+                  schema: { type: integer }
+            responses:
+                "200":
+                    description: Paginated products
+    /products/{id}:
+        get:
+            security:
+                - bearerAuth: []
+            summary: Product details
+            parameters:
+                - in: path
+                  name: id
+                  required: true
+                  schema: { type: integer }
+            responses:
+                "200":
+                    description: Product
+    /operations:
+        get:
+            security:
+                - bearerAuth: []
+            summary: List operations
+            responses:
+                "200":
+                    description: Paginated operations
+        post:
+            security:
+                - bearerAuth: []
+            summary: Create operation
+            responses:
+                "201":
+                    description: Operation created
+    /operations/{id}:
+        get:
+            security:
+                - bearerAuth: []
+            summary: Operation details
+            responses:
+                "200":
+                    description: Operation
+        patch:
+            security:
+                - bearerAuth: []
+            summary: Update operation
+            responses:
+                "200":
+                    description: Operation updated
+        delete:
+            security:
+                - bearerAuth: []
+            summary: Delete operation
+            responses:
+                "200":
+                    description: Operation deleted
+    /documents:
+        get:
+            security:
+                - bearerAuth: []
+            summary: List documents
+            responses:
+                "200":
+                    description: Paginated documents
+        post:
+            security:
+                - bearerAuth: []
+            summary: Create document metadata
+            responses:
+                "201":
+                    description: Document created
+    /documents/{id}:
+        get:
+            security:
+                - bearerAuth: []
+            summary: Document details
+            responses:
+                "200":
+                    description: Document
+        patch:
+            security:
+                - bearerAuth: []
+            summary: Update document metadata
+            responses:
+                "200":
+                    description: Document updated
+        delete:
+            security:
+                - bearerAuth: []
+            summary: Delete document
+            responses:
+                "200":
+                    description: Document deleted
+    /categories:
+        get:
+            security:
+                - bearerAuth: []
+            summary: List categories
+            responses:
+                "200":
+                    description: Paginated categories
+    /categories/{id}:
+        get:
+            security:
+                - bearerAuth: []
+            summary: Category details
+            responses:
+                "200":
+                    description: Category
+    /media/images:
+        post:
+            security:
+                - bearerAuth: []
+            summary: Upload image
+            requestBody:
+                required: true
+                content:
+                    multipart/form-data:
+                        schema:
+                            type: object
+                            required: [file, product_id]
+                            properties:
+                                file:
+                                    type: string
+                                    format: binary
+                                product_id:
+                                    type: integer
+            responses:
+                "201":
+                    description: File uploaded
+    /media/documents:
+        post:
+            security:
+                - bearerAuth: []
+            summary: Upload document
+            requestBody:
+                required: true
+                content:
+                    multipart/form-data:
+                        schema:
+                            type: object
+                            required: [file, operation_id]
+                            properties:
+                                file:
+                                    type: string
+                                    format: binary
+                                operation_id:
+                                    type: integer
+            responses:
+                "201":
+                    description: File uploaded
+    /realtime/auth:
+        post:
+            security:
+                - bearerAuth: []
+            summary: Authorize private websocket channel
+            responses:
+                "200":
+                    description: Channel authorization payload
+    /realtime/health:
+        get:
+            security:
+                - bearerAuth: []
+            summary: Realtime integration health
+            responses:
+                "200":
+                    description: Realtime setup status
+components:
+    securitySchemes:
+        bearerAuth:
+            type: http
+            scheme: bearer
+            bearerFormat: JWT

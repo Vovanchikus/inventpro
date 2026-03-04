@@ -1,4 +1,4 @@
-1771530716a:1:{s:11:"default.htm";a:11:{s:8:"fileName";s:11:"default.htm";s:7:"content";s:5442:"description = "Основной макет Winter CMS"
+1772667525a:1:{s:11:"default.htm";a:11:{s:8:"fileName";s:11:"default.htm";s:7:"content";s:5987:"description = "Основной макет Winter CMS"
 
 [session]
 security = "user" ; ограничиваем для незарегистрированных пользователей страницу
@@ -49,6 +49,9 @@ redirect = "login"
         {% partial 'modals/modal' %}
         <!-- Winter framework + Snowboard -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script>
+            window.jQuery || document.write('<script src="/modules/backend/assets/js/vendor/jquery.min.js"><\\/script>');
+        </script>
 
         {% framework extras %}
         {% snowboard all %}
@@ -60,7 +63,7 @@ redirect = "login"
         <script src="{{ 'assets/js/core/handlers.js'|theme }}?v={{ random(100000,999999) }}"></script>
         <script src="{{ 'assets/js/core/header-search.js'|theme }}?v={{ random(100000,999999) }}"></script>
         <script src="{{ 'assets/js/core/import-excel.js'|theme }}?v={{ random(100000,999999) }}"></script>
-        <script src="{{ 'assets/js/pages/notes-modal.js'|theme }}?v={{ random(100000,999999) }}"></script>
+        <script src="{{ 'assets/js/pages/notes-modal.js'|theme }}?v={{ "now"|date("U") }}"></script>
         <script src="{{ 'assets/js/OverlayScrollbars.min.js'|theme }}?v={{ random(100000,999999) }}"></script>
         <script src="{{ 'assets/js/core/scripts.js'|theme }}?v={{ random(100000,999999) }}"></script>
 
@@ -71,6 +74,14 @@ redirect = "login"
 
         {% if this.page.url == '/add-operation' or this.page.url == '/edit-operation' %}
             <script src="{{ 'assets/js/pages/operation-form.js'|theme }}?v={{ random(100000,999999) }}"></script>
+        {% endif %}
+
+        {% if this.page.url == '/operation-documents-builder' %}
+            <script src="{{ 'assets/js/pages/doc-generation-builder.js'|theme }}?v={{ random(100000,999999) }}"></script>
+        {% endif %}
+
+        {% if this.page.url == '/settings' %}
+            <script src="{{ 'assets/js/pages/settings.js'|theme }}?v={{ random(100000,999999) }}"></script>
         {% endif %}
 
         {% if this.page.url == '/operation-history' or this.page.url == '/documents' %}
@@ -110,7 +121,7 @@ redirect = "login"
     </div>
 </body>
 </html>
-";s:5:"mtime";i:1771247871;s:6:"markup";s:5158:"<!DOCTYPE html>
+";s:5:"mtime";i:1772659182;s:6:"markup";s:5703:"<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="utf-8">
@@ -151,6 +162,9 @@ redirect = "login"
         {% partial 'modals/modal' %}
         <!-- Winter framework + Snowboard -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script>
+            window.jQuery || document.write('<script src="/modules/backend/assets/js/vendor/jquery.min.js"><\\/script>');
+        </script>
 
         {% framework extras %}
         {% snowboard all %}
@@ -162,7 +176,7 @@ redirect = "login"
         <script src="{{ 'assets/js/core/handlers.js'|theme }}?v={{ random(100000,999999) }}"></script>
         <script src="{{ 'assets/js/core/header-search.js'|theme }}?v={{ random(100000,999999) }}"></script>
         <script src="{{ 'assets/js/core/import-excel.js'|theme }}?v={{ random(100000,999999) }}"></script>
-        <script src="{{ 'assets/js/pages/notes-modal.js'|theme }}?v={{ random(100000,999999) }}"></script>
+        <script src="{{ 'assets/js/pages/notes-modal.js'|theme }}?v={{ "now"|date("U") }}"></script>
         <script src="{{ 'assets/js/OverlayScrollbars.min.js'|theme }}?v={{ random(100000,999999) }}"></script>
         <script src="{{ 'assets/js/core/scripts.js'|theme }}?v={{ random(100000,999999) }}"></script>
 
@@ -173,6 +187,14 @@ redirect = "login"
 
         {% if this.page.url == '/add-operation' or this.page.url == '/edit-operation' %}
             <script src="{{ 'assets/js/pages/operation-form.js'|theme }}?v={{ random(100000,999999) }}"></script>
+        {% endif %}
+
+        {% if this.page.url == '/operation-documents-builder' %}
+            <script src="{{ 'assets/js/pages/doc-generation-builder.js'|theme }}?v={{ random(100000,999999) }}"></script>
+        {% endif %}
+
+        {% if this.page.url == '/settings' %}
+            <script src="{{ 'assets/js/pages/settings.js'|theme }}?v={{ random(100000,999999) }}"></script>
         {% endif %}
 
         {% if this.page.url == '/operation-history' or this.page.url == '/documents' %}

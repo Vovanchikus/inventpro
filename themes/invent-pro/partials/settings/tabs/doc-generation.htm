@@ -1,0 +1,70 @@
+<div class="settings-doc" id="settings-doc-root">
+    <div class="settings-doc__field-block">
+        <label class="settings-doc__label" for="settings-edrpou">ЄДРПОУ організації:</label>
+        <div class="settings-doc__field-row form-floating">
+            <input id="settings-edrpou" type="text" class="form-input settings-doc__input" placeholder="Введіть ЄДРПОУ" value="{{ docTemplateSettings.edrpou ?? '' }}">
+            <button type="button" class="button button--nm button--brand settings-doc__save-btn" data-field-key="edrpou" data-field-input="settings-edrpou">Зберегти</button>
+        </div>
+    </div>
+
+    <div class="settings-doc__field-block">
+        <label class="settings-doc__label" for="settings-document-year">Рік документа:</label>
+        <div class="settings-doc__field-row form-floating">
+            <input id="settings-document-year" type="text" class="form-input settings-doc__input settings-doc__input--year" placeholder="2026" maxlength="4" value="{{ docTemplateSettings.document_year ?? '' }}">
+            <button type="button" id="settings-set-current-year" class="button button--nm button--secondary">Встановити поточний</button>
+            <button type="button" class="button button--nm button--brand settings-doc__save-btn" data-field-key="document_year" data-field-input="settings-document-year">Зберегти</button>
+        </div>
+    </div>
+
+    <div class="settings-doc__section" data-role-key="receiver_name">
+        <h3 class="settings-doc__label">На кого документ:</h3>
+        <div class="settings-doc__cards" id="settings-role-receiver_name">
+            {% partial 'settings/tabs/doc-generation-role-cards' roleKey='receiver_name' role=(docTemplateRoles.receiver_name ?? {}) %}
+        </div>
+    </div>
+
+    <div class="settings-doc__section">
+        <h3 class="settings-doc__section-title">Комісія</h3>
+
+        <div class="settings-doc__field-block">
+            <label class="settings-doc__role-title" for="settings-commission-order-details">Дата та № наказу призначення комісії:</label>
+            <div class="settings-doc__field-row form-floating">
+                <input id="settings-commission-order-details" type="text" class="form-input settings-doc__input settings-doc__input--commission-order-details" placeholder="Введіть дату та № наказу" value="{{ docTemplateSettings.commission_order_details ?? '' }}">
+                <button type="button" class="button button--nm button--brand settings-doc__save-btn" data-field-key="commission_order_details" data-field-input="settings-commission-order-details">Зберегти</button>
+            </div>
+        </div>
+
+        <div class="settings-doc__people">
+          <div class="settings-doc__role" data-role-key="commission_head">
+              <div class="settings-doc__role-title">Голова комісії:</div>
+              <div class="settings-doc__cards" id="settings-role-commission_head">
+                  {% partial 'settings/tabs/doc-generation-role-cards' roleKey='commission_head' role=(docTemplateRoles.commission_head ?? {}) %}
+              </div>
+          </div>
+          <div class="settings-doc__role" data-role-key="commission_member_1">
+              <div class="settings-doc__role-title">Член комісії №1:</div>
+              <div class="settings-doc__cards" id="settings-role-commission_member_1">
+                  {% partial 'settings/tabs/doc-generation-role-cards' roleKey='commission_member_1' role=(docTemplateRoles.commission_member_1 ?? {}) %}
+              </div>
+          </div>
+          <div class="settings-doc__role" data-role-key="commission_member_2">
+              <div class="settings-doc__role-title">Член комісії №2:</div>
+              <div class="settings-doc__cards" id="settings-role-commission_member_2">
+                  {% partial 'settings/tabs/doc-generation-role-cards' roleKey='commission_member_2' role=(docTemplateRoles.commission_member_2 ?? {}) %}
+              </div>
+          </div>
+          <div class="settings-doc__role" data-role-key="commission_member_3">
+              <div class="settings-doc__role-title">Член комісії №3:</div>
+              <div class="settings-doc__cards" id="settings-role-commission_member_3">
+                  {% partial 'settings/tabs/doc-generation-role-cards' roleKey='commission_member_3' role=(docTemplateRoles.commission_member_3 ?? {}) %}
+              </div>
+          </div>
+          <div class="settings-doc__role" data-role-key="responsible_person">
+              <div class="settings-doc__role-title">Матеріально-відповідальна особа:</div>
+              <div class="settings-doc__cards" id="settings-role-responsible_person">
+                  {% partial 'settings/tabs/doc-generation-role-cards' roleKey='responsible_person' role=(docTemplateRoles.responsible_person ?? {}) %}
+              </div>
+          </div>
+        </div>{# settings-doc__people #}
+    </div>{# settings-doc__section #}
+</div>{# settings-doc #}

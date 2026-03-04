@@ -11,6 +11,9 @@ use Samvol\Inventory\Models\Document;
 use Samvol\Inventory\Models\Category;
 use Samvol\Inventory\Models\OperationType;
 use Samvol\Inventory\Models\OperationProduct;
+use Samvol\Inventory\Classes\DocumentTemplateSettings;
+use Samvol\Inventory\Classes\OrganizationAccess;
+use Samvol\Inventory\Classes\SettingsScopeResolver;
 
 use Samvol\Inventory\Classes\Transformers\ProductTransformer;
 use Samvol\Inventory\Classes\Transformers\OperationTransformer;
@@ -243,6 +246,135 @@ class Api extends Controller
     }
 
     /*--------------------------
+    | Document Template Settings
+    --------------------------*/
+    public function documentTemplateSettings()
+    {
+        if (!$this->authorizeAdmin()) {
+            return $this->error('Недостаточно прав', 403);
+        }
+
+        return $this->success(DocumentTemplateSettings::get($this->resolveSettingsScope()));
+    }
+
+    public function saveDocumentTemplateField(Request $request)
+    {
+        if (!$this->authorizeAdmin()) {
+            return $this->error('Недостаточно прав', 403);
+        }
+
+        try {
+            $key = trim((string)$request->input('key', ''));
+            $value = $request->input('value', '');
+
+            if ($key === '') {
+                return $this->error('Не указано поле', 422);
+            }
+
+            $settings = DocumentTemplateSettings::saveField($key, $value, $this->resolveSettingsScope());
+            return $this->success($settings);
+        } catch (\InvalidArgumentException $e) {
+            return $this->error($e->getMessage(), 422);
+        } catch (\Throwable $e) {
+            \Log::error('Document template save field error', [
+                'message' => $e->getMessage(),
+            ]);
+            return $this->error('Помилка збереження налаштування', 500);
+        }
+    }
+
+    public function addDocumentTemplatePerson(Request $request)
+    {
+        if (!$this->authorizeAdmin()) {
+            return $this->error('Недостаточно прав', 403);
+        }
+
+        try {
+            $roleKey = trim((string)$request->input('role_key', ''));
+            $name = trim((string)$request->input('name', ''));
+            $position = trim((string)$request->input('position', ''));
+
+            $settings = DocumentTemplateSettings::addPerson($roleKey, $name, $position, $this->resolveSettingsScope());
+            return $this->success($settings);
+        } catch (\InvalidArgumentException $e) {
+            return $this->error($e->getMessage(), 422);
+        } catch (\Throwable $e) {
+            \Log::error('Document template add person error', [
+                'message' => $e->getMessage(),
+            ]);
+            return $this->error('Помилка додавання картки', 500);
+        }
+    }
+
+    public function updateDocumentTemplatePerson(Request $request)
+    {
+        if (!$this->authorizeAdmin()) {
+            return $this->error('Недостаточно прав', 403);
+        }
+
+        try {
+            $roleKey = trim((string)$request->input('role_key', ''));
+            $personId = trim((string)$request->input('person_id', ''));
+            $name = trim((string)$request->input('name', ''));
+            $position = trim((string)$request->input('position', ''));
+
+            $settings = DocumentTemplateSettings::updatePerson($roleKey, $personId, $name, $position, $this->resolveSettingsScope());
+            return $this->success($settings);
+        } catch (\InvalidArgumentException $e) {
+            return $this->error($e->getMessage(), 422);
+        } catch (\Throwable $e) {
+            \Log::error('Document template update person error', [
+                'message' => $e->getMessage(),
+            ]);
+            return $this->error('Помилка оновлення картки', 500);
+        }
+    }
+
+    public function deleteDocumentTemplatePerson(Request $request)
+    {
+        if (!$this->authorizeAdmin()) {
+            return $this->error('Недостаточно прав', 403);
+        }
+
+        try {
+            $roleKey = trim((string)$request->input('role_key', ''));
+            $personId = trim((string)$request->input('person_id', ''));
+
+            $settings = DocumentTemplateSettings::deletePerson($roleKey, $personId, $this->resolveSettingsScope());
+            return $this->success($settings);
+        } catch (\InvalidArgumentException $e) {
+            return $this->error($e->getMessage(), 422);
+        } catch (\Throwable $e) {
+            \Log::error('Document template delete person error', [
+                'message' => $e->getMessage(),
+            ]);
+            return $this->error('Помилка видалення картки', 500);
+        }
+    }
+
+    public function selectDocumentTemplatePerson(Request $request)
+    {
+        if (!$this->authorizeAdmin()) {
+            return $this->error('Недостаточно прав', 403);
+        }
+
+        try {
+            $roleKey = trim((string)$request->input('role_key', ''));
+            $personId = trim((string)$request->input('person_id', ''));
+
+            $settings = DocumentTemplateSettings::selectPerson($roleKey, $personId, $this->resolveSettingsScope());
+            return $this->success($settings);
+        } catch (\InvalidArgumentException $e) {
+            return $this->error($e->getMessage(), 422);
+        } catch (\Throwable $e) {
+            \Log::error('Document template select person error', [
+                'message' => $e->getMessage(),
+            ]);
+            return $this->error('Помилка вибору картки', 500);
+        }
+    }
+
+    /*--------------------------
     | Helpers
     --------------------------*/
     private function mapProduct(Product $p): array
@@ -286,5 +418,63 @@ class Api extends Controller
             'data'    => null,
             'error'   => $message,
         ], $code);
+    }
+
+    private function resolveUser()
+    {
+        try {
+            $frontendUser = \Auth::getUser();
+            if ($frontendUser) {
+                return $frontendUser;
+            }
+        } catch (\Throwable $e) {
+        }
+
+        try {
+            $defaultUser = \Auth::user();
+            if ($defaultUser) {
+                return $defaultUser;
+            }
+        } catch (\Throwable $e) {
+        }
+
+        try {
+            if (class_exists(\Backend\Facades\BackendAuth::class)) {
+                $backendUser = \Backend\Facades\BackendAuth::getUser();
+                if ($backendUser) {
+                    return $backendUser;
+                }
+            }
+        } catch (\Throwable $e) {
+        }
+
+        return null;
+    }
+
+    private function authorizeAdmin(): bool
+    {
+        $user = $this->resolveUser();
+        if (!$user) {
+            return false;
+        }
+
+        if (OrganizationAccess::isOrganizationAdmin($user)) {
+            return true;
+        }
+
+        if (method_exists($user, 'isInGroup') && $user->isInGroup('admin')) {
+            return true;
+        }
+
+        if (property_exists($user, 'is_superuser') && (bool)$user->is_superuser) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private function resolveSettingsScope(): string
+    {
+        return SettingsScopeResolver::resolveScopeKey($this->resolveUser());
     }
 }

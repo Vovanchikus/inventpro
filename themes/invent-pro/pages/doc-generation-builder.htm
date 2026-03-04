@@ -1,0 +1,166 @@
+title = "Формування документу"
+url = "/operation-documents-builder"
+layout = "default"
+[documentBuilderPageData]
+==
+{% if user and isAdmin %}
+<div class="doc-builder box--light"
+    data-operation-id="{{ builderOperationId }}"
+    data-has-missing-settings="{{ (builderWarnings.hasMissingSettings ?? false) ? '1' : '0' }}"
+    data-missing-items="{{ (builderWarnings.missingItems ?? [])|json_encode|e('html_attr') }}">
+    <h2 class="doc-builder__title">Формування документу</h2>
+
+    <div class="doc-builder__layout">
+
+        <section class="doc-builder__settings">
+            <h3 class="doc-builder__section-title">Тонкі налаштування</h3>
+
+            <div class="doc-builder__field">
+                <label class="doc-builder__label">Тип списання:</label>
+                <div class="operation-form__type-box doc-builder__type-box">
+                    <label class="operation-form__type-box__label">
+                        <input type="radio" name="doc_builder_writeoff_subtype" value="autoparts" checked hidden>
+                        <span class="operation-form__type-box__name">Автозапчастини</span>
+                    </label>
+                    <label class="operation-form__type-box__label">
+                        <input type="radio" name="doc_builder_writeoff_subtype" value="materials" hidden>
+                        <span class="operation-form__type-box__name">Буд. матеріали</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="doc-builder__field">
+                <label class="doc-builder__label">Оберіть документи для формування:</label>
+                <div id="doc-builder-doc-list" class="operation-form__type-box doc-builder__type-box"{% if builderDocNames is empty %} style="display:none;"{% endif %}>
+                    {% for docName in builderDocNames %}
+                        <label class="operation-form__type-box__label doc-builder__doc-label">
+                            <input type="checkbox" class="doc-builder__doc-checkbox" value="{{ docName|e('html_attr') }}" checked hidden>
+                            <span class="operation-form__type-box__name doc-builder__doc-name">
+                                <span class="doc-builder__doc-indicator"></span>
+                                <span>{{ docName }}</span>
+                            </span>
+                        </label>
+                    {% endfor %}
+                </div>
+                <div id="doc-builder-doc-empty" class="doc-builder__docs-empty"{% if builderDocNames is not empty %} style="display:none;"{% endif %}>В операції немає документів для формування</div>
+            </div>
+
+        </section>
+
+
+        <section class="doc-builder__general-settings">
+            <h3 class="doc-builder__section-title">Загальні налаштування</h3>
+
+            <div class="doc-builder__field">
+                <label class="doc-builder__label" for="doc-builder-receiver">На кого документ:</label>
+                <div id="doc-builder-receiver-select" class="custom-select doc-builder__select" data-name="receiver_name">
+                    <div class="selected">{{ (builderDefaults.receiver_name ?? '') ?: 'Оберіть зі списку' }}</div>
+                    <div class="options dropdown">
+                        {% for item in builderRoleOptions.receiver_name ?? [] %}
+                            <div class="option doc-builder__option" data-value="{{ (item.value ?? '')|e('html_attr') }}" data-label="{{ (item.label ?? item.value ?? '')|e('html_attr') }}">
+                                <span class="doc-builder__option-name">{{ item.name ?? item.value ?? '' }}</span>
+                                <span class="doc-builder__option-position">{{ item.position ?? '' }}</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <input type="hidden" id="doc-builder-receiver" class="doc-builder__select-input" value="{{ (builderDefaults.receiver_name ?? '')|e('html_attr') }}" data-default="{{ (builderDefaults.receiver_name ?? '')|e('html_attr') }}">
+            </div>
+
+            <h4 class="doc-builder__sub-title">Комісія</h4>
+
+            <div class="doc-builder__field">
+                <label class="doc-builder__label" for="doc-builder-commission-head">Голова комісії:</label>
+                <div id="doc-builder-commission-head-select" class="custom-select doc-builder__select" data-name="commission_head">
+                    <div class="selected">{{ (builderDefaults.commission_head ?? '') ?: 'Оберіть зі списку' }}</div>
+                    <div class="options dropdown">
+                        {% for item in builderRoleOptions.commission_head ?? [] %}
+                            <div class="option doc-builder__option" data-value="{{ (item.value ?? '')|e('html_attr') }}" data-label="{{ (item.label ?? item.value ?? '')|e('html_attr') }}">
+                                <span class="doc-builder__option-name">{{ item.name ?? item.value ?? '' }}</span>
+                                <span class="doc-builder__option-position">{{ item.position ?? '' }}</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <input type="hidden" id="doc-builder-commission-head" class="doc-builder__select-input" value="{{ (builderDefaults.commission_head ?? '')|e('html_attr') }}" data-default="{{ (builderDefaults.commission_head ?? '')|e('html_attr') }}">
+            </div>
+
+            <div class="doc-builder__commission-box">
+
+              <div class="doc-builder__field">
+                  <label class="doc-builder__label" for="doc-builder-commission-member-1">Член комісії № 1:</label>
+                  <div id="doc-builder-commission-member-1-select" class="custom-select doc-builder__select" data-name="commission_member_1">
+                      <div class="selected">{{ (builderDefaults.commission_member_1 ?? '') ?: 'Оберіть зі списку' }}</div>
+                      <div class="options dropdown">
+                          {% for item in builderRoleOptions.commission_member_1 ?? [] %}
+                              <div class="option doc-builder__option" data-value="{{ (item.value ?? '')|e('html_attr') }}" data-label="{{ (item.label ?? item.value ?? '')|e('html_attr') }}">
+                                  <span class="doc-builder__option-name">{{ item.name ?? item.value ?? '' }}</span>
+                                  <span class="doc-builder__option-position">{{ item.position ?? '' }}</span>
+                              </div>
+                          {% endfor %}
+                      </div>
+                  </div>
+                  <input type="hidden" id="doc-builder-commission-member-1" class="doc-builder__select-input" value="{{ (builderDefaults.commission_member_1 ?? '')|e('html_attr') }}" data-default="{{ (builderDefaults.commission_member_1 ?? '')|e('html_attr') }}">
+              </div>
+
+              <div class="doc-builder__field">
+                  <label class="doc-builder__label" for="doc-builder-commission-member-2">Член комісії № 2:</label>
+                  <div id="doc-builder-commission-member-2-select" class="custom-select doc-builder__select" data-name="commission_member_2">
+                      <div class="selected">{{ (builderDefaults.commission_member_2 ?? '') ?: 'Оберіть зі списку' }}</div>
+                      <div class="options dropdown">
+                          {% for item in builderRoleOptions.commission_member_2 ?? [] %}
+                              <div class="option doc-builder__option" data-value="{{ (item.value ?? '')|e('html_attr') }}" data-label="{{ (item.label ?? item.value ?? '')|e('html_attr') }}">
+                                  <span class="doc-builder__option-name">{{ item.name ?? item.value ?? '' }}</span>
+                                  <span class="doc-builder__option-position">{{ item.position ?? '' }}</span>
+                              </div>
+                          {% endfor %}
+                      </div>
+                  </div>
+                  <input type="hidden" id="doc-builder-commission-member-2" class="doc-builder__select-input" value="{{ (builderDefaults.commission_member_2 ?? '')|e('html_attr') }}" data-default="{{ (builderDefaults.commission_member_2 ?? '')|e('html_attr') }}">
+              </div>
+
+              <div class="doc-builder__field">
+                  <label class="doc-builder__label" for="doc-builder-commission-member-3">Член комісії № 3:</label>
+                  <div id="doc-builder-commission-member-3-select" class="custom-select doc-builder__select" data-name="commission_member_3">
+                      <div class="selected">{{ (builderDefaults.commission_member_3 ?? '') ?: 'Оберіть зі списку' }}</div>
+                      <div class="options dropdown">
+                          {% for item in builderRoleOptions.commission_member_3 ?? [] %}
+                              <div class="option doc-builder__option" data-value="{{ (item.value ?? '')|e('html_attr') }}" data-label="{{ (item.label ?? item.value ?? '')|e('html_attr') }}">
+                                  <span class="doc-builder__option-name">{{ item.name ?? item.value ?? '' }}</span>
+                                  <span class="doc-builder__option-position">{{ item.position ?? '' }}</span>
+                              </div>
+                          {% endfor %}
+                      </div>
+                  </div>
+                  <input type="hidden" id="doc-builder-commission-member-3" class="doc-builder__select-input" value="{{ (builderDefaults.commission_member_3 ?? '')|e('html_attr') }}" data-default="{{ (builderDefaults.commission_member_3 ?? '')|e('html_attr') }}">
+              </div>
+            </div>{# doc-builder__commission-box #}
+
+            <div class="doc-builder__field">
+                <label class="doc-builder__label" for="doc-builder-responsible">Матеріально-відповідальна особа:</label>
+                <div id="doc-builder-responsible-select" class="custom-select doc-builder__select" data-name="responsible_person">
+                    <div class="selected">{{ (builderDefaults.responsible_person ?? '') ?: 'Оберіть зі списку' }}</div>
+                    <div class="options dropdown">
+                        {% for item in builderRoleOptions.responsible_person ?? [] %}
+                            <div class="option doc-builder__option" data-value="{{ (item.value ?? '')|e('html_attr') }}" data-label="{{ (item.label ?? item.value ?? '')|e('html_attr') }}">
+                                <span class="doc-builder__option-name">{{ item.name ?? item.value ?? '' }}</span>
+                                <span class="doc-builder__option-position">{{ item.position ?? '' }}</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <input type="hidden" id="doc-builder-responsible" class="doc-builder__select-input" value="{{ (builderDefaults.responsible_person ?? '')|e('html_attr') }}" data-default="{{ (builderDefaults.responsible_person ?? '')|e('html_attr') }}">
+            </div>
+        </section>
+    </div>
+
+    <div class="doc-builder__actions">
+        <button type="button" id="doc-builder-reset" class="button button--nm button--secondary">Відновити налаштування</button>
+        <button type="button" id="doc-builder-generate" class="button button--nm button--brand"{% if not builderCanGenerate %} disabled{% endif %}>Сформувати документи</button>
+    </div>
+</div>
+
+{% partial 'doc-builder/modals' %}
+{% else %}
+    <p>У вас нет прав для формування документів.</p>
+{% endif %}

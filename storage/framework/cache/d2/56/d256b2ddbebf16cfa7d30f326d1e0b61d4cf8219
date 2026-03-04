@@ -1,4 +1,4 @@
-1771530717a:1:{s:19:"global/main-box.htm";a:5:{s:8:"fileName";s:19:"global/main-box.htm";s:7:"content";s:20416:"<div class="main-box box--light">
+1772667525a:1:{s:19:"global/main-box.htm";a:5:{s:8:"fileName";s:19:"global/main-box.htm";s:7:"content";s:20416:"<div class="main-box box--light">
 
 {% if this.page.url == '/warehouse' %}
 
@@ -260,7 +260,7 @@
 </div>{# main-box #}
 
 {# overlay-scroll подключается в layout/default.htm через assets/js/core/overlay-scroll.js #}
-";s:5:"mtime";i:1771444060;s:6:"markup";s:20414:"<div class="main-box box--light">
+";s:5:"mtime";i:1772312036;s:6:"markup";s:20414:"<div class="main-box box--light">
 
 {% if this.page.url == '/warehouse' %}
 

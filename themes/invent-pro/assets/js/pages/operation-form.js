@@ -24,6 +24,487 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!form) return;
 
     const isEdit = form.id === "editOperationForm";
+    const docGenerationApi = {
+        templates: "/api/operation-doc-templates",
+        generate: (operationId) =>
+            `/api/operations/${operationId}/generate-doc`,
+        status: (taskId) => `/api/operations/doc-generation-status/${taskId}`,
+    };
+
+    let docxPreviewLoader = null;
+    let jszipLoader = null;
+    const localJsZipSrc = "/themes/invent-pro/assets/vendor/jszip.min.js";
+    const localDocxPreviewSrc =
+        "/themes/invent-pro/assets/vendor/docx-preview.min.js";
+
+    function loadScript(src) {
+        return new Promise((resolve, reject) => {
+            const existing = document.querySelector(`script[src="${src}"]`);
+            if (existing) {
+                if (existing.dataset.loaded === "1") {
+                    resolve();
+                    return;
+                }
+                existing.addEventListener("load", () => resolve(), {
+                    once: true,
+                });
+                existing.addEventListener(
+                    "error",
+                    () =>
+                        reject(
+                            new Error(`Не удалось загрузить скрипт: ${src}`),
+                        ),
+                    { once: true },
+                );
+                return;
+            }
+
+            const script = document.createElement("script");
+            script.src = src;
+            script.async = true;
+            script.onload = () => {
+                script.dataset.loaded = "1";
+                resolve();
+            };
+            script.onerror = () =>
+                reject(new Error(`Не удалось загрузить скрипт: ${src}`));
+            document.head.appendChild(script);
+        });
+    }
+
+    async function ensureJsZipLib() {
+        if (window.JSZip) {
+            return window.JSZip;
+        }
+
+        if (!jszipLoader) {
+            jszipLoader = loadScript(localJsZipSrc);
+        }
+
+        await jszipLoader;
+
+        if (!window.JSZip) {
+            throw new Error("Библиотека JSZip недоступна");
+        }
+
+        return window.JSZip;
+    }
+
+    async function ensureDocxPreviewLib() {
+        if (window.docx && typeof window.docx.renderAsync === "function") {
+            return window.docx;
+        }
+
+        if (!docxPreviewLoader) {
+            docxPreviewLoader = (async () => {
+                await ensureJsZipLib();
+                await loadScript(localDocxPreviewSrc);
+
+                if (
+                    window.docx &&
+                    typeof window.docx.renderAsync === "function"
+                ) {
+                    return window.docx;
+                }
+
+                throw new Error(
+                    "Библиотека docx-preview загружена, но недоступна",
+                );
+            })();
+        }
+
+        return docxPreviewLoader;
+    }
+
+    async function renderDocxPreview(url, container) {
+        const docx = await ensureDocxPreviewLib();
+        const response = await fetch(url, {
+            credentials: "same-origin",
+            headers: {
+                Accept: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error("Не удалось загрузить DOCX для превью");
+        }
+
+        const arrayBuffer = await response.arrayBuffer();
+        container.innerHTML = "";
+        const styleContainer = document.createElement("div");
+        styleContainer.style.display = "none";
+        container.appendChild(styleContainer);
+
+        const renderContainer = document.createElement("div");
+        renderContainer.style.width = "100%";
+        container.appendChild(renderContainer);
+
+        await docx.renderAsync(arrayBuffer, renderContainer, styleContainer, {
+            inWrapper: true,
+            ignoreWidth: false,
+            ignoreHeight: false,
+            breakPages: true,
+            useBase64URL: true,
+            className: "docx-preview-runtime",
+        });
+    }
+
+    function ensureDocPreviewOverlay() {
+        let overlay = document.getElementById("docx-preview-overlay");
+        if (overlay) {
+            return overlay;
+        }
+
+        overlay = document.createElement("div");
+        overlay.id = "docx-preview-overlay";
+        overlay.style.cssText = [
+            "position:fixed",
+            "inset:0",
+            "z-index:2500",
+            "background:rgba(17,24,39,.55)",
+            "display:none",
+            "align-items:center",
+            "justify-content:center",
+            "padding:24px",
+        ].join(";");
+
+        overlay.innerHTML = `
+            <div style="width:min(1180px,96vw);height:min(88vh,980px);background:#fff;border-radius:12px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 50px rgba(0,0,0,.35);">
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid #e5e7eb;gap:12px;">
+                    <div id="docx-preview-overlay-title" style="font-size:14px;font-weight:600;color:#111827;">Превью документа</div>
+                    <button type="button" id="docx-preview-overlay-close" class="button button--sm button--secondary">Закрыть</button>
+                </div>
+                <div id="docx-preview-overlay-body" style="flex:1;overflow:auto;background:#fff;padding:18px;"></div>
+            </div>
+        `;
+
+        const close = () => {
+            overlay.style.display = "none";
+            const body = overlay.querySelector("#docx-preview-overlay-body");
+            if (body) {
+                body.innerHTML = "";
+            }
+        };
+
+        overlay.addEventListener("click", (event) => {
+            if (event.target === overlay) {
+                close();
+            }
+        });
+
+        overlay
+            .querySelector("#docx-preview-overlay-close")
+            ?.addEventListener("click", close);
+
+        document.body.appendChild(overlay);
+        return overlay;
+    }
+
+    async function openDocxPreviewOverlay(url, titleText = "Превью документа") {
+        const overlay = ensureDocPreviewOverlay();
+        const title = overlay.querySelector("#docx-preview-overlay-title");
+        const body = overlay.querySelector("#docx-preview-overlay-body");
+
+        if (!body) {
+            throw new Error("Не удалось открыть окно превью");
+        }
+
+        if (title) {
+            title.textContent = titleText;
+        }
+
+        body.innerHTML =
+            '<div style="padding:8px 4px;color:#374151;">Загрузка превью...</div>';
+        overlay.style.display = "flex";
+
+        try {
+            await renderDocxPreview(url, body);
+        } catch (error) {
+            overlay.style.display = "none";
+            body.innerHTML = "";
+            throw error;
+        }
+    }
+
+    function getCsrfToken() {
+        return (
+            document
+                .querySelector('meta[name="csrf-token"]')
+                ?.getAttribute("content") ||
+            document.querySelector('input[name="_token"]')?.value ||
+            ""
+        );
+    }
+
+    async function requestJson(url, options = {}) {
+        const headers = {
+            Accept: "application/json",
+            "X-Requested-With": "XMLHttpRequest",
+            ...options.headers,
+        };
+
+        const method = (options.method || "GET").toUpperCase();
+        if (method !== "GET") {
+            headers["X-CSRF-TOKEN"] = getCsrfToken();
+            headers["Content-Type"] = "application/json";
+        }
+
+        const response = await fetch(url, {
+            ...options,
+            method,
+            headers,
+            body:
+                method !== "GET" && options.body
+                    ? JSON.stringify(options.body)
+                    : undefined,
+        });
+
+        const payload = await response.json();
+        if (!response.ok || payload.success === false) {
+            throw new Error(payload.error || "Ошибка запроса");
+        }
+
+        return payload.data || {};
+    }
+
+    async function pollGenerationTask(taskId) {
+        const attempts = 60;
+        for (let i = 0; i < attempts; i++) {
+            await new Promise((resolve) => setTimeout(resolve, 2000));
+            const data = await requestJson(docGenerationApi.status(taskId));
+
+            if (data.status === "ready") {
+                return data;
+            }
+
+            if (data.status === "error") {
+                throw new Error(
+                    data.error || data.message || "Ошибка генерации",
+                );
+            }
+        }
+
+        throw new Error("Превышено время ожидания формирования документа");
+    }
+
+    function syncDocCardSelectedState(root) {
+        if (!root) return;
+
+        root.querySelectorAll(".doc-gen-card").forEach((card) => {
+            const checkbox = card.querySelector(".doc-gen-checkbox");
+            const selected = Boolean(checkbox?.checked);
+            card.classList.toggle("doc-gen-card--selected", selected);
+        });
+    }
+
+    function normalizeTemplateName(value) {
+        return String(value || "")
+            .toLowerCase()
+            .replace(/[^\p{L}\p{N}]+/gu, " ")
+            .trim();
+    }
+
+    function detectOperationKind(typeName) {
+        const normalized = String(typeName || "")
+            .trim()
+            .toLowerCase();
+        if (normalized.includes("спис")) {
+            return "writeoff";
+        }
+        if (normalized.includes("передач") || normalized.includes("приход")) {
+            return "transfer";
+        }
+        return "transfer";
+    }
+
+    async function requestDocGenerationModalHtml(
+        operationId,
+        kind,
+        writeoffSubtype,
+    ) {
+        if (typeof $ === "undefined" || typeof $.request !== "function") {
+            throw new Error("Не вдалося завантажити модальне вікно");
+        }
+
+        const response = await $.request("onShowDocGenerationModal", {
+            data: {
+                operation_id: operationId,
+                kind,
+                writeoff_subtype: writeoffSubtype,
+            },
+        });
+
+        if (!response?.modalContent) {
+            throw new Error("Шаблон модального вікна не знайдено");
+        }
+
+        return response;
+    }
+
+    function parseFileNameFromHeaders(headers) {
+        const disposition = headers.get("content-disposition") || "";
+        const utf8Match = disposition.match(/filename\*=UTF-8''([^;]+)/i);
+        if (utf8Match && utf8Match[1]) {
+            return decodeURIComponent(utf8Match[1]);
+        }
+
+        const asciiMatch = disposition.match(/filename="?([^";]+)"?/i);
+        if (asciiMatch && asciiMatch[1]) {
+            return asciiMatch[1];
+        }
+
+        return null;
+    }
+
+    async function downloadByUrl(url, fallbackFileName) {
+        const response = await fetch(url, {
+            credentials: "same-origin",
+            headers: {
+                Accept: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error("Не удалось скачать сформированный DOCX");
+        }
+
+        const fileName =
+            parseFileNameFromHeaders(response.headers) || fallbackFileName;
+        const blob = await response.blob();
+        const objectUrl = URL.createObjectURL(blob);
+        const anchor = document.createElement("a");
+        anchor.href = objectUrl;
+        anchor.download = fileName;
+        document.body.appendChild(anchor);
+        anchor.click();
+        anchor.remove();
+        URL.revokeObjectURL(objectUrl);
+    }
+
+    function buildTemplateCandidates(documentName, context) {
+        const candidates = [documentName];
+        if (
+            context?.kind === "writeoff" &&
+            context?.writeoffSubtype === "autoparts"
+        ) {
+            candidates.unshift(
+                `${documentName} автозапчастини`,
+                `${documentName} (автозапчастини)`,
+                `${documentName}_автозапчастини`,
+            );
+        }
+
+        return candidates;
+    }
+
+    function resolveTemplateIdForDocument(
+        documentName,
+        templates,
+        fallbackTemplateId,
+        context,
+    ) {
+        const fileTemplates = (templates || []).filter(
+            (item) => item.type === "file",
+        );
+        const candidates = buildTemplateCandidates(documentName, context);
+
+        for (const candidate of candidates) {
+            const normalizedCandidate = normalizeTemplateName(candidate);
+            const exact = fileTemplates.find(
+                (template) =>
+                    normalizeTemplateName(template.name) ===
+                    normalizedCandidate,
+            );
+            if (exact?.id) {
+                return exact.id;
+            }
+        }
+
+        for (const candidate of candidates) {
+            const normalizedCandidate = normalizeTemplateName(candidate);
+            const partial = fileTemplates.find((template) => {
+                const normalizedTemplate = normalizeTemplateName(template.name);
+                return (
+                    normalizedTemplate.includes(normalizedCandidate) ||
+                    normalizedCandidate.includes(normalizedTemplate)
+                );
+            });
+
+            if (partial?.id) {
+                return partial.id;
+            }
+        }
+
+        return fallbackTemplateId || "default";
+    }
+
+    async function openDocGenerationModal(operationId, context = {}) {
+        const selectedTypeName =
+            context.operationTypeName ||
+            context.typeName ||
+            getSelectedTypeName();
+        const kind = detectOperationKind(selectedTypeName);
+
+        let modalPayload;
+        try {
+            modalPayload = await requestDocGenerationModalHtml(
+                operationId,
+                kind,
+                "autoparts",
+            );
+        } catch (error) {
+            if (typeof toast === "function") {
+                toast(error.message, "error", 5000, "top-center");
+            }
+            return;
+        }
+
+        Modal.show(
+            modalPayload.modalContent,
+            modalPayload.modalType || "info",
+            modalPayload.modalTitle || "Сформувати документи?",
+            modalPayload.modalSubtitle ||
+                "Сформувати DOCX документи з вашими товарами",
+        );
+
+        const content = document.querySelector(
+            "#modal-container .modal-content",
+        );
+        const cancelBtn = content?.querySelector("#doc-gen-cancel");
+        const generateBtn = content?.querySelector("#doc-gen-generate");
+
+        if (!content || !cancelBtn || !generateBtn) {
+            return;
+        }
+
+        cancelBtn.addEventListener("click", () => {
+            if (
+                typeof Modal !== "undefined" &&
+                typeof Modal.hide === "function"
+            ) {
+                Modal.hide();
+            }
+        });
+
+        generateBtn.addEventListener("click", async () => {
+            const builderState = {
+                operationId: Number(operationId),
+                kind,
+                writeoffSubtype: "autoparts",
+                createdAt: Date.now(),
+            };
+
+            try {
+                localStorage.setItem(
+                    "docGenerationBuilderState",
+                    JSON.stringify(builderState),
+                );
+            } catch (error) {}
+
+            const targetUrl = `/operation-documents-builder?operation_id=${encodeURIComponent(operationId)}`;
+            window.location.assign(targetUrl);
+        });
+    }
 
     // ==============================
     // Основные элементы формы
@@ -914,6 +1395,14 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         handleServerResponse(data);
+
+        if (data?.showGenerateDocModal && data?.operationId) {
+            openDocGenerationModal(data.operationId, {
+                operationTypeName:
+                    data.operationTypeName || getSelectedTypeName(),
+            });
+        }
+
         localStorage.removeItem(storageKey);
         localStorage.removeItem("selectedProducts");
     });

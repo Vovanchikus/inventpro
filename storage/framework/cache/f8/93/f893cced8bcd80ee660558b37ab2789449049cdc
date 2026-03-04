@@ -1,11 +1,11 @@
-1771530716a:1:{s:18:"edit-operation.htm";a:9:{s:8:"fileName";s:18:"edit-operation.htm";s:7:"content";s:11096:"title = "Редактировать операцию"
+1772666960a:1:{s:18:"edit-operation.htm";a:9:{s:8:"fileName";s:18:"edit-operation.htm";s:7:"content";s:11180:"title = "Редактировать операцию"
 url = "/edit-operation"
 layout = "default"
 
 [editOperation]
 ==
 
-{% if user and user.isInGroup('admin') %}
+{% if user and ((user.organization_status == 'approved' and user.organization_role == 'admin') or user.isInGroup('admin')) %}
 
 <div class="container--sm box--light">
 
@@ -193,7 +193,7 @@ layout = "default"
 {% else %}
     <p>У вас нет прав для редактирования операций.</p>
 {% endif %}
-";s:5:"mtime";i:1771247871;s:6:"markup";s:10969:"{% if user and user.isInGroup('admin') %}
+";s:5:"mtime";i:1772408223;s:6:"markup";s:11053:"{% if user and ((user.organization_status == 'approved' and user.organization_role == 'admin') or user.isInGroup('admin')) %}
 
 <div class="container--sm box--light">
 

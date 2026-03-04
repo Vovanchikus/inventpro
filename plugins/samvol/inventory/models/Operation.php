@@ -12,7 +12,7 @@ class Operation extends Model
 
     public $table = 'samvol_inventory_operations';
 
-    protected $fillable = ['type_id', 'is_draft', 'is_posted', 'note_id', 'draft_products'];
+    protected $fillable = ['type_id', 'is_draft', 'is_posted', 'note_id', 'draft_products', 'mobile_note', 'external_id', 'organization_id'];
     protected $dates = ['prepared_at', 'accounting_at', 'completed_at'];
     protected $slugs = ['slug' => 'id'];
 
@@ -28,6 +28,10 @@ class Operation extends Model
         'note' => [
             'Samvol\\Inventory\\Models\\Note',
             'key' => 'note_id'
+        ],
+        'organization' => [
+            'Samvol\\Inventory\\Models\\Organization',
+            'key' => 'organization_id'
         ]
     ];
 
@@ -347,5 +351,22 @@ class Operation extends Model
      |-----------------------------------------------------------------*/
 
     public $rules = [];
+
+    public function scopeApiList($query)
+    {
+        return $query->select([
+            'id',
+            'slug',
+            'type_id',
+            'is_draft',
+            'is_posted',
+            'organization_id',
+            'mobile_note',
+            'external_id',
+            'created_at',
+            'updated_at',
+        ]);
+    }
+
     public $jsonable = ['draft_products'];
 }

@@ -1,4 +1,4 @@
-1771530716a:1:{s:17:"add-operation.htm";a:10:{s:8:"fileName";s:17:"add-operation.htm";s:7:"content";s:12393:"title = "Новая операция"
+1772666960a:1:{s:17:"add-operation.htm";a:10:{s:8:"fileName";s:17:"add-operation.htm";s:7:"content";s:12455:"title = "Новая операция"
 url = "/add-operation"
 layout = "default"
 
@@ -24,6 +24,7 @@ layout = "default"
 
     <input type="hidden" name="note_id" value="{{ note_id }}">
     <input type="hidden" name="operation_id" value="{{ operation_id }}">
+    <input type="hidden" name="generate_doc_mode" value="1">
 
     <div class="operation-form__type-box">
       {% for type in types|slice(0, 3) %}
@@ -224,7 +225,7 @@ layout = "default"
 {% else %}
     <p>У вас нет прав для добавления новой операции.</p>
 {% endif %}
-";s:5:"mtime";i:1771247871;s:6:"markup";s:12273:"{# Ниже проверка на админа #}
+";s:5:"mtime";i:1771533986;s:6:"markup";s:12335:"{# Ниже проверка на админа #}
 {% set isAdmin = false %}
 {% for group in user.groups %}
     {% if group.code == 'admin' %}
@@ -242,6 +243,7 @@ layout = "default"
 
     <input type="hidden" name="note_id" value="{{ note_id }}">
     <input type="hidden" name="operation_id" value="{{ operation_id }}">
+    <input type="hidden" name="generate_doc_mode" value="1">
 
     <div class="operation-form__type-box">
       {% for type in types|slice(0, 3) %}

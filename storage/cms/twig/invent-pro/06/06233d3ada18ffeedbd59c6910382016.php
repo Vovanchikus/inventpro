@@ -83,22 +83,23 @@ class __TwigTemplate_b75fafae0a7c299a1281da3a9df859b0 extends Template
             // line 18
             yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->sandbox->ensureToStringAllowed(($context["operation_id"] ?? null), 18, $this->source), "html", null, true);
             yield "\">
+    <input type=\"hidden\" name=\"generate_doc_mode\" value=\"1\">
 
     <div class=\"operation-form__type-box\">
       ";
-            // line 21
+            // line 22
             $context['_parent'] = $context;
             $context['_seq'] = CoreExtension::ensureTraversable(Twig\Extension\CoreExtension::slice($this->env->getCharset(), ($context["types"] ?? null), 0, 3));
             foreach ($context['_seq'] as $context["_key"] => $context["type"]) {
-                // line 22
+                // line 23
                 yield "        <label class=\"operation-form__type-box__label\">
           <input type=\"radio\" name=\"type_id\" value=\"";
-                // line 23
-                yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->sandbox->ensureToStringAllowed(CoreExtension::getAttribute($this->env, $this->source, $context["type"], "id", [], "any", false, false, true, 23), 23, $this->source), "html", null, true);
+                // line 24
+                yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->sandbox->ensureToStringAllowed(CoreExtension::getAttribute($this->env, $this->source, $context["type"], "id", [], "any", false, false, true, 24), 24, $this->source), "html", null, true);
                 yield "\" hidden>
           <span class=\"operation-form__type-box__name\">";
-                // line 24
-                yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->sandbox->ensureToStringAllowed(CoreExtension::getAttribute($this->env, $this->source, $context["type"], "name", [], "any", false, false, true, 24), 24, $this->source), "html", null, true);
+                // line 25
+                yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->sandbox->ensureToStringAllowed(CoreExtension::getAttribute($this->env, $this->source, $context["type"], "name", [], "any", false, false, true, 25), 25, $this->source), "html", null, true);
                 yield "</span>
         </label>
       ";
@@ -106,9 +107,9 @@ class __TwigTemplate_b75fafae0a7c299a1281da3a9df859b0 extends Template
             $_parent = $context['_parent'];
             unset($context['_seq'], $context['_key'], $context['type'], $context['_parent']);
             $context = array_intersect_key($context, $_parent) + $_parent;
-            // line 27
-            yield "    </div>";
             // line 28
+            yield "    </div>";
+            // line 29
             yield "
     <div class=\"operation-form__box operation-form__counteragent\">
 
@@ -119,7 +120,7 @@ class __TwigTemplate_b75fafae0a7c299a1281da3a9df859b0 extends Template
       </div>
 
     </div>";
-            // line 38
+            // line 39
             yield "
     <div class=\"operation-form__box operation-form__documents\">
 
@@ -145,7 +146,7 @@ class __TwigTemplate_b75fafae0a7c299a1281da3a9df859b0 extends Template
             </div>
 
           </div>";
-            // line 63
+            // line 64
             yield "
           <div class=\"operation-form__row--document-middle\">
 
@@ -160,7 +161,7 @@ class __TwigTemplate_b75fafae0a7c299a1281da3a9df859b0 extends Template
             </div>
 
           </div>";
-            // line 77
+            // line 78
             yield "
           <div class=\"operation-form__button-box\">
 
@@ -183,13 +184,13 @@ class __TwigTemplate_b75fafae0a7c299a1281da3a9df859b0 extends Template
             <input type=\"file\" name=\"doc_file[]\" style=\"display: none;\" class=\"doc-file-input\">
 
           </div>";
-            // line 99
+            // line 100
             yield "
         </div>";
-            // line 101
+            // line 102
             yield "
       </div>";
-            // line 103
+            // line 104
             yield "
       <div class=\"operation-form__button-box\">
         <div class=\"button--outside\">
@@ -203,7 +204,7 @@ class __TwigTemplate_b75fafae0a7c299a1281da3a9df859b0 extends Template
       </div>
 
     </div>";
-            // line 116
+            // line 117
             yield "
     <div class=\"operation-form__box operation-form__products\">
 
@@ -252,13 +253,13 @@ class __TwigTemplate_b75fafae0a7c299a1281da3a9df859b0 extends Template
             <input type=\"file\" name=\"doc_file[]\" style=\"display: none;\" id=\"docFileInput\">
 
           </div>";
-            // line 164
+            // line 165
             yield "
         </div>";
-            // line 166
+            // line 167
             yield "
       </div>";
-            // line 168
+            // line 169
             yield "
       <div class=\"operation-form__button-box\">
         <div class=\"button--outside\">
@@ -267,7 +268,7 @@ class __TwigTemplate_b75fafae0a7c299a1281da3a9df859b0 extends Template
       </div>
 
     </div>";
-            // line 176
+            // line 177
             yield "
     <div class=\"operation-form__button-box\">
       <button type=\"submit\" class=\"button button--nm button--brand\">Сохранить операцию</button>
@@ -276,7 +277,7 @@ class __TwigTemplate_b75fafae0a7c299a1281da3a9df859b0 extends Template
   </form>
 
 </div>";
-            // line 184
+            // line 185
             yield "
 <script>
   window.docNameOptions = {
@@ -296,44 +297,44 @@ class __TwigTemplate_b75fafae0a7c299a1281da3a9df859b0 extends Template
 </script>
 
 ";
-            // line 202
+            // line 203
             if ((($tmp = ($context["prefill_products"] ?? null)) && $tmp instanceof Markup ? (string) $tmp : $tmp)) {
-                // line 203
+                // line 204
                 yield "<script>
   window.prefill_products = ";
-                // line 204
-                yield json_encode($this->sandbox->ensureToStringAllowed(($context["prefill_products"] ?? null), 204, $this->source));
+                // line 205
+                yield json_encode($this->sandbox->ensureToStringAllowed(($context["prefill_products"] ?? null), 205, $this->source));
                 yield ";
   window.prefill_note_id = ";
-                // line 205
-                yield json_encode($this->sandbox->ensureToStringAllowed(($context["note_id"] ?? null), 205, $this->source));
+                // line 206
+                yield json_encode($this->sandbox->ensureToStringAllowed(($context["note_id"] ?? null), 206, $this->source));
                 yield ";
 </script>
 ";
             }
-            // line 208
+            // line 209
             yield "
 ";
-            // line 209
+            // line 210
             if ((($tmp = ($context["prefill_operation"] ?? null)) && $tmp instanceof Markup ? (string) $tmp : $tmp)) {
-                // line 210
+                // line 211
                 yield "<script>
   window.prefill_operation = ";
-                // line 211
-                yield json_encode($this->sandbox->ensureToStringAllowed(($context["prefill_operation"] ?? null), 211, $this->source));
+                // line 212
+                yield json_encode($this->sandbox->ensureToStringAllowed(($context["prefill_operation"] ?? null), 212, $this->source));
                 yield ";
   window.prefill_documents = ";
-                // line 212
-                yield json_encode(((array_key_exists("prefill_documents", $context)) ? (Twig\Extension\CoreExtension::default($this->sandbox->ensureToStringAllowed(($context["prefill_documents"] ?? null), 212, $this->source), [])) : ([])));
+                // line 213
+                yield json_encode(((array_key_exists("prefill_documents", $context)) ? (Twig\Extension\CoreExtension::default($this->sandbox->ensureToStringAllowed(($context["prefill_documents"] ?? null), 213, $this->source), [])) : ([])));
                 yield ";
 </script>
 ";
             }
-            // line 215
+            // line 216
             yield "
 ";
         } else {
-            // line 217
+            // line 218
             yield "    <p>У вас нет прав для добавления новой операции.</p>
 ";
         }
@@ -361,7 +362,7 @@ class __TwigTemplate_b75fafae0a7c299a1281da3a9df859b0 extends Template
      */
     public function getDebugInfo(): array
     {
-        return array (  337 => 217,  333 => 215,  327 => 212,  323 => 211,  320 => 210,  318 => 209,  315 => 208,  309 => 205,  305 => 204,  302 => 203,  300 => 202,  280 => 184,  271 => 176,  262 => 168,  259 => 166,  256 => 164,  207 => 116,  193 => 103,  190 => 101,  187 => 99,  164 => 77,  149 => 63,  123 => 38,  112 => 28,  110 => 27,  101 => 24,  97 => 23,  94 => 22,  90 => 21,  84 => 18,  80 => 17,  73 => 13,  68 => 10,  66 => 9,  63 => 8,  56 => 6,  53 => 5,  50 => 4,  46 => 3,  44 => 2,);
+        return array (  338 => 218,  334 => 216,  328 => 213,  324 => 212,  321 => 211,  319 => 210,  316 => 209,  310 => 206,  306 => 205,  303 => 204,  301 => 203,  281 => 185,  272 => 177,  263 => 169,  260 => 167,  257 => 165,  208 => 117,  194 => 104,  191 => 102,  188 => 100,  165 => 78,  150 => 64,  124 => 39,  113 => 29,  111 => 28,  102 => 25,  98 => 24,  95 => 23,  91 => 22,  84 => 18,  80 => 17,  73 => 13,  68 => 10,  66 => 9,  63 => 8,  56 => 6,  53 => 5,  50 => 4,  46 => 3,  44 => 2,);
     }
 
     public function getSourceContext(): Source
@@ -384,6 +385,7 @@ class __TwigTemplate_b75fafae0a7c299a1281da3a9df859b0 extends Template
 
     <input type=\"hidden\" name=\"note_id\" value=\"{{ note_id }}\">
     <input type=\"hidden\" name=\"operation_id\" value=\"{{ operation_id }}\">
+    <input type=\"hidden\" name=\"generate_doc_mode\" value=\"1\">
 
     <div class=\"operation-form__type-box\">
       {% for type in types|slice(0, 3) %}
@@ -589,7 +591,7 @@ class __TwigTemplate_b75fafae0a7c299a1281da3a9df859b0 extends Template
     public function checkSecurity()
     {
         static $tags = ["set" => 2, "for" => 3, "if" => 4];
-        static $filters = ["escape" => 13, "slice" => 21, "raw" => 204, "json_encode" => 204, "default" => 212];
+        static $filters = ["escape" => 13, "slice" => 22, "raw" => 205, "json_encode" => 205, "default" => 213];
         static $functions = [];
 
         try {

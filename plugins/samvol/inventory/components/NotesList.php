@@ -66,6 +66,16 @@ class NotesList extends ComponentBase
 
     public function onListNotes()
     {
+        try {
+            \Log::info('[samvol] onListNotes: start', [
+                'ip' => request()->ip(),
+                'ua' => request()->header('User-Agent'),
+                'uri' => request()->getRequestUri(),
+            ]);
+        } catch (\Exception $e) {
+            \Log::warning('[samvol] onListNotes: log start failed: ' . $e->getMessage());
+        }
+
         $raw = Note::with([
             'products',
             'operations.products',
@@ -91,6 +101,16 @@ class NotesList extends ComponentBase
                 $gridHtml = null;
             }
 
+        try {
+            \Log::info('[samvol] onListNotes: success', [
+                'notes_count' => is_array($notes) ? count($notes) : 0,
+                'has_notes_html' => !empty($html),
+                'has_grid_html' => !empty($gridHtml),
+            ]);
+        } catch (\Exception $e) {
+            \Log::warning('[samvol] onListNotes: log success failed: ' . $e->getMessage());
+        }
+
         return ['notes' => $notes, 'notesHtml' => $html, 'notesGridHtml' => $gridHtml];
     }
 
@@ -98,6 +118,19 @@ class NotesList extends ComponentBase
     {
         $noteId = post('note_id');
         $products = post('products');
+
+        try {
+            \Log::info('[samvol] onAddProductsToNote: start', [
+                'ip' => request()->ip(),
+                'ua' => request()->header('User-Agent'),
+                'uri' => request()->getRequestUri(),
+                'note_id' => $noteId,
+                'products_type' => gettype($products),
+                'products_len' => is_string($products) ? mb_strlen($products) : (is_array($products) ? count($products) : null),
+            ]);
+        } catch (\Exception $e) {
+            \Log::warning('[samvol] onAddProductsToNote: log start failed: ' . $e->getMessage());
+        }
 
         // Логирование входящих данных для диагностики
         try {
@@ -186,6 +219,15 @@ class NotesList extends ComponentBase
 
             DB::commit();
 
+            try {
+                \Log::info('[samvol] onAddProductsToNote: success', [
+                    'note_id' => $noteId,
+                    'sync_count' => count($sync),
+                ]);
+            } catch (\Exception $e) {
+                \Log::warning('[samvol] onAddProductsToNote: log success failed: ' . $e->getMessage());
+            }
+
             return ['toast' => ['message' => 'Товары сохранены в заметке', 'type' => 'success']];
 
         } catch (\Exception $e) {
@@ -193,6 +235,11 @@ class NotesList extends ComponentBase
             try {
                 \Log::error('[samvol] onAddProductsToNote failed: ' . $e->getMessage());
                 \Log::error($e->getTraceAsString());
+                \Log::error('[samvol] onAddProductsToNote context', [
+                    'ip' => request()->ip(),
+                    'ua' => request()->header('User-Agent'),
+                    'note_id' => $noteId,
+                ]);
             } catch (\Exception $_) {}
             return ['toast' => ['message' => 'Ошибка: '.$e->getMessage(), 'type' => 'error']];
         }

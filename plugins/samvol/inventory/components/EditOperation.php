@@ -7,6 +7,8 @@ use DB;
 use Exception;
 use Input;
 use Carbon\Carbon;
+use Log;
+use Samvol\Inventory\Classes\OrganizationAccess;
 
 class EditOperation extends ComponentBase
 {
@@ -81,10 +83,16 @@ class EditOperation extends ComponentBase
 
     public function onEditOperation()
     {
-        $user = \Auth::getUser();
+        $user = $this->resolveCurrentUser();
 
-        // 🔐 Проверка прав: только admin
-        if (!$user || !$user->isInGroup('admin')) {
+        if (!$this->hasAdminAccess($user)) {
+            Log::warning('[samvol] onEditOperation denied', [
+                'user_present' => (bool)$user,
+                'user_class' => $user ? get_class($user) : null,
+                'user_id' => $user->id ?? null,
+                'login' => $user->login ?? null,
+                'email' => $user->email ?? null,
+            ]);
             throw new \ApplicationException('У вас нет прав на создание операций!');
         }
 
@@ -368,7 +376,10 @@ class EditOperation extends ComponentBase
                     'type' => 'success',
                     'timeout' => 4000,
                     'position' => 'top-center'
-                ]
+                ],
+                'operationId' => (int)$operation->id,
+                'showGenerateDocModal' => true,
+                'operationTypeName' => (string)($operation->type->name ?? $operationTypeName ?? ''),
             ];
 
         } catch (Exception $e) {
@@ -382,6 +393,115 @@ class EditOperation extends ComponentBase
                 ]
             ];
         }
+    }
+
+    public function onShowDocGenerationModal()
+    {
+        $operationId = (int)post('operation_id', 0);
+        $kind = mb_strtolower(trim((string)post('kind', 'transfer')));
+        if (!in_array($kind, ['transfer', 'writeoff'], true)) {
+            $kind = 'transfer';
+        }
+
+        $writeoffSubtype = mb_strtolower(trim((string)post('writeoff_subtype', 'autoparts')));
+        if (!in_array($writeoffSubtype, ['materials', 'autoparts'], true)) {
+            $writeoffSubtype = 'autoparts';
+        }
+
+        $documents = [];
+        if ($operationId > 0) {
+            $operation = Operation::with(['documents'])->find($operationId);
+            if ($operation && $operation->documents) {
+                foreach ($operation->documents as $document) {
+                    $docName = trim((string)($document->doc_name ?? ''));
+                    if ($docName !== '') {
+                        $documents[] = $docName;
+                    }
+                }
+            }
+        }
+
+        $documents = array_values(array_unique($documents));
+
+        $writeoffSubtypeOptions = [
+            ['key' => 'materials', 'label' => 'Буд. матеріали'],
+            ['key' => 'autoparts', 'label' => 'Автозапчастини'],
+        ];
+
+        $html = $this->renderPartial('modals/modal_doc_generation', [
+            'kind' => $kind,
+            'documents' => $documents,
+            'writeoffSubtype' => $writeoffSubtype,
+            'writeoffSubtypeOptions' => $writeoffSubtypeOptions,
+        ]);
+
+        return [
+            'modalContent' => $html,
+            'modalType' => 'info',
+            'modalTitle' => 'Сформувати документи?',
+            'modalSubtitle' => 'Сформувати DOCX документи з вашими товарами',
+        ];
+    }
+
+    protected function resolveCurrentUser()
+    {
+        try {
+            $frontendUser = \Auth::getUser();
+            if ($frontendUser) {
+                return $frontendUser;
+            }
+        } catch (\Throwable $e) {
+        }
+
+        try {
+            if (class_exists(\Backend\Facades\BackendAuth::class)) {
+                $backendUser = \Backend\Facades\BackendAuth::getUser();
+                if ($backendUser) {
+                    return $backendUser;
+                }
+            }
+        } catch (\Throwable $e) {
+        }
+
+        return null;
+    }
+
+    protected function hasAdminAccess($user): bool
+    {
+        if (!$user) {
+            return false;
+        }
+
+        if (OrganizationAccess::isOrganizationAdmin($user)) {
+            return true;
+        }
+
+        try {
+            if (method_exists($user, 'isInGroup') && $user->isInGroup('admin')) {
+                return true;
+            }
+        } catch (\Throwable $e) {
+        }
+
+        try {
+            if (method_exists($user, 'groups') && $user->groups()->where('code', 'admin')->exists()) {
+                return true;
+            }
+        } catch (\Throwable $e) {
+        }
+
+        if (property_exists($user, 'is_superuser') && (bool)$user->is_superuser === true) {
+            return true;
+        }
+
+        try {
+            if (method_exists($user, 'hasAccess') && $user->hasAccess('samvol.inventory.*')) {
+                return true;
+            }
+        } catch (\Throwable $e) {
+        }
+
+        return false;
     }
 
 }

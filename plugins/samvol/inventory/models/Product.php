@@ -20,6 +20,8 @@ class Product extends Model
         'unit',
         'inv_number',
         'price',
+        'mobile_summary',
+        'external_id',
     ];
 
     public $belongsTo = [
@@ -116,6 +118,21 @@ class Product extends Model
 
     public $rules = [
     ];
+
+    public function scopeApiList($query)
+    {
+        return $query->select([
+            'id',
+            'category_id',
+            'name',
+            'unit',
+            'inv_number',
+            'price',
+            'mobile_summary',
+            'external_id',
+            'updated_at',
+        ]);
+    }
 
     public $jsonable = [];
 }

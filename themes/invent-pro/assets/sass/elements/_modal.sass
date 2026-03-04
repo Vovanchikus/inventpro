@@ -105,6 +105,7 @@
 .modal-content
   max-height: 430px
   overflow-y: auto
+  overflow-x: hidden
 
 .modal-window--import
   .modal-content
@@ -124,3 +125,81 @@
 
     &.scrolled
       box-shadow: 0 4px 12px rgba(0,0,0,0.1)
+
+.doc-generation-modal-v2
+  display: flex
+  flex-direction: column
+  gap: 24px
+  min-width: min(460px, 78vw)
+  overflow-x: hidden
+
+.doc-gen-block
+  display: flex
+  flex-direction: column
+  gap: 16px
+
+.doc-gen-block__title
+  font-size: 16px
+  font-weight: 500
+  color: $text-primary
+
+.doc-gen-subtypes
+  display: flex
+  justify-content: flex-start
+  align-items: center
+  gap: 12px
+  flex-wrap: wrap
+
+.doc-gen-cards
+  display: flex
+  flex-direction: column
+  gap: 8px
+
+.doc-gen-card
+  display: flex
+  align-items: center
+  gap: 24px
+  padding: 12px 24px
+  border: 1px solid $border-interactive
+  border-radius: $radius-nm
+  background: $bg-box
+  cursor: pointer
+  transition: all $transition
+
+  &:hover
+    border-color: $field-border-hover
+
+  &.doc-gen-card--selected
+    background: $neutral-800
+    border-color: transparent
+
+    .doc-gen-card__title
+      color: $text-inverse
+
+    .doc-gen-card__subtitle
+      color: rgba(255, 255, 255, 0.72)
+
+.doc-gen-card__checkbox
+  flex: 0 0 auto
+
+.doc-gen-card__text
+  display: flex
+  flex-direction: column
+  gap: 4px
+
+.doc-gen-card__title
+  font-size: 14px
+  line-height: 16px
+  font-weight: 500
+  color: $text-primary
+
+.doc-gen-card__subtitle
+  font-size: 12px
+  font-weight: 600
+  color: $text-secondary
+
+.doc-gen-actions
+  display: flex
+  justify-content: center
+  gap: 16px
+  margin: 4px

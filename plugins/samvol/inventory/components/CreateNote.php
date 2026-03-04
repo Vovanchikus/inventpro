@@ -20,6 +20,16 @@ class CreateNote extends ComponentBase
 
     public function onShowCreateModal()
     {
+        try {
+            Log::info('[samvol] onShowCreateModal: start', [
+                'ip' => request()->ip(),
+                'ua' => request()->header('User-Agent'),
+                'uri' => request()->getRequestUri(),
+            ]);
+        } catch (\Exception $e) {
+            Log::warning('[samvol] onShowCreateModal: log start failed: ' . $e->getMessage());
+        }
+
         $selected = post('selected_products', []);
         if (is_string($selected)) {
             $decoded = json_decode($selected, true);
@@ -30,16 +40,40 @@ class CreateNote extends ComponentBase
             'selected' => is_array($selected) ? $selected : []
         ]);
 
-        return [
+        $response = [
             'modalContent' => $html,
             'modalType' => 'info',
             'modalTitle' => 'Создать заметку'
         ];
+
+        try {
+            Log::info('[samvol] onShowCreateModal: success', [
+                'selected_count' => is_array($selected) ? count($selected) : 0,
+                'has_content' => !empty($html),
+            ]);
+        } catch (\Exception $e) {
+            Log::warning('[samvol] onShowCreateModal: log success failed: ' . $e->getMessage());
+        }
+
+        return $response;
     }
 
     public function onCreateNote()
     {
         $data = post();
+
+        try {
+            Log::info('[samvol] onCreateNote: start', [
+                'ip' => request()->ip(),
+                'ua' => request()->header('User-Agent'),
+                'uri' => request()->getRequestUri(),
+                'has_note_id' => !empty($data['note_id']),
+                'has_products' => !empty($data['products']),
+                'title_len' => isset($data['title']) ? mb_strlen((string)$data['title']) : 0,
+            ]);
+        } catch (\Exception $e) {
+            Log::warning('[samvol] onCreateNote: log start failed: ' . $e->getMessage());
+        }
 
         // Ранняя рекурсивная проверка входных данных products — если найдены вложенные массивы
         // возвращаем понятную валидацию и логируем путь
@@ -173,10 +207,26 @@ class CreateNote extends ComponentBase
 
             DB::commit();
 
+            try {
+                Log::info('[samvol] onCreateNote: success', [
+                    'note_id' => $note->id,
+                    'products_count' => is_array($products) ? count($products) : 0,
+                ]);
+            } catch (\Exception $e) {
+                Log::warning('[samvol] onCreateNote: log success failed: ' . $e->getMessage());
+            }
+
             return ['toast' => ['message' => 'Заметка сохранена', 'type' => 'success'], 'note_id' => $note->id];
 
         } catch (\Exception $e) {
             DB::rollBack();
+            try {
+                Log::error('[samvol] onCreateNote: failed', [
+                    'message' => $e->getMessage(),
+                    'ip' => request()->ip(),
+                    'ua' => request()->header('User-Agent'),
+                ]);
+            } catch (\Exception $_) {}
             return ['toast' => ['message' => 'Ошибка: '.$e->getMessage(), 'type' => 'error']];
         }
     }

@@ -1,0 +1,37 @@
+title = "Налаштування"
+url = "/settings"
+layout = "default"
+[settingsPageData]
+==
+{% if user and isAdmin %}
+<div class="settings-page box--light">
+
+    <div class="settings-page__top">
+
+      <h2 class="settings-page__title">Налаштування</h2>
+
+      <div class="notes-filter settings-page__tabs" id="settings-tabs">
+          <button type="button" class="notes-filter__tab settings-page__tab" data-tab-target="personnel">Персонал</button>
+          <button type="button" class="notes-filter__tab settings-page__tab" data-tab-target="categories">Категорії</button>
+          <button type="button" class="notes-filter__tab settings-page__tab is-active" data-tab-target="doc-template">Формування документу</button>
+      </div>
+
+    </div>{# settings-page__top #}
+
+    <section class="settings-page__pane" data-tab-content="personnel" style="display:none;">
+        {% partial 'settings/tabs/personnel' %}
+    </section>
+
+    <section class="settings-page__pane" data-tab-content="categories" style="display:none;">
+        {% partial 'settings/tabs/categories' %}
+    </section>
+
+    <section class="settings-page__pane" data-tab-content="doc-template">
+        {% partial 'settings/tabs/doc-generation' %}
+    </section>
+
+    {% partial 'settings/modals' %}
+</div>
+{% else %}
+    <p>У вас нет прав для цієї сторінки.</p>
+{% endif %}

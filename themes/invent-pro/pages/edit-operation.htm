@@ -5,7 +5,7 @@ layout = "default"
 [editOperation]
 ==
 
-{% if user and user.isInGroup('admin') %}
+{% if user and ((user.organization_status == 'approved' and user.organization_role == 'admin') or user.isInGroup('admin')) %}
 
 <div class="container--sm box--light">
 

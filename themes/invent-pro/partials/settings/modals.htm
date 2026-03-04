@@ -1,0 +1,28 @@
+<template id="settings-person-modal-template">
+    <div class="settings-modal">
+        <div class="settings-modal__field form-floating">
+            <label class="settings-modal__label" for="settings-person-modal-name">Ім’я та ПРІЗВИЩЕ</label>
+            <input id="settings-person-modal-name" type="text" class="form-input settings-modal__input" value="" />
+        </div>
+        <div class="settings-modal__field form-floating">
+            <label class="settings-modal__label" for="settings-person-modal-position">Посада</label>
+            <textarea id="settings-person-modal-position" class="form-input settings-modal__input settings-modal__input--textarea"></textarea>
+        </div>
+        <div class="settings-modal__actions">
+            <button type="button" id="settings-person-modal-cancel" class="button button--nm button--secondary">Скасувати</button>
+            <button type="button" id="settings-person-modal-save" class="button button--nm button--brand">
+                <span data-role="submit-label">Зберегти</span>
+            </button>
+        </div>
+    </div>
+</template>
+
+<template id="settings-delete-modal-template">
+    <div class="settings-modal">
+        <div class="settings-modal__confirm-text" data-role="confirm-text">Ви дійсно хочете видалити цю картку?</div>
+        <div class="settings-modal__actions">
+            <button type="button" id="settings-delete-modal-cancel" class="button button--nm button--secondary">Скасувати</button>
+            <button type="button" id="settings-delete-modal-confirm" class="button button--nm button--brand">Видалити</button>
+        </div>
+    </div>
+</template>

@@ -128,18 +128,30 @@ class __TwigTemplate_2ab16caa5e93db8a125a0dd92d370b9d extends Template
         // line 68
         yield "
         <div class=\"header__profile\">
-            <div class=\"header__profile-avatar\">
-                <img src=\"";
-        // line 71
-        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->sandbox->ensureToStringAllowed(CoreExtension::getAttribute($this->env, $this->source, CoreExtension::getAttribute($this->env, $this->source, ($context["user"] ?? null), "avatar", [], "any", false, false, true, 71), "path", [], "any", false, false, true, 71), 71, $this->source), "html", null, true);
+            <button id=\"headerProfileButton\" type=\"button\" class=\"header__profile-trigger\" aria-haspopup=\"true\" aria-expanded=\"false\">
+                <div class=\"header__profile-avatar\">
+                    <img src=\"";
+        // line 72
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->sandbox->ensureToStringAllowed(CoreExtension::getAttribute($this->env, $this->source, CoreExtension::getAttribute($this->env, $this->source, ($context["user"] ?? null), "avatar", [], "any", false, false, true, 72), "path", [], "any", false, false, true, 72), 72, $this->source), "html", null, true);
         yield "\" alt=\"";
-        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->sandbox->ensureToStringAllowed(CoreExtension::getAttribute($this->env, $this->source, ($context["user"] ?? null), "name", [], "any", false, false, true, 71), 71, $this->source), "html", null, true);
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->sandbox->ensureToStringAllowed(CoreExtension::getAttribute($this->env, $this->source, ($context["user"] ?? null), "name", [], "any", false, false, true, 72), 72, $this->source), "html", null, true);
         yield "\">
+                </div>
+            </button>
+            <div class=\"header__profile-dropdown dropdown\">
+                <div class=\"header__profile-item header__profile-item--name\">";
+        // line 76
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->sandbox->ensureToStringAllowed(CoreExtension::getAttribute($this->env, $this->source, ($context["user"] ?? null), "name", [], "any", false, false, true, 76), 76, $this->source), "html", null, true);
+        yield "</div>
+                <a href=\"/settings\" class=\"header__profile-item\">Налаштування</a>
+                <a href=\"javascript:;\" data-request=\"onLogout\" data-request-data=\"redirect: '/login'\" class=\"header__profile-item\">
+                    Вийти
+                </a>
             </div>
         </div>
 
     </div>";
-        // line 76
+        // line 85
         yield "</header>";
         yield from [];
     }
@@ -165,7 +177,7 @@ class __TwigTemplate_2ab16caa5e93db8a125a0dd92d370b9d extends Template
      */
     public function getDebugInfo(): array
     {
-        return array (  143 => 76,  134 => 71,  129 => 68,  116 => 56,  113 => 54,  85 => 27,  83 => 26,  80 => 25,  78 => 24,  71 => 18,  62 => 10,  59 => 9,  55 => 7,  51 => 5,  49 => 4,  44 => 1,);
+        return array (  155 => 85,  144 => 76,  135 => 72,  129 => 68,  116 => 56,  113 => 54,  85 => 27,  83 => 26,  80 => 25,  78 => 24,  71 => 18,  62 => 10,  59 => 9,  55 => 7,  51 => 5,  49 => 4,  44 => 1,);
     }
 
     public function getSourceContext(): Source
@@ -239,8 +251,17 @@ class __TwigTemplate_2ab16caa5e93db8a125a0dd92d370b9d extends Template
         </div>{# header__button-box #}
 
         <div class=\"header__profile\">
-            <div class=\"header__profile-avatar\">
-                <img src=\"{{ user.avatar.path }}\" alt=\"{{ user.name }}\">
+            <button id=\"headerProfileButton\" type=\"button\" class=\"header__profile-trigger\" aria-haspopup=\"true\" aria-expanded=\"false\">
+                <div class=\"header__profile-avatar\">
+                    <img src=\"{{ user.avatar.path }}\" alt=\"{{ user.name }}\">
+                </div>
+            </button>
+            <div class=\"header__profile-dropdown dropdown\">
+                <div class=\"header__profile-item header__profile-item--name\">{{ user.name }}</div>
+                <a href=\"/settings\" class=\"header__profile-item\">Налаштування</a>
+                <a href=\"javascript:;\" data-request=\"onLogout\" data-request-data=\"redirect: '/login'\" class=\"header__profile-item\">
+                    Вийти
+                </a>
             </div>
         </div>
 
@@ -251,7 +272,7 @@ class __TwigTemplate_2ab16caa5e93db8a125a0dd92d370b9d extends Template
     public function checkSecurity()
     {
         static $tags = ["if" => 4];
-        static $filters = ["escape" => 71];
+        static $filters = ["escape" => 72];
         static $functions = [];
 
         try {

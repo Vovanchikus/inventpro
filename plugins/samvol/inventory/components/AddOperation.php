@@ -9,6 +9,7 @@ use Exception;
 use Input;
 use Log;
 use Carbon\Carbon;
+use Samvol\Inventory\Classes\OrganizationAccess;
 
 class AddOperation extends ComponentBase
 {
@@ -320,15 +321,21 @@ class AddOperation extends ComponentBase
 
     public function onAddOperation()
     {
+        $user = $this->resolveCurrentUser();
 
-        $user = \Auth::getUser();
-
-        // 🔐 Проверка прав: только admin
-        if (!$user || !$user->isInGroup('admin')) {
+        if (!$this->hasAdminAccess($user)) {
+            Log::warning('[samvol] onAddOperation denied', [
+                'user_present' => (bool)$user,
+                'user_class' => $user ? get_class($user) : null,
+                'user_id' => $user->id ?? null,
+                'login' => $user->login ?? null,
+                'email' => $user->email ?? null,
+            ]);
             throw new \ApplicationException('У вас нет прав на создание операций!');
         }
 
         $data = post();
+        $generateDocMode = filter_var($data['generate_doc_mode'] ?? false, FILTER_VALIDATE_BOOLEAN);
         // Логируем пришедшие данные кратко для диагностики
         try {
             if (!empty($data['products'])) {
@@ -447,7 +454,7 @@ class AddOperation extends ComponentBase
         $hasDocs = $hasFiles;
 
         $noteIdFromForm = !empty($data['note_id']) ? (int) $data['note_id'] : null;
-        $requireFile = empty($noteIdFromForm);
+        $requireFile = !$generateDocMode && empty($noteIdFromForm);
 
         // Валидируем документы в порядке: имя -> номер -> мета -> дата -> файл
         $docNames = $data['doc_name'] ?? [];
@@ -462,7 +469,20 @@ class AddOperation extends ComponentBase
             is_array($files) ? count($files) : 0
         );
 
-        if ($rowsCount > 0) {
+        $hasAnyDocInput = false;
+        for ($i = 0; $i < $rowsCount; $i++) {
+            $hasAnyDocInput = !empty($docNames[$i])
+                || !empty($docNums[$i])
+                || !empty($docPurposes[$i])
+                || !empty($docDates[$i])
+                || !empty(is_array($files) ? ($files[$i] ?? null) : null);
+
+            if ($hasAnyDocInput) {
+                break;
+            }
+        }
+
+        if ($rowsCount > 0 && ($requireFile || $hasAnyDocInput)) {
             $firstFile = is_array($files) ? ($files[0] ?? null) : null;
             $firstEmpty = empty($docNames[0])
                 && empty($docNums[0])
@@ -811,7 +831,10 @@ class AddOperation extends ComponentBase
                         'type' => 'success',
                         'timeout' => 4000,
                         'position' => 'top-center'
-                    ]
+                    ],
+                    'operationId' => (int) $operation->id,
+                    'showGenerateDocModal' => true,
+                    'operationTypeName' => (string)($opType->name ?? ''),
                 ];
             }
 
@@ -829,7 +852,10 @@ class AddOperation extends ComponentBase
                     'type' => 'success',
                     'timeout' => 4000,
                     'position' => 'top-center'
-                ]
+                ],
+                'operationId' => (int) $operation->id,
+                'showGenerateDocModal' => true,
+                'operationTypeName' => (string)($opType->name ?? ''),
             ];
 
         } catch (Exception $e) {
@@ -884,5 +910,114 @@ class AddOperation extends ComponentBase
             'modalType' => 'info',
             'modalTitle' => 'Выберите товар'
         ];
+    }
+
+    public function onShowDocGenerationModal()
+    {
+        $operationId = (int)post('operation_id', 0);
+        $kind = mb_strtolower(trim((string)post('kind', 'transfer')));
+        if (!in_array($kind, ['transfer', 'writeoff'], true)) {
+            $kind = 'transfer';
+        }
+
+        $writeoffSubtype = mb_strtolower(trim((string)post('writeoff_subtype', 'autoparts')));
+        if (!in_array($writeoffSubtype, ['materials', 'autoparts'], true)) {
+            $writeoffSubtype = 'autoparts';
+        }
+
+        $documents = [];
+        if ($operationId > 0) {
+            $operation = Operation::with(['documents'])->find($operationId);
+            if ($operation && $operation->documents) {
+                foreach ($operation->documents as $document) {
+                    $docName = trim((string)($document->doc_name ?? ''));
+                    if ($docName !== '') {
+                        $documents[] = $docName;
+                    }
+                }
+            }
+        }
+
+        $documents = array_values(array_unique($documents));
+
+        $writeoffSubtypeOptions = [
+            ['key' => 'materials', 'label' => 'Буд. матеріали'],
+            ['key' => 'autoparts', 'label' => 'Автозапчастини'],
+        ];
+
+        $html = $this->renderPartial('modals/modal_doc_generation', [
+            'kind' => $kind,
+            'documents' => $documents,
+            'writeoffSubtype' => $writeoffSubtype,
+            'writeoffSubtypeOptions' => $writeoffSubtypeOptions,
+        ]);
+
+        return [
+            'modalContent' => $html,
+            'modalType' => 'info',
+            'modalTitle' => 'Сформувати документи?',
+            'modalSubtitle' => 'Сформувати DOCX документи з вашими товарами',
+        ];
+    }
+
+    protected function resolveCurrentUser()
+    {
+        try {
+            $frontendUser = \Auth::getUser();
+            if ($frontendUser) {
+                return $frontendUser;
+            }
+        } catch (\Throwable $e) {
+        }
+
+        try {
+            if (class_exists(\Backend\Facades\BackendAuth::class)) {
+                $backendUser = \Backend\Facades\BackendAuth::getUser();
+                if ($backendUser) {
+                    return $backendUser;
+                }
+            }
+        } catch (\Throwable $e) {
+        }
+
+        return null;
+    }
+
+    protected function hasAdminAccess($user): bool
+    {
+        if (!$user) {
+            return false;
+        }
+
+        if (OrganizationAccess::isOrganizationAdmin($user)) {
+            return true;
+        }
+
+        try {
+            if (method_exists($user, 'isInGroup') && $user->isInGroup('admin')) {
+                return true;
+            }
+        } catch (\Throwable $e) {
+        }
+
+        try {
+            if (method_exists($user, 'groups') && $user->groups()->where('code', 'admin')->exists()) {
+                return true;
+            }
+        } catch (\Throwable $e) {
+        }
+
+        if (property_exists($user, 'is_superuser') && (bool)$user->is_superuser === true) {
+            return true;
+        }
+
+        try {
+            if (method_exists($user, 'hasAccess') && $user->hasAccess('samvol.inventory.*')) {
+                return true;
+            }
+        } catch (\Throwable $e) {
+        }
+
+        return false;
     }
 }

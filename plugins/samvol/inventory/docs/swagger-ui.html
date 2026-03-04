@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>InventPro API Docs</title>
+        <link
+            rel="stylesheet"
+            href="https://unpkg.com/swagger-ui-dist@5/swagger-ui.css"
+        />
+        <style>
+            :root {
+                --ip-blue-500: #5b86ca;
+                --ip-green-500: #48a53b;
+                --ip-green-600: #3d8b32;
+                --ip-neutral-100: #fdfdfd;
+                --ip-neutral-200: #f1f1f1;
+                --ip-neutral-300: #ebebeb;
+                --ip-neutral-800: #101010;
+                --ip-text-primary: #101010;
+                --ip-text-muted: #727272;
+                --ip-radius-sm: 8px;
+                --ip-radius-md: 12px;
+                --ip-radius-lg: 28px;
+                --ip-radius-full: 99px;
+                --ip-shadow-light: 0 2px 4px 0 rgba(0, 0, 0, 0.08);
+                --ip-button-success-shadow:
+                    0 4px 8px 0 hsl(113 47% 44% / 25%),
+                    0 6px 20px 0 hsl(0 0% 0% / 15%);
+                --ip-button-success-shadow-hover:
+                    0 6px 12px 0 hsl(113 47% 44% / 30%),
+                    0 10px 25px 0 hsl(0 0% 0% / 20%);
+            }
+
+            html,
+            body {
+                margin: 0;
+                padding: 0;
+                background:
+                    radial-gradient(circle at top right, #ffffff 0%, #f6f8fc 44%, #eef2f8 100%);
+                color: var(--ip-text-primary);
+                font-family: "Segoe UI", "Inter", sans-serif;
+            }
+
+            .swagger-ui {
+                color: var(--ip-text-primary);
+            }
+
+            .swagger-ui .topbar {
+                background: linear-gradient(180deg, #323232, #222222);
+                box-shadow: 0 0 0 1px #333333, 0 2px 4px -1px rgba(13, 13, 13, 0.5);
+                padding: 12px 20px;
+            }
+
+            .swagger-ui .topbar-wrapper::before {
+                content: "InventPro API v1";
+                color: #ffffff;
+                font-size: 16px;
+                font-weight: 600;
+                letter-spacing: 0.01em;
+            }
+
+            .swagger-ui .topbar-wrapper img,
+            .swagger-ui .topbar .download-url-wrapper {
+                display: none;
+            }
+
+            .swagger-ui .scheme-container {
+                background: rgba(255, 255, 255, 0.88);
+                border: 1px solid var(--ip-neutral-300);
+                border-radius: var(--ip-radius-md);
+                box-shadow: var(--ip-shadow-light);
+                margin: 16px auto;
+                max-width: 1240px;
+            }
+
+            .swagger-ui .information-container,
+            .swagger-ui .wrapper {
+                max-width: 1240px;
+            }
+
+            .swagger-ui .info {
+                margin: 20px 0;
+            }
+
+            .swagger-ui .info .title {
+                font-size: 28px;
+                color: var(--ip-text-primary);
+            }
+
+            .swagger-ui .info p,
+            .swagger-ui .info li,
+            .swagger-ui .opblock-description-wrapper p,
+            .swagger-ui .response-col_description__inner p {
+                color: var(--ip-text-muted);
+            }
+
+            .swagger-ui .opblock {
+                border-radius: var(--ip-radius-md);
+                border: 1px solid var(--ip-neutral-300);
+                box-shadow: var(--ip-shadow-light);
+                overflow: hidden;
+            }
+
+            .swagger-ui .opblock .opblock-summary {
+                border-color: var(--ip-neutral-300);
+            }
+
+            .swagger-ui .btn,
+            .swagger-ui .opblock .opblock-summary-method,
+            .swagger-ui button,
+            .swagger-ui select {
+                border-radius: var(--ip-radius-full) !important;
+                font-weight: 500 !important;
+            }
+
+            .swagger-ui .btn.authorize,
+            .swagger-ui .btn.execute {
+                background: var(--ip-green-500) !important;
+                color: #ffffff !important;
+                border: none !important;
+                box-shadow: var(--ip-button-success-shadow);
+                transition: all 0.2s ease-out;
+            }
+
+            .swagger-ui .btn.authorize:hover,
+            .swagger-ui .btn.execute:hover {
+                background: var(--ip-green-600) !important;
+                box-shadow: var(--ip-button-success-shadow-hover);
+            }
+
+            .swagger-ui .btn.btn-clear {
+                border: 1px solid var(--ip-neutral-300) !important;
+                color: var(--ip-text-primary) !important;
+                background: var(--ip-neutral-200) !important;
+            }
+
+            .swagger-ui input[type="text"],
+            .swagger-ui input[type="password"],
+            .swagger-ui textarea {
+                border-radius: var(--ip-radius-sm) !important;
+                border: 1px solid #d6d6d6 !important;
+            }
+
+            .swagger-ui table,
+            .swagger-ui .model-box,
+            .swagger-ui .responses-table,
+            .swagger-ui .parameters-col_description {
+                border-radius: var(--ip-radius-sm);
+            }
+
+            .swagger-ui .opblock-tag {
+                border-bottom: 1px solid var(--ip-neutral-300);
+            }
+        </style>
+    </head>
+    <body>
+        <div id="swagger-ui"></div>
+        <script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-bundle.js"></script>
+        <script>
+            window.ui = SwaggerUIBundle({
+                url: "/api/v1/openapi.yaml",
+                dom_id: "#swagger-ui",
+                deepLinking: true,
+                presets: [SwaggerUIBundle.presets.apis],
+            });
+        </script>
+    </body>
+</html>

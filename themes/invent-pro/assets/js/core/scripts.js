@@ -28,6 +28,41 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
+document.addEventListener("DOMContentLoaded", () => {
+    const profileBtn = document.getElementById("headerProfileButton");
+    const profileDropdown = document.querySelector(".header__profile-dropdown");
+
+    if (!profileBtn || !profileDropdown) return;
+
+    profileBtn.addEventListener("click", (event) => {
+        event.preventDefault();
+        const isOpen = profileDropdown.classList.toggle("show");
+        profileBtn.setAttribute("aria-expanded", String(isOpen));
+    });
+
+    document.addEventListener("click", (event) => {
+        if (!profileDropdown.classList.contains("show")) return;
+
+        const target = event.target;
+        if (
+            target === profileBtn ||
+            profileBtn.contains(target) ||
+            profileDropdown.contains(target)
+        ) {
+            return;
+        }
+
+        profileDropdown.classList.remove("show");
+        profileBtn.setAttribute("aria-expanded", "false");
+    });
+
+    document.addEventListener("keydown", (event) => {
+        if (event.key !== "Escape" && event.key !== "Esc") return;
+        profileDropdown.classList.remove("show");
+        profileBtn.setAttribute("aria-expanded", "false");
+    });
+});
+
 document.addEventListener("DOMContentLoaded", function () {
     if (typeof OverlayScrollbars !== "function") return;
 

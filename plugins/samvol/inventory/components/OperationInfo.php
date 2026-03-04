@@ -5,6 +5,7 @@ use Samvol\Inventory\Models\Operation;
 use Samvol\Inventory\Models\OperationProduct;
 use Samvol\Inventory\Models\OperationType;
 use Samvol\Inventory\Models\Document;
+use Samvol\Inventory\Classes\OrganizationAccess;
 use Carbon\Carbon;
 use DB;
 
@@ -165,7 +166,12 @@ class OperationInfo extends ComponentBase
     {
         $user = \Auth::getUser();
 
-        if (!$user || !$user->isInGroup('admin')) {
+        $hasAccess = $user && (
+            OrganizationAccess::isOrganizationAdmin($user)
+            || (method_exists($user, 'isInGroup') && $user->isInGroup('admin'))
+        );
+
+        if (!$hasAccess) {
             throw new \ApplicationException('У вас нет прав на удаление операций!');
         }
 

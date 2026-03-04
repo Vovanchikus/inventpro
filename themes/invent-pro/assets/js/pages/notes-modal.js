@@ -1,4 +1,25 @@
 document.addEventListener("DOMContentLoaded", () => {
+    function withModalLoadFailSafe(timeoutMs = 12000) {
+        let done = false;
+        const timer = setTimeout(() => {
+            if (done) return;
+            const container = document.querySelector(
+                "#modal-container .modal-content",
+            );
+            if (container) {
+                container.innerHTML =
+                    "<p>Не вдалося завантажити форму. Перевірте інтернет і спробуйте ще раз.</p>";
+            }
+        }, timeoutMs);
+
+        return {
+            finish() {
+                done = true;
+                clearTimeout(timer);
+            },
+        };
+    }
+
     // Открыть модал выбора заметки
     function openChooseNoteModal(selectedProducts) {
         Modal.show(
@@ -7,80 +28,103 @@ document.addEventListener("DOMContentLoaded", () => {
             "Выберите заметку",
         );
 
-        $.request("onListNotes", {
-            success(res) {
-                const container = document.querySelector(
-                    "#modal-container .modal-content",
-                );
+        const failSafe = withModalLoadFailSafe();
 
-                // If server returned rendered HTML partial — insert it
-                if (res.notesHtml) {
-                    container.innerHTML = res.notesHtml;
-                } else {
-                    const notes = res.notes || [];
-                    if (!notes.length) {
-                        container.innerHTML =
-                            '<p>Заметок не найдено. <a href="#" class="btn" id="openCreateNoteFromModal">Создать</a></p>';
-                        document
-                            .getElementById("openCreateNoteFromModal")
-                            ?.addEventListener("click", (e) => {
-                                e.preventDefault();
-                                openCreateNoteModal();
-                            });
-                        return;
+        try {
+            $.request("onListNotes", {
+                success(res) {
+                    failSafe.finish();
+                    const container = document.querySelector(
+                        "#modal-container .modal-content",
+                    );
+
+                    // If server returned rendered HTML partial — insert it
+                    if (res.notesHtml) {
+                        container.innerHTML = res.notesHtml;
+                    } else {
+                        const notes = res.notes || [];
+                        if (!notes.length) {
+                            container.innerHTML =
+                                '<p>Заметок не найдено. <a href="#" class="btn" id="openCreateNoteFromModal">Создать</a></p>';
+                            document
+                                .getElementById("openCreateNoteFromModal")
+                                ?.addEventListener("click", (e) => {
+                                    e.preventDefault();
+                                    openCreateNoteModal();
+                                });
+                            return;
+                        }
+
+                        // Fallback: build simple list (shouldn't be used normally)
+                        const list = document.createElement("div");
+                        list.className = "notes-list";
+                        notes.forEach((n) => {
+                            const card = document.createElement("div");
+                            card.className = "note-card";
+                            card.dataset.id = n.id;
+                            card.innerHTML = `<h4>${n.title || "Без названия"}</h4><div class="note-meta">${n.due_date ? "Срок: " + n.due_date : ""}</div><p>${n.description || ""}</p><div class="note-actions"><button class="btn btn-add-to-note">Добавить выбранные</button></div>`;
+                            list.appendChild(card);
+                        });
+                        container.innerHTML = "";
+                        container.appendChild(list);
                     }
 
-                    // Fallback: build simple list (shouldn't be used normally)
-                    const list = document.createElement("div");
-                    list.className = "notes-list";
-                    notes.forEach((n) => {
-                        const card = document.createElement("div");
-                        card.className = "note-card";
-                        card.dataset.id = n.id;
-                        card.innerHTML = `<h4>${n.title || "Без названия"}</h4><div class="note-meta">${n.due_date ? "Срок: " + n.due_date : ""}</div><p>${n.description || ""}</p><div class="note-actions"><button class="btn btn-add-to-note">Добавить выбранные</button></div>`;
-                        list.appendChild(card);
-                    });
-                    container.innerHTML = "";
-                    container.appendChild(list);
-                }
+                    // Attach click handlers for add buttons
+                    container
+                        .querySelectorAll(".btn-add-to-note")
+                        .forEach((btn) => {
+                            btn.addEventListener("click", (e) => {
+                                const card = e.target.closest(".note-card");
+                                const noteId = card?.dataset?.id;
+                                if (!noteId) return;
 
-                // Attach click handlers for add buttons
-                container
-                    .querySelectorAll(".btn-add-to-note")
-                    .forEach((btn) => {
-                        btn.addEventListener("click", (e) => {
-                            const card = e.target.closest(".note-card");
-                            const noteId = card?.dataset?.id;
-                            if (!noteId) return;
-
-                            $.request("onAddProductsToNote", {
-                                data: {
-                                    note_id: noteId,
-                                    products: JSON.stringify(selectedProducts),
-                                },
-                                success(resp) {
-                                    handleServerResponse(resp);
-                                    Modal.hide();
-                                    localStorage.removeItem("selectedProducts");
-                                    document
-                                        .querySelectorAll(".product-check")
-                                        .forEach((cb) => (cb.checked = false));
-                                    document
-                                        .querySelectorAll(".bottom-bar__close")
-                                        .forEach((b) => b.click());
-                                },
+                                $.request("onAddProductsToNote", {
+                                    data: {
+                                        note_id: noteId,
+                                        products:
+                                            JSON.stringify(selectedProducts),
+                                    },
+                                    success(resp) {
+                                        handleServerResponse(resp);
+                                        Modal.hide();
+                                        localStorage.removeItem(
+                                            "selectedProducts",
+                                        );
+                                        document
+                                            .querySelectorAll(".product-check")
+                                            .forEach(
+                                                (cb) => (cb.checked = false),
+                                            );
+                                        document
+                                            .querySelectorAll(
+                                                ".bottom-bar__close",
+                                            )
+                                            .forEach((b) => b.click());
+                                    },
+                                });
                             });
                         });
-                    });
-            },
-            error() {
-                const container = document.querySelector(
-                    "#modal-container .modal-content",
-                );
+                },
+                error() {
+                    failSafe.finish();
+                    const container = document.querySelector(
+                        "#modal-container .modal-content",
+                    );
+                    container.innerHTML =
+                        "<p>Ошибка при загрузке списка заметок</p>";
+                },
+            });
+        } catch (e) {
+            console.error("openChooseNoteModal init error", e);
+            failSafe.finish();
+            const container = document.querySelector(
+                "#modal-container .modal-content",
+            );
+            if (container) {
                 container.innerHTML =
-                    "<p>Ошибка при загрузке списка заметок</p>";
-            },
-        });
+                    "<p>Помилка ініціалізації запиту. Оновіть сторінку.</p>";
+            }
+        }
     }
 
     // Заменим prompt-логику в bottom-bar.js — слушаем событие, чтобы открывать модал
@@ -112,74 +156,78 @@ document.addEventListener("DOMContentLoaded", () => {
             </svg>`,
         );
 
-        $.request("onShowCreateModal", {
-            data: {
-                selected_products: prefillProducts || [],
-            },
-            success(res) {
-                const container = document.querySelector(
-                    "#modal-container .modal-content",
-                );
+        const failSafe = withModalLoadFailSafe();
 
-                if (!container) return;
+        try {
+            $.request("onShowCreateModal", {
+                data: {
+                    selected_products: prefillProducts || [],
+                },
+                success(res) {
+                    failSafe.finish();
+                    const container = document.querySelector(
+                        "#modal-container .modal-content",
+                    );
 
-                if (res && res.modalContent) {
-                    container.innerHTML = res.modalContent;
-                }
+                    if (!container) return;
 
-                const form = document.getElementById("modalCreateNoteForm");
-                if (!form) return;
-
-                form.addEventListener("submit", (ev) => {
-                    ev.preventDefault();
-                    const formData = new FormData(form);
-                    // determine if products were provided
-                    let hasProducts = false;
-                    if (prefillProducts) {
-                        formData.append(
-                            "products",
-                            JSON.stringify(prefillProducts),
-                        );
-                        hasProducts = Array.isArray(prefillProducts)
-                            ? prefillProducts.length > 0
-                            : !!prefillProducts;
-                    } else {
-                        const stored =
-                            localStorage.getItem("createNote") ||
-                            localStorage.getItem("selectedProducts");
-                        if (stored) {
-                            formData.append("products", stored);
-                            try {
-                                const parsed = JSON.parse(stored);
-                                hasProducts = Array.isArray(parsed)
-                                    ? parsed.length > 0
-                                    : !!parsed;
-                            } catch (e) {
-                                hasProducts = stored.length > 0;
-                            }
-                        }
+                    if (res && res.modalContent) {
+                        container.innerHTML = res.modalContent;
                     }
 
-                    const data = {};
-                    formData.forEach((v, k) => (data[k] = v));
+                    const form = document.getElementById("modalCreateNoteForm");
+                    if (!form) return;
 
-                    $.request("onCreateNote", {
-                        data: data,
-                        success(res) {
-                            handleServerResponse(res);
-                            const noteId = res.note_id;
-                            // Показываем опции только если были товары
-                            if (!hasProducts) {
-                                Modal.hide();
-                                localStorage.removeItem("createNote");
-                                localStorage.removeItem("selectedProducts");
-                                document
-                                    .querySelectorAll(".product-check")
-                                    .forEach((cb) => (cb.checked = false));
-                                return;
+                    form.addEventListener("submit", (ev) => {
+                        ev.preventDefault();
+                        const formData = new FormData(form);
+                        // determine if products were provided
+                        let hasProducts = false;
+                        if (prefillProducts) {
+                            formData.append(
+                                "products",
+                                JSON.stringify(prefillProducts),
+                            );
+                            hasProducts = Array.isArray(prefillProducts)
+                                ? prefillProducts.length > 0
+                                : !!prefillProducts;
+                        } else {
+                            const stored =
+                                localStorage.getItem("createNote") ||
+                                localStorage.getItem("selectedProducts");
+                            if (stored) {
+                                formData.append("products", stored);
+                                try {
+                                    const parsed = JSON.parse(stored);
+                                    hasProducts = Array.isArray(parsed)
+                                        ? parsed.length > 0
+                                        : !!parsed;
+                                } catch (e) {
+                                    hasProducts = stored.length > 0;
+                                }
                             }
+                        }
 
-                            const createNowHtml = `
+                        const data = {};
+                        formData.forEach((v, k) => (data[k] = v));
+
+                        $.request("onCreateNote", {
+                            data: data,
+                            success(res) {
+                                handleServerResponse(res);
+                                const noteId = res.note_id;
+                                // Показываем опции только если были товары
+                                if (!hasProducts) {
+                                    Modal.hide();
+                                    localStorage.removeItem("createNote");
+                                    localStorage.removeItem("selectedProducts");
+                                    document
+                                        .querySelectorAll(".product-check")
+                                        .forEach((cb) => (cb.checked = false));
+                                    return;
+                                }
+
+                                const createNowHtml = `
                         <div class="modal-box">
                             <p>Заметка сохранена.</p>
                             <div class="modal-actions">
@@ -189,51 +237,65 @@ document.addEventListener("DOMContentLoaded", () => {
                         </div>
                     `;
 
-                            Modal.show(createNowHtml, "info", "Готово");
+                                Modal.show(createNowHtml, "info", "Готово");
 
-                            document
-                                .getElementById("createOperationNow")
-                                ?.addEventListener("click", () => {
-                                    // Перейти на страницу создания операции с prefill: сохраняем товары в localStorage и редирект
-                                    const stored =
-                                        localStorage.getItem("createNote") ||
-                                        localStorage.getItem(
-                                            "selectedProducts",
-                                        );
-                                    if (stored) {
-                                        // сохраним временно под ключом createOperation
-                                        try {
-                                            localStorage.setItem(
-                                                "createOperation",
-                                                stored,
+                                document
+                                    .getElementById("createOperationNow")
+                                    ?.addEventListener("click", () => {
+                                        // Перейти на страницу создания операции с prefill: сохраняем товары в localStorage и редирект
+                                        const stored =
+                                            localStorage.getItem(
+                                                "createNote",
+                                            ) ||
+                                            localStorage.getItem(
+                                                "selectedProducts",
                                             );
-                                        } catch (e) {}
-                                    }
+                                        if (stored) {
+                                            // сохраним временно под ключом createOperation
+                                            try {
+                                                localStorage.setItem(
+                                                    "createOperation",
+                                                    stored,
+                                                );
+                                            } catch (e) {}
+                                        }
 
-                                    // редирект на страницу создания операции с note_id в параметре
-                                    window.location.href =
-                                        "/add-operation?note_id=" + noteId;
-                                });
+                                        // редирект на страницу создания операции с note_id в параметре
+                                        window.location.href =
+                                            "/add-operation?note_id=" + noteId;
+                                    });
 
-                            document
-                                .getElementById("createOperationLater")
-                                ?.addEventListener("click", () => {
-                                    Modal.hide();
-                                });
-                        },
+                                document
+                                    .getElementById("createOperationLater")
+                                    ?.addEventListener("click", () => {
+                                        Modal.hide();
+                                    });
+                            },
+                        });
                     });
-                });
-            },
-            error() {
-                const container = document.querySelector(
-                    "#modal-container .modal-content",
-                );
-                if (container) {
-                    container.innerHTML =
-                        "<p>Ошибка при загрузке формы создания заметки</p>";
-                }
-            },
-        });
+                },
+                error() {
+                    failSafe.finish();
+                    const container = document.querySelector(
+                        "#modal-container .modal-content",
+                    );
+                    if (container) {
+                        container.innerHTML =
+                            "<p>Ошибка при загрузке формы создания заметки</p>";
+                    }
+                },
+            });
+        } catch (e) {
+            console.error("openCreateNoteModal init error", e);
+            failSafe.finish();
+            const container = document.querySelector(
+                "#modal-container .modal-content",
+            );
+            if (container) {
+                container.innerHTML =
+                    "<p>Помилка ініціалізації запиту. Оновіть сторінку.</p>";
+            }
+        }
     }
 
     // Подключаем обработку клика по кнопке создать заметку внизу

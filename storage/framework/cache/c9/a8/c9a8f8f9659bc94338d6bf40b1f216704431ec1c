@@ -1,4 +1,4 @@
-1771530717a:1:{s:17:"global/header.htm";a:5:{s:8:"fileName";s:17:"global/header.htm";s:7:"content";s:6288:"<header class="header">
+1772667525a:1:{s:17:"global/header.htm";a:5:{s:8:"fileName";s:17:"global/header.htm";s:7:"content";s:6922:"<header class="header">
 
     <div class="header__left">
         {% if this.page.url == '/add-operation' %}
@@ -67,15 +67,24 @@
         </div>{# header__button-box #}
 
         <div class="header__profile">
-            <div class="header__profile-avatar">
-                <img src="{{ user.avatar.path }}" alt="{{ user.name }}">
+            <button id="headerProfileButton" type="button" class="header__profile-trigger" aria-haspopup="true" aria-expanded="false">
+                <div class="header__profile-avatar">
+                    <img src="{{ user.avatar.path }}" alt="{{ user.name }}">
+                </div>
+            </button>
+            <div class="header__profile-dropdown dropdown">
+                <div class="header__profile-item header__profile-item--name">{{ user.name }}</div>
+                <a href="/settings" class="header__profile-item">Налаштування</a>
+                <a href="javascript:;" data-request="onLogout" data-request-data="redirect: '/login'" class="header__profile-item">
+                    Вийти
+                </a>
             </div>
         </div>
 
     </div>{# header__right #}
 </header>
 
-";s:5:"mtime";i:1769717065;s:6:"markup";s:6284:"<header class="header">
+";s:5:"mtime";i:1772408223;s:6:"markup";s:6918:"<header class="header">
 
     <div class="header__left">
         {% if this.page.url == '/add-operation' %}
@@ -144,8 +153,17 @@
         </div>{# header__button-box #}
 
         <div class="header__profile">
-            <div class="header__profile-avatar">
-                <img src="{{ user.avatar.path }}" alt="{{ user.name }}">
+            <button id="headerProfileButton" type="button" class="header__profile-trigger" aria-haspopup="true" aria-expanded="false">
+                <div class="header__profile-avatar">
+                    <img src="{{ user.avatar.path }}" alt="{{ user.name }}">
+                </div>
+            </button>
+            <div class="header__profile-dropdown dropdown">
+                <div class="header__profile-item header__profile-item--name">{{ user.name }}</div>
+                <a href="/settings" class="header__profile-item">Налаштування</a>
+                <a href="javascript:;" data-request="onLogout" data-request-data="redirect: '/login'" class="header__profile-item">
+                    Вийти
+                </a>
             </div>
         </div>
 
