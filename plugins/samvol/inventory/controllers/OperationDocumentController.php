@@ -34,7 +34,10 @@ class OperationDocumentController
         ];
 
         if ($operationId > 0) {
-            $operation = Operation::with(['documents'])->find($operationId);
+            $operation = $this->constrainByOrganization(
+                Operation::with(['documents'])->where('id', $operationId),
+                $this->resolveUser()
+            )->first();
             if ($operation) {
                 $data['document_name'] = $generator->getPrimaryDocumentName($operation);
                 $data['resolved_template_id'] = $generator->resolveTemplateIdForOperation($operation, $templates);
@@ -51,7 +54,10 @@ class OperationDocumentController
             return $this->error('Недостаточно прав', 403);
         }
 
-        $operation = Operation::with(['products', 'type', 'documents'])->find($id);
+        $operation = $this->constrainByOrganization(
+            Operation::with(['products', 'type', 'documents'])->where('id', $id),
+            $user
+        )->first();
         if (!$operation) {
             return $this->error('Операция не найдена', 404);
         }
@@ -122,6 +128,7 @@ class OperationDocumentController
             }
 
             $this->writeAudit([
+                'organization_id' => (int) ($operation->organization_id ?? 0) ?: null,
                 'operation_id' => (int)$operation->id,
                 'user_id' => (int)($user->id ?? 0),
                 'template_id' => $templateId,
@@ -172,6 +179,7 @@ class OperationDocumentController
             ]);
 
             $this->writeAudit([
+                'organization_id' => (int) ($operation->organization_id ?? 0) ?: null,
                 'operation_id' => (int)$operation->id,
                 'user_id' => (int)($user->id ?? 0),
                 'template_id' => $templateId,
@@ -527,16 +535,8 @@ class OperationDocumentController
             $allow = true;
         }
 
-        if (!$allow && method_exists($user, 'isInGroup') && $user->isInGroup('admin')) {
+        if (!$allow && OrganizationAccess::isProjectAdmin($user)) {
             $allow = true;
-        }
-
-        if (!$allow && property_exists($user, 'is_superuser') && (bool)$user->is_superuser === true) {
-            $allow = true;
-        }
-
-        if (!$allow && method_exists($user, 'hasAccess')) {
-            $allow = (bool)$user->hasAccess('samvol.inventory.*');
         }
 
         $this->logAuthContext('docgen_auth', $user, $allow, $allow ? 'allowed' : 'not_admin');
@@ -603,11 +603,29 @@ class OperationDocumentController
     protected function writeAudit(array $data): void
     {
         try {
+            if (empty($data['organization_id'])) {
+                $resolvedUser = $this->resolveUser();
+                $organizationId = (int) ($resolvedUser->organization_id ?? 0);
+                if ($organizationId > 0) {
+                    $data['organization_id'] = $organizationId;
+                }
+            }
+
             $data = $this->sanitizeUtf8Recursive($data);
             DB::table('samvol_inventory_document_generations')->insert($data);
         } catch (\Throwable $e) {
             \Log::warning('Failed to write document generation audit', ['message' => $e->getMessage()]);
         }
+    }
+
+    protected function constrainByOrganization($query, $user)
+    {
+        $organizationId = (int) ($this->resolveUser($user)->organization_id ?? 0);
+        if ($organizationId <= 0) {
+            return $query->whereRaw('1 = 0');
+        }
+
+        return $query->where('organization_id', $organizationId);
     }
 
     protected function sanitizeUtf8Recursive($value)

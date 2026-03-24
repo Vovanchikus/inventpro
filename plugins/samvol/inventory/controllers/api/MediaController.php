@@ -28,7 +28,8 @@ class MediaController extends BaseApiController
             return $this->fail('Validation failed', 422, $validator->errors()->toArray());
         }
 
-        $product = Product::query()->find((int) $request->input('product_id'));
+        $productQuery = Product::query()->where('id', (int) $request->input('product_id'));
+        $product = $this->apiPolicy->constrainByOrganization($productQuery, $request)->first();
         if (!$product) {
             return $this->fail('Product not found', 404);
         }

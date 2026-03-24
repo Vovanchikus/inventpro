@@ -16,19 +16,37 @@ class OperationController extends BaseApiController
 
     public function index(Request $request)
     {
-        $perPage = max(1, min(100, (int) $request->input('per_page', 20)));
+        $maxPerPage = max(1, (int) config('samvol.inventory::api.max_per_page', 100));
+        $validator = Validator::make($request->query(), [
+            'updated_since' => 'sometimes|date',
+            'page' => 'sometimes|integer|min:1',
+            'per_page' => 'sometimes|integer|min:1|max:' . $maxPerPage,
+            'sort_by' => 'sometimes|string|in:id,created_at,updated_at,type_id',
+            'sort_dir' => 'sometimes|string|in:asc,desc',
+            'date_from' => 'sometimes|date',
+            'date_to' => 'sometimes|date',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->fail('Validation failed', 422, $validator->errors()->toArray());
+        }
+
+        $perPage = (int) $request->input('per_page', 20);
+        $page = (int) $request->input('page', 1);
+        $updatedSince = $this->resolveUpdatedSince($request);
+
         $sort = $this->normalizeSort(
-            (string) $request->input('sort_by', 'id'),
-            (string) $request->input('sort_dir', 'desc'),
+            (string) $request->input('sort_by', $updatedSince ? 'updated_at' : 'id'),
+            (string) $request->input('sort_dir', $updatedSince ? 'asc' : 'desc'),
             ['id', 'created_at', 'updated_at', 'type_id'],
-            'id',
-            'desc'
+            $updatedSince ? 'updated_at' : 'id',
+            $updatedSince ? 'asc' : 'desc'
         );
 
         $query = Operation::query()
             ->apiList()
-            ->with(['type', 'documents', 'products'])
-            ->withCount('products');
+            ->with(['type'])
+            ->withCount(['products', 'documents']);
         $query = $this->apiPolicy->constrainByOrganization($query, $request);
 
         if ($typeId = (int) $request->input('type_id', 0)) {
@@ -47,20 +65,16 @@ class OperationController extends BaseApiController
             $query->whereDate('created_at', '<=', $dateTo);
         }
 
-        $query->orderBy($sort['field'], $sort['dir']);
-        $queryData = [
-            'organization_id' => $this->apiPolicy->organizationId($request),
-            'page' => (int) $request->input('page', 1),
-            'per_page' => $perPage,
-            'type_id' => (int) $request->input('type_id', 0),
-            'is_draft' => (string) $request->input('is_draft', ''),
-            'date_from' => (string) $request->input('date_from', ''),
-            'date_to' => (string) $request->input('date_to', ''),
-            'sort_by' => $sort['field'],
-            'sort_dir' => $sort['dir'],
-        ];
+        if ($updatedSince) {
+            $query->where('updated_at', '>', $updatedSince->toDateTimeString());
+        }
 
-        $paginator = $this->cached('operations.index', $queryData, fn() => $query->paginate($perPage));
+        $query->orderBy($sort['field'], $sort['dir']);
+        if ($sort['field'] !== 'id') {
+            $query->orderBy('id', 'asc');
+        }
+
+        $paginator = $query->paginate($perPage, ['*'], 'page', $page);
 
         return $this->paginated($paginator, fn(Operation $operation) => $this->mapOperation($operation));
     }
@@ -106,24 +120,37 @@ class OperationController extends BaseApiController
             return $this->fail('Validation failed', 422, $validator->errors()->toArray());
         }
 
-        $operation = new Operation();
-        $operation->type_id = (int) $request->input('type_id');
-        $operation->is_draft = (bool) $request->boolean('is_draft', false);
-        $operation->is_posted = (bool) $request->boolean('is_posted', false);
-        $operation->mobile_note = (string) $request->input('mobile_note', '');
-        $operation->external_id = (string) $request->input('external_id', '');
-        $operation->organization_id = $this->apiPolicy->organizationId($request);
-        $operation->save();
+        return $this->withIdempotency($request, 'operations.store', function () use ($request) {
+            $operation = new Operation();
+            $operation->type_id = (int) $request->input('type_id');
+            $operation->is_draft = (bool) $request->boolean('is_draft', false);
+            $operation->is_posted = (bool) $request->boolean('is_posted', false);
+            $operation->mobile_note = (string) $request->input('mobile_note', '');
+            $operation->external_id = (string) $request->input('external_id', '');
+            $operation->organization_id = $this->apiPolicy->organizationId($request);
+            $operation->save();
 
-        $this->syncProducts($operation, (array) $request->input('products', []));
-        $operation->load(['type', 'documents', 'products']);
-        $this->bumpCacheVersion('operations.index');
-        $this->bumpCacheVersion('operations.show');
-        if ($operation->organization_id) {
-            event(new InventoryEntityChanged((int) $operation->organization_id, 'operation', 'created', (int) $operation->id, optional($operation->updated_at)->toIso8601String()));
-        }
+            $syncResult = $this->syncProducts($operation, (array) $request->input('products', []), $request);
+            $operation->load(['type', 'documents', 'products']);
+            $this->bumpCacheVersion('operations.index');
+            $this->bumpCacheVersion('operations.show');
+            if ($operation->organization_id) {
+                event(new InventoryEntityChanged((int) $operation->organization_id, 'operation', 'created', (int) $operation->id, optional($operation->updated_at)->toIso8601String()));
+            }
 
-        return $this->ok($this->mapOperation($operation), 201);
+            $meta = [];
+            if (!empty($syncResult['skipped_product_ids'])) {
+                $meta['partial'] = true;
+                $meta['warnings'] = [
+                    'Some products were skipped because they are unavailable for this organization.',
+                ];
+                $meta['details'] = [
+                    'skipped_product_ids' => $syncResult['skipped_product_ids'],
+                ];
+            }
+
+            return $this->ok($this->mapOperation($operation), 201, $meta);
+        });
     }
 
     public function update(Request $request, int $id)
@@ -164,19 +191,37 @@ class OperationController extends BaseApiController
             $operation->is_posted = (bool) $request->boolean('is_posted');
         }
 
-        $operation->save();
+        return $this->withIdempotency($request, 'operations.update.' . $id, function () use ($request, $operation) {
+            $operation->save();
 
-        if ($request->has('products')) {
-            $this->syncProducts($operation, (array) $request->input('products', []));
-        }
+            $syncResult = [
+                'skipped_product_ids' => [],
+            ];
 
-        $operation->load(['type', 'documents', 'products']);
-        $this->bumpCacheVersion('operations.index');
-        $this->bumpCacheVersion('operations.show');
-        if ($operation->organization_id) {
-            event(new InventoryEntityChanged((int) $operation->organization_id, 'operation', 'updated', (int) $operation->id, optional($operation->updated_at)->toIso8601String()));
-        }
-        return $this->ok($this->mapOperation($operation));
+            if ($request->has('products')) {
+                $syncResult = $this->syncProducts($operation, (array) $request->input('products', []), $request);
+            }
+
+            $operation->load(['type', 'documents', 'products']);
+            $this->bumpCacheVersion('operations.index');
+            $this->bumpCacheVersion('operations.show');
+            if ($operation->organization_id) {
+                event(new InventoryEntityChanged((int) $operation->organization_id, 'operation', 'updated', (int) $operation->id, optional($operation->updated_at)->toIso8601String()));
+            }
+
+            $meta = [];
+            if (!empty($syncResult['skipped_product_ids'])) {
+                $meta['partial'] = true;
+                $meta['warnings'] = [
+                    'Some products were skipped because they are unavailable for this organization.',
+                ];
+                $meta['details'] = [
+                    'skipped_product_ids' => $syncResult['skipped_product_ids'],
+                ];
+            }
+
+            return $this->ok($this->mapOperation($operation), 200, $meta);
+        });
     }
 
     public function destroy(Request $request, int $id)
@@ -187,23 +232,26 @@ class OperationController extends BaseApiController
             return $this->fail('Operation not found', 404);
         }
 
-        $organizationId = (int) ($operation->organization_id ?? 0);
-        $deletedId = (int) $operation->id;
-        $operation->products()->detach();
-        $operation->delete();
-        $this->bumpCacheVersion('operations.index');
-        $this->bumpCacheVersion('operations.show');
+        return $this->withIdempotency($request, 'operations.destroy.' . $id, function () use ($operation) {
+            $organizationId = (int) ($operation->organization_id ?? 0);
+            $deletedId = (int) $operation->id;
+            $operation->products()->detach();
+            $operation->delete();
+            $this->bumpCacheVersion('operations.index');
+            $this->bumpCacheVersion('operations.show');
 
-        if ($organizationId > 0) {
-            event(new InventoryEntityChanged($organizationId, 'operation', 'deleted', $deletedId, now()->toIso8601String()));
-        }
+            if ($organizationId > 0) {
+                event(new InventoryEntityChanged($organizationId, 'operation', 'deleted', $deletedId, now()->toIso8601String()));
+            }
 
-        return $this->ok(['deleted' => true]);
+            return $this->ok(['deleted' => true]);
+        });
     }
 
-    private function syncProducts(Operation $operation, array $products): void
+    private function syncProducts(Operation $operation, array $products, Request $request): array
     {
         $syncPayload = [];
+        $skippedProductIds = [];
 
         foreach ($products as $item) {
             $productId = (int) ($item['product_id'] ?? 0);
@@ -211,11 +259,14 @@ class OperationController extends BaseApiController
                 continue;
             }
 
-            if (!Product::query()->where('id', $productId)->exists()) {
+            $productQuery = Product::query()->where('id', $productId);
+            if (!$this->apiPolicy->constrainByOrganization($productQuery, $request)->exists()) {
+                $skippedProductIds[] = $productId;
                 continue;
             }
 
             $syncPayload[$productId] = [
+                'organization_id' => (int) ($operation->organization_id ?? 0) ?: null,
                 'quantity' => (float) ($item['quantity'] ?? 0),
                 'sum' => (float) ($item['sum'] ?? 0),
                 'counteragent' => (string) ($item['counteragent'] ?? ''),
@@ -223,6 +274,10 @@ class OperationController extends BaseApiController
         }
 
         $operation->products()->sync($syncPayload);
+
+        return [
+            'skipped_product_ids' => array_values(array_unique($skippedProductIds)),
+        ];
     }
 
     private function mapOperation(Operation $operation): array

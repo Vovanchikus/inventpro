@@ -1,0 +1,20 @@
+{
+    "name": "mysql-to-postgres-migration",
+    "version": "1.0.0",
+    "description": "Stream migration helper: MySQL -> PostgreSQL (PostGIS) for products table",
+    "main": "migrate_products.js",
+    "scripts": {
+        "migrate:products": "node migrate_products.js",
+        "migrate:all": "node migrate_all.js",
+        "move:prefix": "node move_prefix_to_plain.js",
+        "drop:notnull": "node drop_not_null_prefix_targets.js"
+    },
+    "dependencies": {
+        "mysql2": "^3.3.0",
+        "pg": "^8.10.0",
+        "dotenv": "^16.0.0"
+    },
+    "engines": {
+        "node": ">=16"
+    }
+}

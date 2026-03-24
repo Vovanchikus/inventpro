@@ -1,0 +1,11 @@
+list: $/samvol/inventory/models/user/columns.yaml
+modelClass: Winter\User\Models\User
+title: Users
+noRecordsMessage: "backend::lang.list.no_records"
+showSetup: true
+showCheckboxes: false
+recordsPerPage: 30
+recordUrl: "samvol/inventory/organizationusers/update/:id"
+toolbar:
+    search:
+        prompt: "backend::lang.list.search_prompt"

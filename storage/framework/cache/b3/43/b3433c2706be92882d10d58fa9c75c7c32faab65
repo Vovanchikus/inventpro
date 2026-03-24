@@ -1,18 +1,13 @@
-1772666960a:1:{s:17:"add-operation.htm";a:10:{s:8:"fileName";s:17:"add-operation.htm";s:7:"content";s:12455:"title = "Новая операция"
+1774350080a:1:{s:17:"add-operation.htm";a:9:{s:8:"fileName";s:17:"add-operation.htm";s:7:"content";s:12543:"title = "Новая операция"
 url = "/add-operation"
 layout = "default"
 
-[account]
-
 [addOperation]
 ==
-{# Ниже проверка на админа #}
-{% set isAdmin = false %}
-{% for group in user.groups %}
-    {% if group.code == 'admin' %}
-        {% set isAdmin = true %}
-    {% endif %}
-{% endfor %}
+{# Проверка доступа по роли в организации #}
+{% set orgRole = (user.organization_role ?? '')|lower %}
+{% set orgStatus = (user.organization_status ?? '')|lower %}
+{% set isAdmin = user and ((orgRole == 'admin' and orgStatus == 'approved') or (user.is_superuser ?? false)) %}
 
 {% if user and isAdmin %}
 
@@ -225,13 +220,10 @@ layout = "default"
 {% else %}
     <p>У вас нет прав для добавления новой операции.</p>
 {% endif %}
-";s:5:"mtime";i:1771533986;s:6:"markup";s:12335:"{# Ниже проверка на админа #}
-{% set isAdmin = false %}
-{% for group in user.groups %}
-    {% if group.code == 'admin' %}
-        {% set isAdmin = true %}
-    {% endif %}
-{% endfor %}
+";s:5:"mtime";i:1772680986;s:6:"markup";s:12436:"{# Проверка доступа по роли в организации #}
+{% set orgRole = (user.organization_role ?? '')|lower %}
+{% set orgStatus = (user.organization_status ?? '')|lower %}
+{% set isAdmin = user and ((orgRole == 'admin' and orgStatus == 'approved') or (user.is_superuser ?? false)) %}
 
 {% if user and isAdmin %}
 
@@ -443,4 +435,4 @@ layout = "default"
 
 {% else %}
     <p>У вас нет прав для добавления новой операции.</p>
-{% endif %}";s:4:"code";N;s:5:"title";s:27:"Новая операция";s:3:"url";s:14:"/add-operation";s:6:"layout";s:7:"default";s:7:"account";a:0:{}s:12:"addOperation";a:0:{}}}
+{% endif %}";s:4:"code";N;s:5:"title";s:27:"Новая операция";s:3:"url";s:14:"/add-operation";s:6:"layout";s:7:"default";s:12:"addOperation";a:0:{}}}

@@ -1,6 +1,7 @@
 <?php namespace Samvol\Inventory\Classes\Api;
 
 use Illuminate\Http\Request;
+use Samvol\Inventory\Classes\PrimaryOrganizationResolver;
 
 class ApiPolicy
 {
@@ -14,7 +15,11 @@ class ApiPolicy
         $user = $this->user($request);
         $id = (int) ($user->organization_id ?? 0);
 
-        return $id > 0 ? $id : null;
+        if ($id > 0) {
+            return $id;
+        }
+
+        return PrimaryOrganizationResolver::resolveId(true);
     }
 
     public function constrainByOrganization($query, Request $request, string $column = 'organization_id')

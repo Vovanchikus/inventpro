@@ -8,6 +8,7 @@ use Model;
 class Document extends Model
 {
     use \Winter\Storm\Database\Traits\Validation;
+    use \Samvol\Inventory\Classes\Concerns\HasOrganizationScope;
 
     protected $fillable = [
         'operation_id',

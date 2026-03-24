@@ -147,3 +147,21 @@
 1.0.50:
     - "Updated operations and documents with organization scope"
     - builder_table_update_samvol_inventory_org_scope.php
+1.0.51:
+    - "Backfilled single organization scope for inventory entities"
+    - builder_table_update_samvol_inventory_single_org_scope.php
+1.0.52:
+    - "Added organization scope to pivot history tables"
+    - builder_table_update_samvol_inventory_org_scope_pivots.php
+1.0.53:
+    - "Added organization scope to document settings and generations"
+    - builder_table_update_samvol_inventory_doc_settings_org_scope.php
+1.0.54:
+    - "Backfilled organization scope for legacy documents"
+    - builder_table_update_samvol_inventory_documents_org_backfill.php
+1.0.55:
+    - "Initialized Winter.User groups for project admin and organization users"
+    - builder_table_update_user_groups_org_access.php
+1.0.56:
+    - "Cleaned up legacy Winter.User groups"
+    - builder_table_update_user_groups_cleanup_legacy.php

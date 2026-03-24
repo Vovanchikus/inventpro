@@ -28,6 +28,10 @@ navigation:
                 label: Документы
                 url: samvol/inventory/documents
                 icon: icon-sitemap
+            organization_users:
+                label: Пользователи организаций
+                url: samvol/inventory/organizationusers
+                icon: icon-users
             notes:
                 label: Заметки
                 url: samvol/inventory/notes

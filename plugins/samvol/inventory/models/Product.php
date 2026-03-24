@@ -8,12 +8,14 @@ class Product extends Model
 {
     use \Winter\Storm\Database\Traits\Validation;
     use \Winter\Storm\Database\Traits\Sluggable;
+    use \Samvol\Inventory\Classes\Concerns\HasOrganizationScope;
 
     public $table = 'samvol_inventory_products';
 
     protected $slugs = ['slug' => 'inv_number'];
 
     protected $fillable = [
+        'organization_id',
         'category_id',
         'name',
         'quantity',
@@ -25,7 +27,8 @@ class Product extends Model
     ];
 
     public $belongsTo = [
-        'category' => ['Samvol\Inventory\Models\Category']
+        'category' => ['Samvol\Inventory\Models\Category'],
+        'organization' => ['Samvol\Inventory\Models\Organization', 'key' => 'organization_id'],
     ];
 
     public $belongsToMany = [
@@ -131,6 +134,7 @@ class Product extends Model
             'mobile_summary',
             'external_id',
             'updated_at',
+            'organization_id',
         ]);
     }
 

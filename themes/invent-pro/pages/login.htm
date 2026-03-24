@@ -58,13 +58,35 @@ redirect = "warehouse"
         {% endif %}
 
         <div class="form-group">
-            <label for="registerOrgCode">Код організації</label>
+            <label for="registerOrganizationId">Організація</label>
+            <select
+                name="organization_id"
+                class="form-control"
+                id="registerOrganizationId"
+                required>
+                <option value="">Завантаження...</option>
+            </select>
+            <small id="registerOrganizationHint" class="text-muted">Оберіть існуючу організацію зі списку.</small>
+        </div>
+
+        <div class="form-group">
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" id="registerCreateOrganization" name="create_organization" value="1">
+                    Створити нову організацію
+                </label>
+            </div>
+        </div>
+
+        <div class="form-group" id="registerOrganizationNameGroup" style="display:none;">
+            <label for="registerOrganizationName">Назва нової організації</label>
             <input
-                name="organization_code"
+                name="organization_name"
                 type="text"
                 class="form-control"
-                id="registerOrgCode"
-                placeholder="Наприклад: org-001"/>
+                id="registerOrganizationName"
+                placeholder="Введіть назву організації"/>
+            <small id="registerOrganizationNameStatus" class="text-muted"></small>
         </div>
 
         <div class="form-group">
@@ -84,5 +106,100 @@ redirect = "warehouse"
 {% else %}
     <p>Реєстрацію тимчасово вимкнено.</p>
 {% endif %}
+
+<script>
+(function () {
+    var orgSelect = document.getElementById('registerOrganizationId');
+    var orgHint = document.getElementById('registerOrganizationHint');
+    var createCheckbox = document.getElementById('registerCreateOrganization');
+    var orgNameGroup = document.getElementById('registerOrganizationNameGroup');
+    var orgNameInput = document.getElementById('registerOrganizationName');
+    var orgNameStatus = document.getElementById('registerOrganizationNameStatus');
+    var checkTimer = null;
+
+    if (!orgSelect || !createCheckbox || !orgNameGroup || !orgNameInput || !orgNameStatus) {
+        return;
+    }
+
+    function setNameStatus(message, isError) {
+        orgNameStatus.textContent = message || '';
+        orgNameStatus.style.color = isError ? '#b50000' : '#2f6f1a';
+    }
+
+    function toggleMode() {
+        var createMode = !!createCheckbox.checked;
+        orgNameGroup.style.display = createMode ? '' : 'none';
+        orgNameInput.required = createMode;
+        orgSelect.disabled = createMode;
+        orgSelect.required = !createMode;
+        if (createMode) {
+            orgSelect.value = '';
+            orgHint.textContent = 'Нова організація потребує підтвердження адміністратором проєкту.';
+        } else {
+            setNameStatus('', false);
+            orgHint.textContent = 'Оберіть існуючу організацію зі списку.';
+        }
+    }
+
+    function loadOrganizations() {
+        fetch('/api/v1/public/organizations')
+            .then(function (response) { return response.json(); })
+            .then(function (payload) {
+                var items = (payload && payload.data && payload.data.items) ? payload.data.items : [];
+                orgSelect.innerHTML = '<option value="">Оберіть організацію</option>';
+
+                items.forEach(function (item) {
+                    var option = document.createElement('option');
+                    option.value = item.id;
+                    option.textContent = item.name;
+                    orgSelect.appendChild(option);
+                });
+
+                if (!items.length) {
+                    orgHint.textContent = 'Активних організацій не знайдено. Ви можете створити нову.';
+                }
+            })
+            .catch(function () {
+                orgSelect.innerHTML = '<option value="">Не вдалося завантажити список</option>';
+                orgHint.textContent = 'Не вдалося завантажити організації. Спробуйте оновити сторінку.';
+            });
+    }
+
+    function checkOrganizationName() {
+        var name = orgNameInput.value.trim();
+        if (!createCheckbox.checked) {
+            return;
+        }
+
+        if (name.length < 3) {
+            setNameStatus('Введіть щонайменше 3 символи.', true);
+            return;
+        }
+
+        fetch('/api/v1/public/organizations/check-name?name=' + encodeURIComponent(name))
+            .then(function (response) { return response.json(); })
+            .then(function (payload) {
+                var available = !!(payload && payload.data && payload.data.available);
+                if (available) {
+                    setNameStatus('Назва вільна.', false);
+                } else {
+                    setNameStatus('Така організація вже існує. Оберіть її зі списку.', true);
+                }
+            })
+            .catch(function () {
+                setNameStatus('Не вдалося перевірити назву. Повторіть спробу.', true);
+            });
+    }
+
+    createCheckbox.addEventListener('change', toggleMode);
+    orgNameInput.addEventListener('input', function () {
+        clearTimeout(checkTimer);
+        checkTimer = setTimeout(checkOrganizationName, 350);
+    });
+
+    toggleMode();
+    loadOrganizations();
+})();
+</script>
 
 

@@ -1,9 +1,12 @@
 <?php namespace Samvol\Inventory\Controllers\Api;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Samvol\Inventory\Classes\Api\JwtTokenService;
 use Samvol\Inventory\Classes\Api\RefreshTokenService;
+use Samvol\Inventory\Classes\OrganizationAccess;
+use Samvol\Inventory\Models\Organization;
 use Winter\User\Models\User;
 
 class AuthController extends BaseApiController
@@ -33,11 +36,15 @@ class AuthController extends BaseApiController
                 'password' => (string) $request->input('password'),
             ]);
         } catch (\Throwable $e) {
-            return $this->fail('Invalid credentials', 401);
+            return $this->apiError('AUTH_TOKEN_INVALID', 'Invalid credentials', 401);
         }
 
         if (!$user) {
-            return $this->fail('Invalid credentials', 401);
+            return $this->apiError('AUTH_TOKEN_INVALID', 'Invalid credentials', 401);
+        }
+
+        if (!$this->isAllowedToSignIn($user)) {
+            return $this->apiError('AUTH_FORBIDDEN', 'Account is pending project admin approval', 403);
         }
 
         return $this->ok($this->buildTokenResponse($user, $request));
@@ -51,6 +58,8 @@ class AuthController extends BaseApiController
             'password' => 'required|string|min:8|confirmed',
             'organization_id' => 'nullable|integer',
             'organization_code' => 'nullable|string|max:64',
+            'create_organization' => 'nullable|boolean',
+            'organization_name' => 'nullable|string|max:255',
         ]);
 
         if ($validator->fails()) {
@@ -66,9 +75,16 @@ class AuthController extends BaseApiController
                 'password_confirmation' => (string) $request->input('password_confirmation'),
                 'organization_id' => $request->input('organization_id'),
                 'organization_code' => $request->input('organization_code'),
+                'create_organization' => $request->boolean('create_organization', false),
+                'organization_name' => $request->input('organization_name'),
             ], true, true);
         } catch (\Throwable $e) {
-            return $this->fail($e->getMessage(), 422);
+            Log::warning('api.auth_register_failed', [
+                'request_id' => (string) $request->attributes->get('api_request_id', ''),
+                'message' => $e->getMessage(),
+            ]);
+
+            return $this->apiError('VALIDATION_ERROR', 'Unable to register account with provided data', 422);
         }
 
         return $this->ok($this->buildTokenResponse($user, $request), 201);
@@ -88,12 +104,16 @@ class AuthController extends BaseApiController
         $rotatedSession = $this->refreshTokenService->rotate((string) $request->input('refresh_token'), $newTokenId, $request);
 
         if (!$rotatedSession) {
-            return $this->fail('Refresh token is invalid or expired', 401);
+            return $this->apiError('AUTH_TOKEN_INVALID', 'Refresh token is invalid or expired', 401);
         }
 
         $user = User::query()->find((int) $rotatedSession->user_id);
         if (!$user) {
-            return $this->fail('User not found', 404);
+            return $this->apiError('RESOURCE_UNAVAILABLE', 'User not found', 404);
+        }
+
+        if (!$this->isAllowedToSignIn($user)) {
+            return $this->apiError('AUTH_FORBIDDEN', 'Account is pending project admin approval', 403);
         }
 
         $accessToken = $this->jwtTokenService->issueAccessToken((int) $user->id, $newTokenId, $this->resolveScopes($user));
@@ -112,7 +132,7 @@ class AuthController extends BaseApiController
     {
         $user = $request->attributes->get('api_user');
         if (!$user) {
-            return $this->fail('Unauthorized', 401);
+            return $this->apiError('AUTH_TOKEN_INVALID', 'Unauthorized', 401);
         }
 
         return $this->ok($this->userPayload($user));
@@ -135,6 +155,40 @@ class AuthController extends BaseApiController
         return $this->ok(['revoked' => true]);
     }
 
+    public function organizations()
+    {
+        $organizations = Organization::query()
+            ->where('is_active', true)
+            ->orderBy('name')
+            ->get(['id', 'name', 'code']);
+
+        return $this->ok([
+            'items' => $organizations->map(fn(Organization $organization) => [
+                'id' => (int) $organization->id,
+                'name' => (string) $organization->name,
+                'code' => (string) $organization->code,
+            ])->values(),
+        ]);
+    }
+
+    public function checkOrganizationName(Request $request)
+    {
+        $name = trim((string) $request->input('name', ''));
+        if ($name === '') {
+            return $this->apiError('VALIDATION_ERROR', 'Organization name is required', 422);
+        }
+
+        $normalized = preg_replace('/\s+/u', ' ', mb_strtolower($name));
+        $exists = Organization::query()
+            ->whereRaw('LOWER(TRIM(name)) = ?', [trim((string) $normalized)])
+            ->exists();
+
+        return $this->ok([
+            'name' => $name,
+            'available' => !$exists,
+        ]);
+    }
+
     private function buildTokenResponse($user, Request $request): array
     {
         $tokenId = $this->jwtTokenService->newTokenId();
@@ -153,23 +207,53 @@ class AuthController extends BaseApiController
         ];
     }
 
+    public function health(Request $request)
+    {
+        return $this->ok([
+            'status' => 'ok',
+            'auth_pipeline' => 'ready',
+            'server_time_utc' => now()->utc()->toIso8601String(),
+        ]);
+    }
+
     private function resolveScopes($user): array
     {
-        if (method_exists($user, 'isInGroup') && $user->isInGroup('admin')) {
-            return ['*'];
-        }
-
         return ['inventory.read', 'inventory.write'];
     }
 
     private function userPayload($user): array
     {
+        $organizationName = null;
+        if (!empty($user->organization_id)) {
+            $organizationName = Organization::query()
+                ->where('id', (int) $user->organization_id)
+                ->value('name');
+        }
+
         return [
             'id' => (int) $user->id,
             'name' => (string) ($user->name ?? ''),
             'email' => (string) ($user->email ?? ''),
             'organization_id' => $user->organization_id ?? null,
+            'organization_name' => $organizationName ? (string) $organizationName : null,
             'organization_role' => $user->organization_role ?? null,
+            'organization_status' => $user->organization_status ?? null,
         ];
+    }
+
+    private function isAllowedToSignIn($user): bool
+    {
+        if (!$user) {
+            return false;
+        }
+
+        if (OrganizationAccess::isProjectAdmin($user)) {
+            return true;
+        }
+
+        $status = strtolower(trim((string) ($user->organization_status ?? '')));
+        $organizationId = (int) ($user->organization_id ?? 0);
+
+        return $status === OrganizationAccess::STATUS_APPROVED && $organizationId > 0;
     }
 }

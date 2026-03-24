@@ -27,7 +27,7 @@ class Warehouse extends ComponentBase
     {
         $files = Input::file('images') ?: [Input::file('image')]; // поддержка нескольких файлов или одного
         $productId = post('product_id');
-        $product = Product::find($productId);
+        $product = $this->constrainByOrganization(Product::query()->where('id', $productId))->first();
 
         if (!$files || !$product) {
             return ['error' => 'Файл не выбран или товар не найден'];
@@ -58,7 +58,7 @@ class Warehouse extends ComponentBase
         $productId = post('product_id');
         $imageId = post('image_id');
 
-        $product = Product::find($productId);
+        $product = $this->constrainByOrganization(Product::query()->where('id', $productId))->first();
 
         if (!$product || !$imageId) {
             return ['error' => 'Некорректные данные для удаления изображения'];
@@ -97,7 +97,7 @@ class Warehouse extends ComponentBase
             }
         }
 
-        $product = Product::find($productId);
+        $product = $this->constrainByOrganization(Product::query()->where('id', $productId))->first();
 
         if (!$product || !is_array($order)) {
             return ['error' => 'Некорректные данные для сортировки изображений'];
@@ -180,7 +180,7 @@ class Warehouse extends ComponentBase
         }
 
         DB::transaction(function () use ($productIds, $categoryId) {
-            Product::whereIn('id', $productIds)
+            $this->constrainByOrganization(Product::whereIn('id', $productIds))
                 ->update(['category_id' => $categoryId]);
         });
 
@@ -195,7 +195,7 @@ class Warehouse extends ComponentBase
 
     public function onRun()
     {
-        $this->products = Product::query()
+        $this->products = $this->constrainByOrganization(Product::query())
             ->select([
                 'id',
                 'name',
@@ -215,6 +215,7 @@ class Warehouse extends ComponentBase
                 ->join('samvol_inventory_operations as o', 'op.operation_id', '=', 'o.id')
                 ->join('samvol_inventory_operation_types as t', 'o.type_id', '=', 't.id')
                 ->whereIn('op.product_id', $productIds)
+                ->where('o.organization_id', $this->organizationId())
                 ->groupBy('op.product_id')
                 ->selectRaw(
                     "op.product_id,
@@ -306,5 +307,19 @@ class Warehouse extends ComponentBase
     public function defineProperties()
     {
         return [];
+    }
+
+    protected function organizationId(): int
+    {
+        $user = \Auth::getUser();
+        return (int) ($user->organization_id ?? 0);
+    }
+
+    protected function constrainByOrganization($query, string $column = 'organization_id')
+    {
+        $organizationId = $this->organizationId();
+        return $organizationId > 0
+            ? $query->where($column, $organizationId)
+            : $query->whereRaw('1 = 0');
     }
 }

@@ -69,7 +69,9 @@ class EditOperation extends ComponentBase
 
         if ($this->operationId) {
             // Если передан ID через URL
-            $this->operation = Operation::with(['products', 'documents'])->find($this->operationId);
+            $this->operation = $this->constrainByOrganization(
+                Operation::with(['products', 'documents'])->where('id', $this->operationId)
+            )->first();
             $this->products = $this->operation ? $this->operation->products : [];
         } else {
             // Если ID нет — пробуем взять из localStorage через JS
@@ -189,7 +191,9 @@ class EditOperation extends ComponentBase
 
             // Проверка остатков для расхода/передачи/списания
             if (in_array($operationTypeName, ['расход', 'передача', 'списание'])) {
-                $product = Product::where('inv_number', $inv_number)->first();
+                $product = Product::where('inv_number', $inv_number)
+                    ->where('organization_id', $this->organizationId())
+                    ->first();
                 $currentQty = $product->calculated_quantity ?? 0;
 
                 if (is_numeric($quantity_raw) && floatval($quantity_raw) > $currentQty) {
@@ -227,7 +231,7 @@ class EditOperation extends ComponentBase
             DB::beginTransaction();
 
             $operation = !empty($data['operation_id'])
-                ? Operation::find($data['operation_id'])
+                ? $this->constrainByOrganization(Operation::where('id', $data['operation_id']))->first()
                 : new Operation();
 
 
@@ -257,6 +261,7 @@ class EditOperation extends ComponentBase
             $operation->note_id = $noteId ?? null;
 
             $operation->type_id = $data['type_id'];
+            $operation->organization_id = $this->organizationId();
             $operation->save();
 
             $operationCounteragent = $data['counteragent'] ?? null;
@@ -267,6 +272,7 @@ class EditOperation extends ComponentBase
             foreach ($data['doc_name'] as $i => $docName) {
                 $uploadedFile = $files[$i] ?? null;
                 $document = $operation->documents()->create([
+                    'organization_id' => (int) $operation->organization_id,
                     'doc_name' => $docName,
                     'doc_num'  => $data['doc_num'][$i] ?? '',
                     'doc_purpose' => $data['doc_purpose'][$i] ?? null,
@@ -289,7 +295,7 @@ class EditOperation extends ComponentBase
                     $quantity   = floatval($this->normalizeNumericInput($data['quantity'][$i] ?? null));
 
                     $product = Product::firstOrCreate(
-                        ['inv_number' => $inv_number],
+                        ['inv_number' => $inv_number, 'organization_id' => $this->organizationId()],
                         ['name' => $name, 'unit' => $unit, 'price' => $price]
                     );
 
@@ -334,6 +340,7 @@ class EditOperation extends ComponentBase
                     // Добавляем товар в текущую операцию (новая запись или обновление)
                     $operation->products()->syncWithoutDetaching([
                         $product->id => [
+                            'organization_id' => (int) ($operation->organization_id ?? 0) ?: null,
                             'quantity' => $quantity,
                             'sum' => $pivotSum,
                             'counteragent' => $operationCounteragent
@@ -344,7 +351,10 @@ class EditOperation extends ComponentBase
                 // Для черновой операции — сохраним текущий выбор товаров в заметке (если есть),
                 // вместо записи в pivot
                 if (!empty($noteId) && !empty($data['name']) && is_array($data['name'])) {
-                    $note = \Samvol\Inventory\Models\Note::find($noteId);
+                    $note = \Samvol\Inventory\Models\Note::query()
+                        ->where('id', $noteId)
+                        ->where('organization_id', $this->organizationId())
+                        ->first();
                     if ($note) {
                         $tmp = [];
                         foreach ($data['name'] as $i => $name) {
@@ -410,7 +420,9 @@ class EditOperation extends ComponentBase
 
         $documents = [];
         if ($operationId > 0) {
-            $operation = Operation::with(['documents'])->find($operationId);
+            $operation = $this->constrainByOrganization(
+                Operation::with(['documents'])->where('id', $operationId)
+            )->first();
             if ($operation && $operation->documents) {
                 foreach ($operation->documents as $document) {
                     $docName = trim((string)($document->doc_name ?? ''));
@@ -476,32 +488,21 @@ class EditOperation extends ComponentBase
             return true;
         }
 
-        try {
-            if (method_exists($user, 'isInGroup') && $user->isInGroup('admin')) {
-                return true;
-            }
-        } catch (\Throwable $e) {
-        }
+        return OrganizationAccess::isProjectAdmin($user);
+    }
 
-        try {
-            if (method_exists($user, 'groups') && $user->groups()->where('code', 'admin')->exists()) {
-                return true;
-            }
-        } catch (\Throwable $e) {
-        }
+    protected function organizationId(): int
+    {
+        $user = $this->resolveCurrentUser();
+        return (int) ($user->organization_id ?? 0);
+    }
 
-        if (property_exists($user, 'is_superuser') && (bool)$user->is_superuser === true) {
-            return true;
-        }
-
-        try {
-            if (method_exists($user, 'hasAccess') && $user->hasAccess('samvol.inventory.*')) {
-                return true;
-            }
-        } catch (\Throwable $e) {
-        }
-
-        return false;
+    protected function constrainByOrganization($query, string $column = 'organization_id')
+    {
+        $organizationId = $this->organizationId();
+        return $organizationId > 0
+            ? $query->where($column, $organizationId)
+            : $query->whereRaw('1 = 0');
     }
 
 }

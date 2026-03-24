@@ -1,0 +1,35 @@
+columns:
+    id:
+        label: ID
+        type: number
+        sortable: true
+    email:
+        label: Email
+        searchable: true
+        sortable: true
+    name:
+        label: First Name
+        searchable: true
+        sortable: true
+    surname:
+        label: Last Name
+        searchable: true
+        sortable: true
+    organization:
+        label: Organization
+        relation: organization
+        select: name
+        sortable: true
+    organization_role:
+        label: Role
+        type: text
+        sortable: true
+    organization_status:
+        label: Status
+        type: text
+        sortable: true
+    organization_approved_at:
+        label: Approved At
+        type: datetime
+        format: Y-m-d H:i
+        sortable: true

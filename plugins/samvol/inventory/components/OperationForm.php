@@ -48,7 +48,9 @@ class OperationForm extends ComponentBase
 
         if ($this->operationId) {
             // Редактирование существующей операции
-            $this->operation = Operation::with(['products', 'documents'])->find($this->operationId);
+            $this->operation = $this->constrainByOrganization(
+                Operation::with(['products', 'documents'])->where('id', $this->operationId)
+            )->first();
             $this->products = $this->operation ? $this->operation->products : [];
         } else {
             // Создание новой операции
@@ -79,12 +81,13 @@ class OperationForm extends ComponentBase
 
             // --- Создаём новую или получаем существующую операцию ---
             if (!empty($data['operation_id'])) {
-                $operation = Operation::find($data['operation_id']);
+                $operation = $this->constrainByOrganization(Operation::where('id', $data['operation_id']))->first();
             } else {
                 $operation = new Operation();
             }
 
             $operation->type_id = $data['type_id'] ?? null;
+            $operation->organization_id = $this->organizationId();
             $operation->save();
 
             // --- Сохраняем документы ---
@@ -92,6 +95,7 @@ class OperationForm extends ComponentBase
             foreach ($data['doc_name'] as $i => $docName) {
                 if ($docName) {
                     $operation->documents()->create([
+                        'organization_id' => (int) $operation->organization_id,
                         'doc_name' => $docName,
                         'doc_num'  => $data['doc_num'][$i] ?? '',
                         'doc_date' => $data['doc_date'][$i] ?? null
@@ -195,7 +199,9 @@ class OperationForm extends ComponentBase
 
             // Проверка остатка
             if (in_array($operationTypeName, ['расход', 'передача']) && $inv_number) {
-                $product = Product::where('inv_number', $inv_number)->first();
+                $product = Product::where('inv_number', $inv_number)
+                    ->where('organization_id', $this->organizationId())
+                    ->first();
                 $currentQty = $product->calculated_quantity ?? 0;
                 if (is_numeric($qty_raw) && floatval($qty_raw) > $currentQty) {
                     $errors[] = ["field" => "quantity[$i]", "message" => "Слишком много"];
@@ -232,11 +238,12 @@ class OperationForm extends ComponentBase
             $quantity   = floatval($data['quantity'][$i]);
 
             $product = Product::firstOrCreate(
-                ['inv_number' => $inv_number],
+                ['inv_number' => $inv_number, 'organization_id' => $this->organizationId()],
                 ['name' => $name, 'unit' => $unit, 'price' => $price]
             );
 
             $pivotData = [
+                'organization_id' => (int) ($operation->organization_id ?? 0) ?: null,
                 'quantity' => $quantity,
                 'sum' => round($quantity * $price, 2),
                 'counteragent' => $operationCounteragent
@@ -281,8 +288,12 @@ class OperationForm extends ComponentBase
 
         $q = mb_strtolower($query);
 
-        $products = Product::whereRaw('LOWER(name) LIKE ?', ["%{$q}%"])
-            ->orWhereRaw('LOWER(inv_number) LIKE ?', ["%{$q}%"])
+        $products = Product::query()
+            ->where('organization_id', $this->organizationId())
+            ->where(function ($builder) use ($q) {
+                $builder->whereRaw('LOWER(name) LIKE ?', ["%{$q}%"])
+                    ->orWhereRaw('LOWER(inv_number) LIKE ?', ["%{$q}%"]);
+            })
             ->limit(20)
             ->get(['id','name','inv_number','unit','price']);
 
@@ -313,5 +324,19 @@ class OperationForm extends ComponentBase
             'modalType' => 'info',
             'modalTitle' => 'Выберите товар'
         ];
+    }
+
+    protected function organizationId(): int
+    {
+        $user = \Auth::getUser();
+        return (int) ($user->organization_id ?? 0);
+    }
+
+    protected function constrainByOrganization($query, string $column = 'organization_id')
+    {
+        $organizationId = $this->organizationId();
+        return $organizationId > 0
+            ? $query->where($column, $organizationId)
+            : $query->whereRaw('1 = 0');
     }
 }

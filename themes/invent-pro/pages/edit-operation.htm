@@ -5,7 +5,9 @@ layout = "default"
 [editOperation]
 ==
 
-{% if user and ((user.organization_status == 'approved' and user.organization_role == 'admin') or user.isInGroup('admin')) %}
+{% set orgRole = (user.organization_role ?? '')|lower %}
+{% set orgStatus = (user.organization_status ?? '')|lower %}
+{% if user and ((orgStatus == 'approved' and orgRole == 'admin') or (user.is_superuser ?? false)) %}
 
 <div class="container--sm box--light">
 

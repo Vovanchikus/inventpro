@@ -456,8 +456,14 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function applyDifferences(updates, report) {
+        // Send large payloads as JSON strings to avoid hitting PHP max_input_vars
+        const payload = {
+            updates: typeof updates === 'string' ? updates : JSON.stringify(updates || {}),
+            report: typeof report === 'string' ? report : JSON.stringify(report || {}),
+        };
+
         $.request("onApplyDifferences", {
-            data: { updates, report },
+            data: payload,
             beforeSend() {
                 btnProgress.start();
             },

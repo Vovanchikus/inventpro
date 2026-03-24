@@ -2,17 +2,12 @@ title = "Новая операция"
 url = "/add-operation"
 layout = "default"
 
-[account]
-
 [addOperation]
 ==
-{# Ниже проверка на админа #}
-{% set isAdmin = false %}
-{% for group in user.groups %}
-    {% if group.code == 'admin' %}
-        {% set isAdmin = true %}
-    {% endif %}
-{% endfor %}
+{# Проверка доступа по роли в организации #}
+{% set orgRole = (user.organization_role ?? '')|lower %}
+{% set orgStatus = (user.organization_status ?? '')|lower %}
+{% set isAdmin = user and ((orgRole == 'admin' and orgStatus == 'approved') or (user.is_superuser ?? false)) %}
 
 {% if user and isAdmin %}
 

@@ -1,20 +1,24 @@
 openapi: 3.0.3
 info:
     title: InventPro Mobile API
-    version: 1.0.0
-    description: API v1 for React Native / React PWA clients.
+    version: 1.1.0
+    description: Deterministic API contract for React Native offline-first sync.
 servers:
     - url: /api/v1
 paths:
-    /docs:
+    /auth/health:
         get:
-            summary: Swagger UI page
+            summary: Auth pipeline health check
             responses:
-                "200":
-                    description: HTML documentation page
+                '200':
+                    description: API auth pipeline is available
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/SuccessEnvelope'
     /auth/login:
         post:
-            summary: Login
+            summary: Login and issue tokens
             requestBody:
                 required: true
                 content:
@@ -23,225 +27,353 @@ paths:
                             type: object
                             required: [password]
                             properties:
-                                login: { type: string }
-                                email: { type: string, format: email }
-                                password: { type: string }
+                                login:
+                                    type: string
+                                email:
+                                    type: string
+                                    format: email
+                                password:
+                                    type: string
             responses:
-                "200":
+                '200':
                     description: Access and refresh token pair
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/SuccessEnvelope'
+                '401':
+                    $ref: '#/components/responses/AuthInvalid'
     /auth/register:
         post:
-            summary: Register
+            summary: Register user
             responses:
-                "201":
-                    description: Created
+                '201':
+                    description: User is registered and token pair is issued
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/SuccessEnvelope'
+                '422':
+                    $ref: '#/components/responses/ValidationError'
     /auth/refresh:
         post:
-            summary: Rotate tokens by refresh token
+            summary: Rotate token pair by refresh token
             responses:
-                "200":
+                '200':
                     description: New token pair
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/SuccessEnvelope'
+                '401':
+                    $ref: '#/components/responses/AuthInvalid'
     /auth/me:
         get:
             security:
                 - bearerAuth: []
-            summary: Current user
+            summary: Current authorized user
             responses:
-                "200":
-                    description: User info
-    /auth/logout:
-        post:
-            security:
-                - bearerAuth: []
-            summary: Revoke current refresh session
-            responses:
-                "200":
-                    description: Revoked
+                '200':
+                    description: User profile
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/SuccessEnvelope'
+                '401':
+                    $ref: '#/components/responses/AuthBearerRequired'
     /products:
         get:
             security:
                 - bearerAuth: []
             summary: List products
             parameters:
+                - $ref: '#/components/parameters/Page'
+                - $ref: '#/components/parameters/PerPage'
+                - $ref: '#/components/parameters/SortByProducts'
+                - $ref: '#/components/parameters/SortDir'
+                - $ref: '#/components/parameters/UpdatedSince'
                 - in: query
-                  name: page
-                  schema: { type: integer }
+                    name: q
+                    schema: { type: string }
                 - in: query
-                  name: per_page
-                  schema: { type: integer, maximum: 100 }
-                - in: query
-                  name: q
-                  schema: { type: string }
-                - in: query
-                  name: category_id
-                  schema: { type: integer }
+                    name: category_id
+                    schema: { type: integer }
             responses:
-                "200":
-                    description: Paginated products
-    /products/{id}:
-        get:
-            security:
-                - bearerAuth: []
-            summary: Product details
-            parameters:
-                - in: path
-                  name: id
-                  required: true
-                  schema: { type: integer }
-            responses:
-                "200":
-                    description: Product
-    /operations:
-        get:
-            security:
-                - bearerAuth: []
-            summary: List operations
-            responses:
-                "200":
-                    description: Paginated operations
-        post:
-            security:
-                - bearerAuth: []
-            summary: Create operation
-            responses:
-                "201":
-                    description: Operation created
-    /operations/{id}:
-        get:
-            security:
-                - bearerAuth: []
-            summary: Operation details
-            responses:
-                "200":
-                    description: Operation
-        patch:
-            security:
-                - bearerAuth: []
-            summary: Update operation
-            responses:
-                "200":
-                    description: Operation updated
-        delete:
-            security:
-                - bearerAuth: []
-            summary: Delete operation
-            responses:
-                "200":
-                    description: Operation deleted
-    /documents:
-        get:
-            security:
-                - bearerAuth: []
-            summary: List documents
-            responses:
-                "200":
-                    description: Paginated documents
-        post:
-            security:
-                - bearerAuth: []
-            summary: Create document metadata
-            responses:
-                "201":
-                    description: Document created
-    /documents/{id}:
-        get:
-            security:
-                - bearerAuth: []
-            summary: Document details
-            responses:
-                "200":
-                    description: Document
-        patch:
-            security:
-                - bearerAuth: []
-            summary: Update document metadata
-            responses:
-                "200":
-                    description: Document updated
-        delete:
-            security:
-                - bearerAuth: []
-            summary: Delete document
-            responses:
-                "200":
-                    description: Document deleted
+                '200':
+                    description: Product page
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/SuccessEnvelope'
+                '401':
+                    $ref: '#/components/responses/AuthBearerRequired'
     /categories:
         get:
             security:
                 - bearerAuth: []
             summary: List categories
+            parameters:
+                - $ref: '#/components/parameters/Page'
+                - $ref: '#/components/parameters/PerPage'
+                - $ref: '#/components/parameters/SortByCategories'
+                - $ref: '#/components/parameters/SortDir'
+                - $ref: '#/components/parameters/UpdatedSince'
             responses:
-                "200":
-                    description: Paginated categories
-    /categories/{id}:
+                '200':
+                    description: Category page
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/SuccessEnvelope'
+    /operations:
         get:
             security:
                 - bearerAuth: []
-            summary: Category details
+            summary: List operations
+            parameters:
+                - $ref: '#/components/parameters/Page'
+                - $ref: '#/components/parameters/PerPage'
+                - $ref: '#/components/parameters/SortByOperations'
+                - $ref: '#/components/parameters/SortDir'
+                - $ref: '#/components/parameters/UpdatedSince'
             responses:
-                "200":
-                    description: Category
-    /media/images:
+                '200':
+                    description: Operation page
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/SuccessEnvelope'
         post:
             security:
                 - bearerAuth: []
-            summary: Upload image
-            requestBody:
-                required: true
-                content:
-                    multipart/form-data:
-                        schema:
-                            type: object
-                            required: [file, product_id]
-                            properties:
-                                file:
-                                    type: string
-                                    format: binary
-                                product_id:
-                                    type: integer
+            summary: Create operation (idempotent)
+            parameters:
+                - $ref: '#/components/parameters/ClientRequestId'
             responses:
-                "201":
-                    description: File uploaded
-    /media/documents:
-        post:
+                '201':
+                    description: Operation created
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/SuccessEnvelope'
+    /operations/{id}:
+        patch:
             security:
                 - bearerAuth: []
-            summary: Upload document
-            requestBody:
-                required: true
-                content:
-                    multipart/form-data:
-                        schema:
-                            type: object
-                            required: [file, operation_id]
-                            properties:
-                                file:
-                                    type: string
-                                    format: binary
-                                operation_id:
-                                    type: integer
+            summary: Update operation (idempotent)
+            parameters:
+                - in: path
+                    name: id
+                    required: true
+                    schema: { type: integer }
+                - $ref: '#/components/parameters/ClientRequestId'
             responses:
-                "201":
-                    description: File uploaded
-    /realtime/auth:
-        post:
+                '200':
+                    description: Operation updated
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/SuccessEnvelope'
+        delete:
             security:
                 - bearerAuth: []
-            summary: Authorize private websocket channel
+            summary: Delete operation (idempotent)
+            parameters:
+                - in: path
+                    name: id
+                    required: true
+                    schema: { type: integer }
+                - $ref: '#/components/parameters/ClientRequestId'
             responses:
-                "200":
-                    description: Channel authorization payload
-    /realtime/health:
+                '200':
+                    description: Operation deleted
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/SuccessEnvelope'
+    /documents:
         get:
             security:
                 - bearerAuth: []
-            summary: Realtime integration health
+            summary: List documents
+            parameters:
+                - $ref: '#/components/parameters/Page'
+                - $ref: '#/components/parameters/PerPage'
+                - $ref: '#/components/parameters/SortByDocuments'
+                - $ref: '#/components/parameters/SortDir'
+                - $ref: '#/components/parameters/UpdatedSince'
             responses:
-                "200":
-                    description: Realtime setup status
+                '200':
+                    description: Document page
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/SuccessEnvelope'
+        post:
+            security:
+                - bearerAuth: []
+            summary: Create document (idempotent)
+            parameters:
+                - $ref: '#/components/parameters/ClientRequestId'
+            responses:
+                '201':
+                    description: Document created
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/SuccessEnvelope'
+    /history:
+        get:
+            security:
+                - bearerAuth: []
+            summary: Product operation history for mobile timeline
+            description: Returns history items and `meta.filters` (`types`, `counteragents`, `years`) for filter UI prefill.
+            parameters:
+                - $ref: '#/components/parameters/Page'
+                - $ref: '#/components/parameters/PerPage'
+                - $ref: '#/components/parameters/SortByHistory'
+                - $ref: '#/components/parameters/SortDir'
+                - $ref: '#/components/parameters/UpdatedSince'
+                - in: query
+                    name: slug
+                    schema: { type: string }
+                - in: query
+                    name: type_id
+                    schema: { type: integer }
+                - in: query
+                    name: counteragent
+                    schema: { type: string }
+                - in: query
+                    name: year
+                    schema: { type: integer }
+            responses:
+                '200':
+                    description: History page
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/SuccessEnvelope'
+                '401':
+                    $ref: '#/components/responses/AuthBearerRequired'
 components:
     securitySchemes:
         bearerAuth:
             type: http
             scheme: bearer
             bearerFormat: JWT
+    parameters:
+        Page:
+            in: query
+            name: page
+            schema: { type: integer, minimum: 1, default: 1 }
+        PerPage:
+            in: query
+            name: per_page
+            schema: { type: integer, minimum: 1, maximum: 100, default: 20 }
+        SortDir:
+            in: query
+            name: sort_dir
+            schema: { type: string, enum: [asc, desc], default: desc }
+        UpdatedSince:
+            in: query
+            name: updated_since
+            description: Exclusive sync cursor. ISO 8601 UTC timestamp.
+            schema: { type: string, format: date-time }
+        SortByProducts:
+            in: query
+            name: sort_by
+            schema: { type: string, enum: [id, name, inv_number, price, updated_at] }
+        SortByCategories:
+            in: query
+            name: sort_by
+            schema: { type: string, enum: [id, name, updated_at] }
+        SortByOperations:
+            in: query
+            name: sort_by
+            schema: { type: string, enum: [id, created_at, updated_at, type_id] }
+        SortByDocuments:
+            in: query
+            name: sort_by
+            schema: { type: string, enum: [id, doc_date, updated_at, operation_id] }
+        SortByHistory:
+            in: query
+            name: sort_by
+            schema: { type: string, enum: [id, doc_date, updated_at, quantity, sum] }
+        ClientRequestId:
+            in: header
+            name: X-Client-Request-Id
+            required: false
+            description: Idempotency key for write requests.
+            schema: { type: string, maxLength: 128 }
+    responses:
+        AuthBearerRequired:
+            description: Missing bearer token
+            content:
+                application/json:
+                    schema:
+                        $ref: '#/components/schemas/ErrorEnvelope'
+        AuthInvalid:
+            description: Invalid or expired token
+            content:
+                application/json:
+                    schema:
+                        $ref: '#/components/schemas/ErrorEnvelope'
+        ValidationError:
+            description: Validation error
+            content:
+                application/json:
+                    schema:
+                        $ref: '#/components/schemas/ErrorEnvelope'
+    schemas:
+        SuccessEnvelope:
+            type: object
+            required: [success, data, meta, error]
+            properties:
+                success:
+                    type: boolean
+                    enum: [true]
+                data: {}
+                meta:
+                    type: object
+                    additionalProperties: true
+                    properties:
+                        request_id:
+                            type: string
+                error:
+                    nullable: true
+                    type: object
+        ErrorEnvelope:
+            type: object
+            required: [success, data, meta, error]
+            properties:
+                success:
+                    type: boolean
+                    enum: [false]
+                data:
+                    nullable: true
+                meta:
+                    type: object
+                    additionalProperties: true
+                    properties:
+                        request_id:
+                            type: string
+                error:
+                    type: object
+                    required: [code, message, details]
+                    properties:
+                        code:
+                            type: string
+                            enum:
+                                - AUTH_BEARER_REQUIRED
+                                - AUTH_TOKEN_INVALID
+                                - AUTH_TOKEN_EXPIRED
+                                - AUTH_FORBIDDEN
+                                - VALIDATION_ERROR
+                                - RATE_LIMITED
+                                - SERVER_ERROR
+                                - RESOURCE_UNAVAILABLE
+                        message:
+                            type: string
+                        details:
+                            type: object
+                            additionalProperties: true

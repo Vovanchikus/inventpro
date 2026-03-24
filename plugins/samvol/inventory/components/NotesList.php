@@ -33,6 +33,13 @@ class NotesList extends ComponentBase
 
     public function onRun()
     {
+        $organizationId = $this->organizationId();
+        if ($organizationId <= 0) {
+            $this->page['notes'] = [];
+            $this->page['note'] = null;
+            return;
+        }
+
         $noteId = $this->property('noteId');
         if ($noteId) {
             $note = Note::with([
@@ -41,7 +48,7 @@ class NotesList extends ComponentBase
                 'operations.documents',
                 'operations.documents.doc_file',
                 'operations.type'
-            ])->where('id', $noteId)->first();
+            ])->where('id', $noteId)->where('organization_id', $organizationId)->first();
 
             $normalized = $note ? $this->normalizeNotes(collect([$note])) : [];
             if (!empty($normalized[0])) {
@@ -58,7 +65,7 @@ class NotesList extends ComponentBase
             'operations.documents',
             'operations.documents.doc_file',
             'operations.type'
-        ])->orderBy('due_date', 'asc')->get();
+        ])->where('organization_id', $organizationId)->orderBy('due_date', 'asc')->get();
         $this->notes = $raw;
         // Normalize notes for page consumption (ensure products array shape)
         $this->page['notes'] = $this->normalizeNotes($raw);
@@ -66,6 +73,11 @@ class NotesList extends ComponentBase
 
     public function onListNotes()
     {
+        $organizationId = $this->organizationId();
+        if ($organizationId <= 0) {
+            return ['notes' => [], 'notesHtml' => null, 'notesGridHtml' => null];
+        }
+
         try {
             \Log::info('[samvol] onListNotes: start', [
                 'ip' => request()->ip(),
@@ -82,7 +94,7 @@ class NotesList extends ComponentBase
             'operations.documents',
             'operations.documents.doc_file',
             'operations.type'
-        ])->orderBy('due_date', 'asc')->get();
+        ])->where('organization_id', $organizationId)->orderBy('due_date', 'asc')->get();
         $notes = $this->normalizeNotes($raw);
 
             // Также возвращаем отрендеренный HTML партиал (Twig) для модалки
@@ -118,6 +130,11 @@ class NotesList extends ComponentBase
     {
         $noteId = post('note_id');
         $products = post('products');
+        $organizationId = $this->organizationId();
+
+        if ($organizationId <= 0) {
+            return ['error' => 'organization_id is required'];
+        }
 
         try {
             \Log::info('[samvol] onAddProductsToNote: start', [
@@ -150,7 +167,7 @@ class NotesList extends ComponentBase
         try {
             DB::beginTransaction();
 
-            $note = Note::find($noteId);
+            $note = Note::query()->where('id', $noteId)->where('organization_id', $organizationId)->first();
             if (!$note) throw new \Exception('Note not found');
 
 
@@ -177,13 +194,14 @@ class NotesList extends ComponentBase
             foreach ($normalized as $inv => $p) {
                 try {
                     $product = Product::firstOrCreate(
-                        ['inv_number' => $inv],
+                        ['inv_number' => $inv, 'organization_id' => $organizationId],
                         ['name' => $p['name'] ?? null, 'unit' => $p['unit'] ?? null, 'price' => $p['price'] ?? null]
                     );
                     $pid = $product->id;
                     $qty = isset($p['quantity']) ? floatval($p['quantity']) : 0;
                     $price = isset($p['price']) ? floatval($p['price']) : null;
                     $sync[$pid] = [
+                        'organization_id' => $organizationId,
                         'quantity' => $qty,
                         'sum' => $price !== null ? round($qty * $price, 2) : null,
                         'counteragent' => null,
@@ -276,7 +294,7 @@ class NotesList extends ComponentBase
             \Log::warning('[samvol] toggle accounting: lock failed - ' . $e->getMessage());
         }
 
-        $operation = Operation::find($operationId);
+        $operation = Operation::query()->where('id', $operationId)->where('organization_id', $this->organizationId())->first();
         if (!$operation) {
             return ['toast' => ['message' => 'Операция не найдена', 'type' => 'error']];
         }
@@ -321,7 +339,7 @@ class NotesList extends ComponentBase
                 'operations.documents',
                 'operations.documents.doc_file',
                 'operations.type'
-            ])->where('id', $noteId)->first();
+            ])->where('id', $noteId)->where('organization_id', $this->organizationId())->first();
 
             $normalized = $note ? $this->normalizeNotes(collect([$note])) : [];
             $noteView = $normalized[0] ?? null;
@@ -726,5 +744,11 @@ class NotesList extends ComponentBase
                 'create_operation_url' => '/add-operation?note_id=' . $n->id,
             ];
         })->toArray();
+    }
+
+    protected function organizationId(): int
+    {
+        $user = \Auth::getUser();
+        return (int) ($user->organization_id ?? 0);
     }
 }

@@ -61,6 +61,10 @@ class CreateNote extends ComponentBase
     public function onCreateNote()
     {
         $data = post();
+        $organizationId = $this->organizationId();
+        if ($organizationId <= 0) {
+            return ['toast' => ['message' => 'Організація користувача не визначена', 'type' => 'error']];
+        }
 
         try {
             Log::info('[samvol] onCreateNote: start', [
@@ -115,13 +119,14 @@ class CreateNote extends ComponentBase
         try {
             // Создаём или обновляем заметку. Не создаём автоматически черновую операцию.
             if (!empty($data['note_id'])) {
-                $note = Note::find($data['note_id']);
+                $note = Note::query()->where('id', $data['note_id'])->where('organization_id', $organizationId)->first();
                 if (!$note) throw new \Exception('Заметка не найдена');
                 $note->title = $data['title'] ?? $note->title;
                 $note->description = $data['description'] ?? $note->description;
                 $note->due_date = $data['due_date'] ?? $note->due_date;
             } else {
                 $note = new Note();
+                $note->organization_id = $organizationId;
                 $note->title = $data['title'] ?? null;
                 $note->description = $data['description'] ?? null;
                 $note->due_date = $data['due_date'] ?? null;
@@ -189,6 +194,7 @@ class CreateNote extends ComponentBase
                     }
 
                     $syncData[$pidKey] = [
+                        'organization_id' => $organizationId,
                         'quantity' => is_numeric($quantity) ? floatval($quantity) : 0,
                         'sum' => is_numeric($sum) ? floatval($sum) : ($sum === null ? null : (string)$sum),
                         'counteragent' => $counteragent,
@@ -229,5 +235,11 @@ class CreateNote extends ComponentBase
             } catch (\Exception $_) {}
             return ['toast' => ['message' => 'Ошибка: '.$e->getMessage(), 'type' => 'error']];
         }
+    }
+
+    protected function organizationId(): int
+    {
+        $user = \Auth::getUser();
+        return (int) ($user->organization_id ?? 0);
     }
 }

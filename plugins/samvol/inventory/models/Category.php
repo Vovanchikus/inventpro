@@ -12,12 +12,16 @@ class Category extends Model
     use \Winter\Storm\Database\Traits\NestedTree;
     use \Winter\Storm\Database\Traits\Sluggable;
 
-    public $fillable = ['name', 'parent_id'];
+    public $fillable = ['name', 'parent_id', 'organization_id'];
 
     protected $dates = ['deleted_at'];
     protected $slugs = ['slug' => 'name'];
 
     public $table = 'samvol_inventory_categories';
+
+    public $belongsTo = [
+        'organization' => ['Samvol\\Inventory\\Models\\Organization', 'key' => 'organization_id'],
+    ];
 
     public function getParentCategoryNameAttribute()
     {

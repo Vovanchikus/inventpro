@@ -23,11 +23,25 @@ class OperationInfo extends ComponentBase
     }
 
     public function onRun() {
+        $organizationId = $this->organizationId();
+        if ($organizationId <= 0) {
+            $this->page['operations'] = collect();
+            $this->page['status'] = get('status') ?: 'final';
+            $this->page['draftCount'] = 0;
+            $this->page['finalCount'] = 0;
+            $this->page['types'] = collect();
+            $this->page['counteragents'] = collect();
+            $this->page['years'] = collect();
+            $this->page['operation_item'] = null;
+            return;
+        }
+
         $slug = $this->param('slug');
 
         if ($slug) {
             $this->operation_item = Operation::with(['products', 'documents', 'documents.doc_file', 'type', 'note'])
                 ->where('slug', $slug)
+                ->where('organization_id', $organizationId)
                 ->first();
             $this->page['operation_item'] = $this->operation_item;
 
@@ -76,6 +90,7 @@ class OperationInfo extends ComponentBase
                 'note:id,title',
             ])
             ->withCount('products')
+            ->where('samvol_inventory_operations.organization_id', $organizationId)
             ->whereIn('type_id', [1,2,3]);
 
         if ($status === 'draft') {
@@ -123,10 +138,12 @@ class OperationInfo extends ComponentBase
         $this->page['status'] = $status;
 
         $this->page['draftCount'] = Operation::whereIn('type_id', [1,2,3])
+            ->where('organization_id', $organizationId)
             ->where('is_draft', true)
             ->count();
 
         $this->page['finalCount'] = Operation::whereIn('type_id', [1,2,3])
+            ->where('organization_id', $organizationId)
             ->where('is_draft', false)
             ->whereHas('documents', function($q){
                 $q->whereHas('doc_file');
@@ -136,6 +153,7 @@ class OperationInfo extends ComponentBase
         $this->page['types'] = OperationType::whereIn('id', [1,2,3])->get();
 
         $counteragentsQuery = OperationProduct::whereNotNull('counteragent')
+            ->where('organization_id', $organizationId)
             ->whereHas('operation', function ($q) use ($status) {
                 $q->whereIn('type_id', [1,2,3]);
 
@@ -154,6 +172,7 @@ class OperationInfo extends ComponentBase
             ->pluck('counteragent');
 
         $this->page['years'] = Document::whereNotNull('doc_date')
+            ->where('organization_id', $organizationId)
             ->selectRaw('YEAR(doc_date) as year')
             ->distinct()
             ->orderByDesc('year')
@@ -168,7 +187,7 @@ class OperationInfo extends ComponentBase
 
         $hasAccess = $user && (
             OrganizationAccess::isOrganizationAdmin($user)
-            || (method_exists($user, 'isInGroup') && $user->isInGroup('admin'))
+            || OrganizationAccess::isProjectAdmin($user)
         );
 
         if (!$hasAccess) {
@@ -187,7 +206,10 @@ class OperationInfo extends ComponentBase
             ];
         }
 
-        $operation = Operation::with(['products', 'documents'])->find($id);
+        $operation = Operation::with(['products', 'documents'])
+            ->where('id', $id)
+            ->where('organization_id', $this->organizationId())
+            ->first();
         if (!$operation || !$operation->is_draft) {
             return [
                 'toast' => [
@@ -231,5 +253,11 @@ class OperationInfo extends ComponentBase
     public function defineProperties()
     {
         return [];
+    }
+
+    protected function organizationId(): int
+    {
+        $user = \Auth::getUser();
+        return (int) ($user->organization_id ?? 0);
     }
 }

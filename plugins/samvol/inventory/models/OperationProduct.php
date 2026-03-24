@@ -5,11 +5,12 @@ use Winter\Storm\Database\Pivot;
 class OperationProduct extends Pivot
 {
     use \Winter\Storm\Database\Traits\Validation;
+    use \Samvol\Inventory\Classes\Concerns\HasOrganizationScope;
 
     public $table = 'samvol_inventory_operation_products';
     public $timestamps = false;
 
-    protected $fillable = ['quantity', 'sum', 'counteragent'];
+    protected $fillable = ['organization_id', 'quantity', 'sum', 'counteragent'];
 
     public $belongsTo = [
         'product' => ['Samvol\Inventory\Models\Product'],

@@ -29,9 +29,17 @@ class QrProductCode extends ComponentBase
     public function onRun()
     {
         $slug = $this->property('slug'); // здесь inv_number из URL
+        $user = \Auth::getUser();
+        $organizationId = (int) ($user->organization_id ?? 0);
+        if ($organizationId <= 0) {
+            $this->page['qrCode'] = null;
+            return;
+        }
 
         // Ищем товар по inv_number
-        $product = Product::where('inv_number', $slug)->first();
+        $product = Product::where('inv_number', $slug)
+            ->where('organization_id', $organizationId)
+            ->first();
 
         if (!$product) {
             $this->page['qrCode'] = null;

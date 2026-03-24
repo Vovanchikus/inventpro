@@ -32,6 +32,16 @@ class History extends ComponentBase
 
     public function onRun()
     {
+        $organizationId = $this->organizationId();
+        if ($organizationId <= 0) {
+            $this->page['histories'] = collect();
+            $this->page['filteredCount'] = 0;
+            $this->page['types'] = collect();
+            $this->page['counteragents'] = collect();
+            $this->page['years'] = collect();
+            return;
+        }
+
         /*
          |-------------------------------------------------------
          | 1. Товар (ЕСЛИ есть slug)
@@ -40,7 +50,9 @@ class History extends ComponentBase
         $product = null;
 
         if ($this->property('slug')) {
-            $product = Product::where('slug', $this->property('slug'))->first();
+            $product = Product::where('slug', $this->property('slug'))
+                ->where('organization_id', $organizationId)
+                ->first();
         }
 
         $this->page['product'] = $product;
@@ -78,6 +90,7 @@ class History extends ComponentBase
             'operation:id,type_id',
             'operation.type:id,name',
         ])
+        ->where('samvol_inventory_operation_products.organization_id', $organizationId)
         ->whereDoesntHave('operation', function ($q) {
             $q->whereIn('type_id', [6, 7]);
         });
@@ -139,7 +152,8 @@ class History extends ComponentBase
          | 9. Контрагенты
          |-------------------------------------------------------
          */
-        $counteragentsQuery = OperationProduct::whereNotNull('counteragent');
+        $counteragentsQuery = OperationProduct::whereNotNull('counteragent')
+            ->where('organization_id', $organizationId);
 
         if ($product) {
             $counteragentsQuery->where('product_id', $product->id);
@@ -155,9 +169,16 @@ class History extends ComponentBase
          |-------------------------------------------------------
          */
         $this->page['years'] = Document::whereNotNull('doc_date')
+            ->where('organization_id', $organizationId)
             ->selectRaw('YEAR(doc_date) as year')
             ->distinct()
             ->orderByDesc('year')
             ->pluck('year');
+    }
+
+    protected function organizationId(): int
+    {
+        $user = \Auth::getUser();
+        return (int) ($user->organization_id ?? 0);
     }
 }

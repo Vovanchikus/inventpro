@@ -1,4 +1,4 @@
-1772667525a:1:{s:19:"global/main-box.htm";a:5:{s:8:"fileName";s:19:"global/main-box.htm";s:7:"content";s:20416:"<div class="main-box box--light">
+1774350211a:1:{s:19:"global/main-box.htm";a:5:{s:8:"fileName";s:19:"global/main-box.htm";s:7:"content";s:20416:"<div class="main-box box--light">
 
 {% if this.page.url == '/warehouse' %}
 

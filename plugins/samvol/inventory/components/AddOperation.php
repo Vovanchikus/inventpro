@@ -36,10 +36,12 @@ class AddOperation extends ComponentBase
 
     public function onRun()
     {
+        $organizationId = $this->organizationId();
         $operationId = input('operation_id');
         $this->page['operation_id'] = $operationId;
         if ($operationId) {
-            $operation = Operation::with(['note.products', 'products', 'documents'])->find($operationId);
+            $operationQuery = Operation::with(['note.products', 'products', 'documents'])->where('id', $operationId);
+            $operation = $this->constrainByOrganization($operationQuery)->first();
             if ($operation) {
                 $prefill = [];
                 $noteId = $operation->note_id;
@@ -200,7 +202,10 @@ class AddOperation extends ComponentBase
         // Если пришёл note_id в URL, передадим товары из заметки в страницу (не создавая операцию)
         $noteId = input('note_id') ?: session('note_id');
         if ($noteId) {
-            $note = \Samvol\Inventory\Models\Note::find($noteId);
+            $note = \Samvol\Inventory\Models\Note::query()
+                ->where('id', $noteId)
+                ->where('organization_id', $organizationId)
+                ->first();
             if ($note) {
                 $prefill = [];
 
@@ -313,6 +318,7 @@ class AddOperation extends ComponentBase
 
         // Ищем товары, у которых inv_number начинается с $q
         $product = Product::where('inv_number', 'LIKE', "$q%")
+            ->where('organization_id', $this->organizationId())
             ->orderBy('inv_number')
             ->first(['name', 'inv_number', 'unit', 'price']); // <- только первый результат
 
@@ -600,7 +606,9 @@ class AddOperation extends ComponentBase
             // --- Проверка остатка ---
             if (in_array($operationTypeName, ['расход', 'передача', 'списание'])) {
 
-                $product = Product::where('inv_number', $inv_number)->first();
+                $product = Product::where('inv_number', $inv_number)
+                    ->where('organization_id', $this->organizationId())
+                    ->first();
                 $currentQty = $product->calculated_quantity ?? 0;
 
                 if (is_numeric($quantity_raw) && floatval($quantity_raw) > $currentQty) {
@@ -643,7 +651,9 @@ class AddOperation extends ComponentBase
             DB::beginTransaction();
 
             $operationId = $data['operation_id'] ?? null;
-            $operation = $operationId ? Operation::with(['products', 'documents'])->find($operationId) : new Operation();
+            $operation = $operationId
+                ? $this->constrainByOrganization(Operation::with(['products', 'documents'])->where('id', $operationId))->first()
+                : new Operation();
             if ($operationId && !$operation) {
                 return [
                     'toast' => [
@@ -656,6 +666,7 @@ class AddOperation extends ComponentBase
             }
 
             $operation->type_id = $data['type_id'];
+            $operation->organization_id = $this->organizationId();
 
             $hasExistingFiles = false;
             if ($operationId) {
@@ -707,6 +718,7 @@ class AddOperation extends ComponentBase
                     $uploadedFile = $files[$i] ?? null;
 
                     $document = $operation->documents()->create([
+                        'organization_id' => (int) $operation->organization_id,
                         'doc_name' => $docName,
                         'doc_num'  => $data['doc_num'][$i] ?? '',
                         'doc_purpose' => $data['doc_purpose'][$i] ?? null,
@@ -734,7 +746,7 @@ class AddOperation extends ComponentBase
                     $quantity   = floatval($this->normalizeNumericInput($data['quantity'][$i] ?? null));
 
                     $product = Product::firstOrCreate(
-                        ['inv_number' => $inv_number],
+                        ['inv_number' => $inv_number, 'organization_id' => $this->organizationId()],
                         ['name' => $name, 'unit' => $unit, 'price' => $price]
                     );
 
@@ -742,6 +754,7 @@ class AddOperation extends ComponentBase
 
                     // Привязываем товары
                     $operation->products()->attach($product->id, [
+                        'organization_id' => (int) ($operation->organization_id ?? 0) ?: null,
                         'quantity'     => $quantity,
                         'sum'          => $pivotSum,
                         'counteragent' => $operationCounteragent
@@ -750,7 +763,10 @@ class AddOperation extends ComponentBase
             } else {
                 // Для черновой операции не трогаем pivot — вместо этого обновим товары в заметке (если она есть)
                 if (!empty($operation->note_id) && !empty($data['name']) && is_array($data['name'])) {
-                    $note = \Samvol\Inventory\Models\Note::find($operation->note_id);
+                    $note = \Samvol\Inventory\Models\Note::query()
+                        ->where('id', $operation->note_id)
+                        ->where('organization_id', $this->organizationId())
+                        ->first();
                     if ($note) {
                         // Build sync payload: ensure products exist and map by product ID
                         $sync = [];
@@ -759,13 +775,14 @@ class AddOperation extends ComponentBase
                             if (!$inv) continue;
                             try {
                                 $product = Product::firstOrCreate(
-                                    ['inv_number' => $inv],
+                                    ['inv_number' => $inv, 'organization_id' => $this->organizationId()],
                                     ['name' => $name, 'unit' => $data['unit'][$i] ?? null, 'price' => isset($data['price'][$i]) ? floatval($this->normalizeNumericInput($data['price'][$i])) : null]
                                 );
                                 $pid = $product->id;
                                 $qty = isset($data['quantity'][$i]) ? floatval($this->normalizeNumericInput($data['quantity'][$i])) : 0;
                                 $price = isset($data['price'][$i]) ? floatval($this->normalizeNumericInput($data['price'][$i])) : null;
                                 $sync[$pid] = [
+                                    'organization_id' => (int) ($operation->organization_id ?? 0) ?: null,
                                     'quantity' => $qty,
                                     'sum' => $price !== null ? round($qty * $price, 2) : null,
                                     'counteragent' => $operationCounteragent,
@@ -816,7 +833,10 @@ class AddOperation extends ComponentBase
                 }
 
                 if (!empty($operation->note_id)) {
-                    $note = \Samvol\Inventory\Models\Note::find($operation->note_id);
+                    $note = \Samvol\Inventory\Models\Note::query()
+                        ->where('id', $operation->note_id)
+                        ->where('organization_id', $this->organizationId())
+                        ->first();
                     if ($note) {
                         $note->status = 'document_prepared';
                         $note->save();
@@ -840,7 +860,10 @@ class AddOperation extends ComponentBase
 
             // Если операция финальная — вызовем recalcStatus у заметки
             if (!empty($operation->note_id)) {
-                $note = \Samvol\Inventory\Models\Note::find($operation->note_id);
+                $note = \Samvol\Inventory\Models\Note::query()
+                    ->where('id', $operation->note_id)
+                    ->where('organization_id', $this->organizationId())
+                    ->first();
                 if ($note) $note->recalcStatus();
             }
 
@@ -881,8 +904,12 @@ class AddOperation extends ComponentBase
 
         $q = mb_strtolower($query);
 
-        $products = Product::whereRaw('LOWER(name) LIKE ?', ["%{$q}%"])
-            ->orWhereRaw('LOWER(inv_number) LIKE ?', ["%{$q}%"])
+        $products = Product::query()
+            ->where('organization_id', $this->organizationId())
+            ->where(function ($builder) use ($q) {
+                $builder->whereRaw('LOWER(name) LIKE ?', ["%{$q}%"])
+                    ->orWhereRaw('LOWER(inv_number) LIKE ?', ["%{$q}%"]);
+            })
             ->limit(20)
             ->get(['id','name','inv_number','unit','price']);
 
@@ -927,7 +954,9 @@ class AddOperation extends ComponentBase
 
         $documents = [];
         if ($operationId > 0) {
-            $operation = Operation::with(['documents'])->find($operationId);
+            $operation = $this->constrainByOrganization(
+                Operation::with(['documents'])->where('id', $operationId)
+            )->first();
             if ($operation && $operation->documents) {
                 foreach ($operation->documents as $document) {
                     $docName = trim((string)($document->doc_name ?? ''));
@@ -993,31 +1022,20 @@ class AddOperation extends ComponentBase
             return true;
         }
 
-        try {
-            if (method_exists($user, 'isInGroup') && $user->isInGroup('admin')) {
-                return true;
-            }
-        } catch (\Throwable $e) {
-        }
+        return OrganizationAccess::isProjectAdmin($user);
+    }
 
-        try {
-            if (method_exists($user, 'groups') && $user->groups()->where('code', 'admin')->exists()) {
-                return true;
-            }
-        } catch (\Throwable $e) {
-        }
+    protected function organizationId(): int
+    {
+        $user = $this->resolveCurrentUser();
+        return (int) ($user->organization_id ?? 0);
+    }
 
-        if (property_exists($user, 'is_superuser') && (bool)$user->is_superuser === true) {
-            return true;
-        }
-
-        try {
-            if (method_exists($user, 'hasAccess') && $user->hasAccess('samvol.inventory.*')) {
-                return true;
-            }
-        } catch (\Throwable $e) {
-        }
-
-        return false;
+    protected function constrainByOrganization($query, string $column = 'organization_id')
+    {
+        $organizationId = $this->organizationId();
+        return $organizationId > 0
+            ? $query->where($column, $organizationId)
+            : $query->whereRaw('1 = 0');
     }
 }

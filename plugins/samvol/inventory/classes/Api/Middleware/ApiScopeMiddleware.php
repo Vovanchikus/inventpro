@@ -1,6 +1,7 @@
 <?php namespace Samvol\Inventory\Classes\Api\Middleware;
 
 use Closure;
+use Samvol\Inventory\Classes\Api\ApiResponse;
 
 class ApiScopeMiddleware
 {
@@ -10,10 +11,7 @@ class ApiScopeMiddleware
         $scopes = (array) ($payload['scopes'] ?? []);
 
         if (!in_array($requiredScope, $scopes, true) && !in_array('*', $scopes, true)) {
-            return response()->json([
-                'success' => false,
-                'error' => 'Insufficient API scope',
-            ], 403);
+            return ApiResponse::error($request, 'AUTH_FORBIDDEN', 'Insufficient API scope', 403);
         }
 
         return $next($request);

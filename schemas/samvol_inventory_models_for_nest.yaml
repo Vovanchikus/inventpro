@@ -1,0 +1,244 @@
+# Samvol Inventory — schema for NestJS generation
+# Use this file to generate TypeORM entities/controllers/services in Nest.
+# Types: int, string, text, decimal, bool, datetime, date, json
+
+Product:
+    table: samvol_inventory_products
+    fields:
+        id: { type: int, pk: true }
+        organization_id:
+            { type: int, fk: Organization.id, nullable: false, index: true }
+        category_id: { type: int, fk: Category.id, nullable: true, index: true }
+        name: { type: string }
+        quantity: { type: decimal, precision: 14, scale: 4, nullable: true }
+        unit: { type: string, nullable: true }
+        inv_number: { type: string, nullable: true, index: true }
+        price: { type: decimal, precision: 14, scale: 2, nullable: true }
+        mobile_summary: { type: text, nullable: true }
+        external_id: { type: string, nullable: true, index: true }
+        slug: { type: string, nullable: true }
+        created_at: { type: datetime }
+        updated_at: { type: datetime }
+    json_fields: []
+    soft_delete: false
+    relations:
+        category: { type: ManyToOne, target: Category, fk: category_id }
+        organization:
+            { type: ManyToOne, target: Organization, fk: organization_id }
+        operations:
+            {
+                type: ManyToMany,
+                target: Operation,
+                through: OperationProduct,
+                pivot_fields: [quantity, sum, counteragent],
+                pivot_table: samvol_inventory_operation_products,
+            }
+
+Category:
+    table: samvol_inventory_categories
+    fields:
+        id: { type: int, pk: true }
+        name: { type: string }
+        parent_id: { type: int, fk: Category.id, nullable: true, index: true }
+        organization_id: { type: int, fk: Organization.id, nullable: true }
+        slug: { type: string, nullable: true }
+        created_at: { type: datetime }
+        updated_at: { type: datetime }
+        deleted_at: { type: datetime, nullable: true }
+    json_fields: []
+    soft_delete: true
+    relations:
+        parent: { type: ManyToOne, target: Category, fk: parent_id }
+        children: { type: OneToMany, target: Category, fk: parent_id }
+        organization:
+            { type: ManyToOne, target: Organization, fk: organization_id }
+
+Organization:
+    table: samvol_inventory_organizations
+    fields:
+        id: { type: int, pk: true }
+        name: { type: string }
+        code: { type: string, nullable: true }
+        is_active: { type: bool, default: true }
+        created_at: { type: datetime }
+        updated_at: { type: datetime }
+    relations:
+        users: { type: OneToMany, target: User, fk: organization_id }
+
+OperationType:
+    table: samvol_inventory_operation_types
+    fields:
+        id: { type: int, pk: true }
+        name: { type: string }
+    timestamps: false
+    relations:
+        operations: { type: OneToMany, target: Operation, fk: type_id }
+
+Operation:
+    table: samvol_inventory_operations
+    fields:
+        id: { type: int, pk: true }
+        type_id: { type: int, fk: OperationType.id }
+        note_id: { type: int, fk: Note.id, nullable: true }
+        is_draft: { type: bool, default: false }
+        is_posted: { type: bool, default: false }
+        draft_products: { type: json, nullable: true }
+        mobile_note: { type: text, nullable: true }
+        external_id: { type: string, nullable: true }
+        organization_id: { type: int, fk: Organization.id }
+        prepared_at: { type: datetime, nullable: true }
+        accounting_at: { type: datetime, nullable: true }
+        completed_at: { type: datetime, nullable: true }
+        slug: { type: string, nullable: true }
+        created_at: { type: datetime }
+        updated_at: { type: datetime }
+    json_fields: [draft_products]
+    relations:
+        type: { type: ManyToOne, target: OperationType, fk: type_id }
+        note: { type: ManyToOne, target: Note, fk: note_id }
+        organization:
+            { type: ManyToOne, target: Organization, fk: organization_id }
+        products:
+            {
+                type: ManyToMany,
+                target: Product,
+                through: OperationProduct,
+                pivot_fields: [quantity, sum, counteragent],
+                pivot_table: samvol_inventory_operation_products,
+            }
+        documents: { type: OneToMany, target: Document, fk: operation_id }
+        workflowNotes:
+            { type: OneToMany, target: WorkflowNoteOperation, fk: operation_id }
+
+OperationProduct: # pivot model (operation_products)
+    table: samvol_inventory_operation_products
+    pivot: true
+    timestamps: false
+    fields:
+        id: { type: int, pk: true }
+        operation_id: { type: int, fk: Operation.id }
+        product_id: { type: int, fk: Product.id }
+        organization_id: { type: int, fk: Organization.id, nullable: true }
+        quantity: { type: decimal, precision: 14, scale: 4 }
+        sum: { type: decimal, precision: 14, scale: 2 }
+        counteragent: { type: string, nullable: true }
+    relations:
+        product: { type: ManyToOne, target: Product, fk: product_id }
+        operation: { type: ManyToOne, target: Operation, fk: operation_id }
+
+Note:
+    table: samvol_inventory_notes
+    fields:
+        id: { type: int, pk: true }
+        organization_id: { type: int, fk: Organization.id }
+        title: { type: string }
+        description: { type: text, nullable: true }
+        due_date: { type: date, nullable: true }
+        status: { type: string, default: "new" }
+        created_at: { type: datetime }
+        updated_at: { type: datetime }
+    relations:
+        products:
+            {
+                type: ManyToMany,
+                target: Product,
+                pivot_table: samvol_inventory_note_products,
+                pivot_fields: [organization_id, quantity, sum, counteragent],
+                timestamps: true,
+            }
+        organization:
+            { type: ManyToOne, target: Organization, fk: organization_id }
+        operations: { type: OneToMany, target: Operation, fk: note_id }
+
+NoteProduct: # pivot table for notes and products
+    table: samvol_inventory_note_products
+    pivot: true
+    timestamps: true
+    fields:
+        id: { type: int, pk: true }
+        note_id: { type: int, fk: Note.id }
+        product_id: { type: int, fk: Product.id }
+        organization_id: { type: int, fk: Organization.id, nullable: true }
+        quantity: { type: decimal, precision: 14, scale: 4 }
+        sum: { type: decimal, precision: 14, scale: 2 }
+        counteragent: { type: string, nullable: true }
+
+Document:
+    table: samvol_inventory_documents
+    fields:
+        id: { type: int, pk: true }
+        operation_id: { type: int, fk: Operation.id }
+        doc_name: { type: string, nullable: true }
+        doc_num: { type: string, nullable: true }
+        doc_date: { type: date, nullable: true }
+        doc_purpose: { type: text, nullable: true }
+        mime_type: { type: string, nullable: true }
+        file_size: { type: int, nullable: true }
+        organization_id: { type: int, fk: Organization.id, nullable: true }
+        created_at: { type: datetime }
+        updated_at: { type: datetime }
+    relations:
+        operation: { type: ManyToOne, target: Operation, fk: operation_id }
+        organization:
+            { type: ManyToOne, target: Organization, fk: organization_id }
+
+ApiRefreshToken:
+    table: samvol_inventory_api_refresh_tokens
+    fields:
+        id: { type: int, pk: true }
+        user_id: { type: int, fk: User.id }
+        token_id: { type: string }
+        token_hash: { type: string }
+        expires_at: { type: datetime }
+        revoked_at: { type: datetime, nullable: true }
+        replaced_by_token_id: { type: string, nullable: true }
+        user_agent: { type: string, nullable: true }
+        ip_address: { type: string, nullable: true }
+        created_at: { type: datetime }
+        updated_at: { type: datetime }
+    relations:
+        user: { type: ManyToOne, target: User, fk: user_id }
+
+DocTemplateSetting:
+    table: samvol_inventory_doc_template_settings
+    fields:
+        id: { type: int, pk: true }
+        organization_id: { type: int, fk: Organization.id }
+        scope_key: { type: string }
+        key: { type: string }
+        value: { type: text, nullable: true }
+        created_at: { type: datetime }
+        updated_at: { type: datetime }
+
+DocTemplatePerson:
+    table: samvol_inventory_doc_template_people
+    fields:
+        id: { type: int, pk: true }
+        organization_id: { type: int, fk: Organization.id }
+        scope_key: { type: string }
+        role_key: { type: string }
+        name: { type: string }
+        position: { type: string, nullable: true }
+        sort_order: { type: int, nullable: true }
+        created_at: { type: datetime }
+        updated_at: { type: datetime }
+
+WorkflowNoteOperation:
+    table: samvol_inventory_workflow_note_operation
+    fields:
+        id: { type: int, pk: true }
+        note_id: { type: int, fk: Note.id }
+        operation_id: { type: int, fk: Operation.id }
+    timestamps: false
+
+# Notes / Hints for the generator
+# - Use integer primary keys (auto-increment) for all models unless otherwise required.
+# - Use appropriate decimal precision for monetary/quantity fields (see above).
+# - Create pivot entities (OperationProduct, NoteProduct) as join tables with pivot fields.
+# - Apply indexes on foreign keys and frequently queried columns (organization_id, external_id, inv_number).
+# - Map `json` fields to JSON columns where supported (Postgres/MySQL 5.7+), otherwise text.
+# - Soft delete is enabled for Category (deleted_at). Add `deletedAt` handling in Nest/TypeORM.
+# - `draft_products` is stored as JSON; generate a `text`/`json` column and transform to DTOs.
+# - Relations: translate `belongsTo` → ManyToOne, `hasMany` → OneToMany, `belongsToMany` → ManyToMany with pivot.
+
+# If you want, я могу сгенерировать: TypeORM entities, DTOs и CRUD-модули на NestJS по этой схеме.

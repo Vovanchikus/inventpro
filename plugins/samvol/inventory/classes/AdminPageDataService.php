@@ -31,8 +31,7 @@ class AdminPageDataService
 
         try {
             return OrganizationAccess::isOrganizationAdmin($user)
-                || (method_exists($user, 'isInGroup') && $user->isInGroup('admin'))
-                || (property_exists($user, 'is_superuser') && (bool) $user->is_superuser === true);
+                || OrganizationAccess::isProjectAdmin($user);
         } catch (\Throwable $e) {
             return false;
         }

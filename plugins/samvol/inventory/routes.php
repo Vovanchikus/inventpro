@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Samvol\Inventory\Controllers\Api;
 use Samvol\Inventory\Controllers\DocumentsDownloadController;
@@ -11,6 +12,8 @@ use Samvol\Inventory\Controllers\Api\MediaController;
 use Samvol\Inventory\Controllers\Api\OperationController;
 use Samvol\Inventory\Controllers\Api\ProductController;
 use Samvol\Inventory\Controllers\Api\RealtimeController;
+use Samvol\Inventory\Controllers\Api\HistoryController;
+use Samvol\Inventory\Classes\Api\ApiResponse;
 
 /*
 |--------------------------------------------------------------------------
@@ -93,14 +96,17 @@ Route::group(['prefix' => 'api'], function () {
 /*--------------------------
 | Mobile API V1
 --------------------------*/
-Route::group(['prefix' => 'api/v1'], function () {
+Route::group(['prefix' => 'api/v1', 'middleware' => ['api.request_context', 'api.exception_json']], function () {
     Route::post('auth/login', [AuthController::class, 'login']);
     Route::post('auth/register', [AuthController::class, 'register']);
     Route::post('auth/refresh', [AuthController::class, 'refresh']);
+    Route::get('auth/health', [AuthController::class, 'health']);
+    Route::get('public/organizations', [AuthController::class, 'organizations']);
+    Route::get('public/organizations/check-name', [AuthController::class, 'checkOrganizationName']);
     Route::get('openapi.yaml', function () {
         $path = plugins_path('samvol/inventory/docs/openapi-v1.yaml');
         if (!is_file($path)) {
-            return response()->json(['success' => false, 'error' => 'OpenAPI specification is not available'], 404);
+            return ApiResponse::error(request(), 'RESOURCE_UNAVAILABLE', 'OpenAPI specification is not available', 404);
         }
 
         return response()->file($path, [
@@ -119,6 +125,7 @@ Route::group(['prefix' => 'api/v1'], function () {
     });
 
     Route::group(['middleware' => ['api.token']], function () {
+
         Route::get('auth/me', [AuthController::class, 'me']);
         Route::post('auth/logout', [AuthController::class, 'logout']);
         Route::post('realtime/auth', [RealtimeController::class, 'auth']);
@@ -142,9 +149,16 @@ Route::group(['prefix' => 'api/v1'], function () {
         Route::get('categories', [CategoryController::class, 'index'])->middleware(['api.scope:inventory.read', 'api.org_role:reader']);
         Route::get('categories/{id}', [CategoryController::class, 'show'])->middleware(['api.scope:inventory.read', 'api.org_role:reader']);
 
+        Route::get('history', [HistoryController::class, 'index'])->middleware(['api.scope:inventory.read', 'api.org_role:reader']);
+
         Route::post('media/images', [MediaController::class, 'uploadImage'])->middleware(['api.scope:inventory.write', 'api.org_role:responsible']);
         Route::post('media/documents', [MediaController::class, 'uploadDocument'])->middleware(['api.scope:inventory.write', 'api.org_role:responsible']);
     });
+
+    // Keep /api/v1 strictly JSON, including unknown endpoints.
+    Route::any('{any}', function (Request $request) {
+        return ApiResponse::error($request, 'RESOURCE_UNAVAILABLE', 'Endpoint not found', 404);
+    })->where('any', '.*');
 });
 
 /*--------------------------
@@ -153,7 +167,7 @@ Route::group(['prefix' => 'api/v1'], function () {
 Route::get('document-file/{id}', [
     DocumentsDownloadController::class,
     'download'
-]);
+])->middleware('web');
 
 Route::get('generated-documents/{token}', [
     OperationDocumentController::class,

@@ -31,7 +31,13 @@ class Api extends Controller
     public function products()
     {
         try {
-            $items = Product::with(['images', 'category', 'category.children'])->get();
+            $query = Product::with(['images', 'category', 'category.children']);
+            $query = $this->constrainByOrganization($query);
+            if (!$query) {
+                return $this->error('Організація не визначена для користувача', 403);
+            }
+
+            $items = $query->get();
             return $this->success(
                 $items->map(fn($p) => $this->mapProduct($p))
             );
@@ -44,7 +50,13 @@ class Api extends Controller
     public function product($id)
     {
         try {
-            $item = Product::with(['images','category','category.children'])->find($id);
+            $query = Product::with(['images','category','category.children'])->where('id', $id);
+            $query = $this->constrainByOrganization($query);
+            if (!$query) {
+                return $this->error('Організація не визначена для користувача', 403);
+            }
+
+            $item = $query->first();
             if (!$item) return $this->error("Product not found", 404);
 
             return $this->success($this->mapProduct($item));
@@ -59,13 +71,25 @@ class Api extends Controller
     --------------------------*/
     public function operations()
     {
-        $items = Operation::with('products', 'documents')->get();
+        $query = Operation::with('products', 'documents');
+        $query = $this->constrainByOrganization($query);
+        if (!$query) {
+            return $this->error('Організація не визначена для користувача', 403);
+        }
+
+        $items = $query->get();
         return $this->success(OperationTransformer::collection($items));
     }
 
     public function operation($id)
     {
-        $item = Operation::with('products', 'documents')->find($id);
+        $query = Operation::with('products', 'documents')->where('id', $id);
+        $query = $this->constrainByOrganization($query);
+        if (!$query) {
+            return $this->error('Організація не визначена для користувача', 403);
+        }
+
+        $item = $query->first();
         if (!$item) return $this->error("Operation not found", 404);
 
         return $this->success(OperationTransformer::one($item));
@@ -76,12 +100,24 @@ class Api extends Controller
     --------------------------*/
     public function documents()
     {
-        return $this->success(DocumentTransformer::collection(Document::all()));
+        $query = Document::query();
+        $query = $this->constrainByOrganization($query);
+        if (!$query) {
+            return $this->error('Організація не визначена для користувача', 403);
+        }
+
+        return $this->success(DocumentTransformer::collection($query->get()));
     }
 
     public function document($id)
     {
-        $item = Document::find($id);
+        $query = Document::query()->where('id', $id);
+        $query = $this->constrainByOrganization($query);
+        if (!$query) {
+            return $this->error('Організація не визначена для користувача', 403);
+        }
+
+        $item = $query->first();
         if (!$item) return $this->error("Document not found", 404);
 
         return $this->success(DocumentTransformer::one($item));
@@ -89,7 +125,13 @@ class Api extends Controller
 
     public function documentFile($id)
     {
-        $doc = Document::find($id);
+        $query = Document::query()->where('id', $id);
+        $query = $this->constrainByOrganization($query);
+        if (!$query) {
+            return $this->error('Організація не визначена для користувача', 403);
+        }
+
+        $doc = $query->first();
         if (!$doc || !$doc->doc_file) abort(404);
 
         $file = $doc->doc_file;
@@ -111,16 +153,20 @@ class Api extends Controller
     --------------------------*/
     public function categories()
     {
+        $query = Category::whereNull('parent_id');
+
         return $this->success(
             CategoryTransformer::collection(
-                Category::whereNull('parent_id')->get()
+                $query->get()
             )
         );
     }
 
     public function category($id)
     {
-        $cat = Category::find($id);
+        $query = Category::query()->where('id', $id);
+
+        $cat = $query->first();
         if (!$cat) return $this->error("Category not found", 404);
 
         return $this->success(CategoryTransformer::one($cat));
@@ -155,7 +201,13 @@ class Api extends Controller
     --------------------------*/
     public function warehouseProducts()
     {
-        $products = Product::with(['category.children', 'images'])->get();
+        $query = Product::with(['category.children', 'images']);
+        $query = $this->constrainByOrganization($query);
+        if (!$query) {
+            return $this->error('Організація не визначена для користувача', 403);
+        }
+
+        $products = $query->get();
 
         return $this->success(
             $products->map(fn($p) => $this->mapProduct($p))
@@ -167,16 +219,25 @@ class Api extends Controller
     --------------------------*/
     public function history(Request $request)
     {
+        $organizationId = $this->organizationId();
+        if (!$organizationId) {
+            return $this->error('Організація не визначена для користувача', 403);
+        }
+
         $query = OperationProduct::with([
             'product',
             'operation.type',
             'operation.documents'
-        ])->whereDoesntHave('operation', fn($q) =>
+        ])
+        ->where('organization_id', $organizationId)
+        ->whereDoesntHave('operation', fn($q) =>
             $q->whereIn('type_id', [6, 7])
         );
 
         if ($slug = $request->get('slug')) {
-            if ($product = Product::where('slug', $slug)->first()) {
+            $productQuery = Product::where('slug', $slug);
+            $productQuery = $this->constrainByOrganization($productQuery);
+            if ($productQuery && ($product = $productQuery->first())) {
                 $query->where('product_id', $product->id);
             }
         }
@@ -191,7 +252,13 @@ class Api extends Controller
     --------------------------*/
     public function upload(Request $request)
     {
-        $product = Product::find($request->get('product_id'));
+        $productQuery = Product::query()->where('id', (int) $request->get('product_id'));
+        $productQuery = $this->constrainByOrganization($productQuery);
+        if (!$productQuery) {
+            return $this->error('Організація не визначена для користувача', 403);
+        }
+
+        $product = $productQuery->first();
         if (!$product) return $this->error('Product not found', 404);
 
         $clientId = $request->get('client_id');
@@ -235,14 +302,44 @@ class Api extends Controller
     --------------------------*/
     public function checkImage(Request $request)
     {
-        $url = $request->get('url');
-        if (!$url) return $this->error('URL not provided', 400);
+        // Support single `url` or multiple `urls` (array or comma-separated)
+        $rawUrls = $request->get('urls', $request->get('url'));
+        if (!$rawUrls) return $this->error('URL(s) not provided', 400);
 
-        $path = public_path(parse_url($url, PHP_URL_PATH));
+        $urls = [];
+        if (is_array($rawUrls)) {
+            $urls = $rawUrls;
+        } else {
+            // allow comma-separated list
+            $str = trim((string)$rawUrls);
+            if ($str === '') return $this->error('URL(s) not provided', 400);
+            if (strpos($str, ',') !== false) {
+                $parts = array_map('trim', explode(',', $str));
+                $urls = array_values(array_filter($parts, fn($v) => $v !== ''));
+            } else {
+                $urls = [$str];
+            }
+        }
 
-        return $this->success([
-            'exists' => file_exists($path)
-        ]);
+        $results = [];
+        foreach ($urls as $u) {
+            $path = public_path(parse_url($u, PHP_URL_PATH));
+            $exists = false;
+            if ($path) {
+                $exists = file_exists($path);
+            }
+            $results[] = [
+                'url' => (string)$u,
+                'exists' => $exists,
+            ];
+        }
+
+        // If single URL was provided, keep legacy response shape for callers
+        if (count($results) === 1) {
+            return $this->success(['exists' => $results[0]['exists']]);
+        }
+
+        return $this->success(['results' => $results]);
     }
 
     /*--------------------------
@@ -462,15 +559,25 @@ class Api extends Controller
             return true;
         }
 
-        if (method_exists($user, 'isInGroup') && $user->isInGroup('admin')) {
-            return true;
+        return OrganizationAccess::isProjectAdmin($user);
+    }
+
+    private function organizationId(): ?int
+    {
+        $user = $this->resolveUser();
+        $organizationId = (int)($user->organization_id ?? 0);
+
+        return $organizationId > 0 ? $organizationId : null;
+    }
+
+    private function constrainByOrganization($query, string $column = 'organization_id')
+    {
+        $organizationId = $this->organizationId();
+        if (!$organizationId) {
+            return null;
         }
 
-        if (property_exists($user, 'is_superuser') && (bool)$user->is_superuser) {
-            return true;
-        }
-
-        return false;
+        return $query->where($column, $organizationId);
     }
 
     private function resolveSettingsScope(): string

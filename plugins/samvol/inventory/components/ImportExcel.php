@@ -287,11 +287,17 @@ class ImportExcel extends ComponentBase
 
     protected function getIncomingOperationsForProduct($productId)
     {
+        $organizationId = $this->organizationId();
+        if ($organizationId <= 0) {
+            return [];
+        }
+
         $rows = DB::table('samvol_inventory_operation_products as op')
             ->join('samvol_inventory_operations as o', 'o.id', '=', 'op.operation_id')
             ->join('samvol_inventory_operation_types as t', 't.id', '=', 'o.type_id')
             ->leftJoin('samvol_inventory_documents as d', 'd.operation_id', '=', 'o.id')
             ->where('op.product_id', $productId)
+            ->where('o.organization_id', $organizationId)
             ->whereIn(DB::raw('LOWER(t.name)'), [
                 'приход',
                 'импорт',
@@ -326,6 +332,11 @@ class ImportExcel extends ComponentBase
 
     protected function applySplitResolutions($splitCandidates, $splitResolutions, &$warnings)
     {
+        $organizationId = $this->organizationId();
+        if ($organizationId <= 0) {
+            return [];
+        }
+
         if (!is_array($splitCandidates) || !is_array($splitResolutions)) {
             return [];
         }
@@ -433,6 +444,7 @@ class ImportExcel extends ComponentBase
                         'unit' => $baseProduct->unit,
                         'inv_number' => $row['excel_inv_number'],
                         'price' => $row['excel_price'],
+                        'organization_id' => $organizationId,
                     ]);
                 }
 
@@ -442,6 +454,7 @@ class ImportExcel extends ComponentBase
                 $sourcePivot = DB::table('samvol_inventory_operation_products')
                     ->where('operation_id', $row['operation_id'])
                     ->where('product_id', $baseProduct->id)
+                    ->where('organization_id', $organizationId)
                     ->first();
 
                 if (!$sourcePivot) {
@@ -459,11 +472,13 @@ class ImportExcel extends ComponentBase
                 $existingTargetPivot = DB::table('samvol_inventory_operation_products')
                     ->where('operation_id', $row['operation_id'])
                     ->where('product_id', $targetProduct->id)
+                    ->where('organization_id', $organizationId)
                     ->first();
 
                 if ($existingTargetPivot) {
                     DB::table('samvol_inventory_operation_products')
                         ->where('id', $existingTargetPivot->id)
+                        ->where('organization_id', $organizationId)
                         ->update([
                             'quantity' => $this->parseNumeric($existingTargetPivot->quantity ?? 0) + $sourceQty,
                             'sum' => $this->parseNumeric($existingTargetPivot->sum ?? 0) + $this->parseNumeric($sourcePivot->sum ?? 0),
@@ -472,10 +487,12 @@ class ImportExcel extends ComponentBase
 
                     DB::table('samvol_inventory_operation_products')
                         ->where('id', $sourcePivot->id)
+                        ->where('organization_id', $organizationId)
                         ->delete();
                 } else {
                     DB::table('samvol_inventory_operation_products')
                         ->where('id', $sourcePivot->id)
+                        ->where('organization_id', $organizationId)
                         ->update([
                             'product_id' => $targetProduct->id,
                         ]);
@@ -500,8 +517,27 @@ class ImportExcel extends ComponentBase
     // -----------------------------
     public function onApplyDifferences()
     {
+        $organizationId = $this->organizationId();
+        if ($organizationId <= 0) {
+            return ['success' => false, 'toast' => [
+                'message' => 'Користувач не прив\'язаний до організації',
+                'type' => 'error',
+                'timeout' => 4500,
+                'position' => 'top-center'
+            ]];
+        }
+
         $updates = post('updates', []);
         $report = post('report', []);
+
+        // If frontend sent JSON-serialized payloads (to avoid max_input_vars), decode them
+        if (is_string($updates) && $updates !== '') {
+            $decodedUpdates = json_decode($updates, true);
+            if (json_last_error() === JSON_ERROR_NONE) {
+                $updates = $decodedUpdates;
+            }
+        }
+
         if (is_string($report) && $report !== '') {
             $decoded = json_decode($report, true);
             if (json_last_error() === JSON_ERROR_NONE) {
@@ -554,7 +590,7 @@ class ImportExcel extends ComponentBase
             return (float) $clean;
         };
 
-        $applyExcelDataToProduct = function (Product $product, $excelInvNumber, $excelQuantity, $price, $excelSum) use ($counteragent, &$warnings) {
+        $applyExcelDataToProduct = function (Product $product, $excelInvNumber, $excelQuantity, $price, $excelSum) use ($counteragent, $organizationId, &$warnings) {
             $currentQuantity = $product->calculated_quantity ?? 0;
             $currentSum = $product->calculated_sum ?? 0;
 
@@ -592,6 +628,7 @@ class ImportExcel extends ComponentBase
                     'quantity' => $pivotQuantity,
                     'sum' => $pivotSum,
                     'counteragent' => $counteragent,
+                    'organization_id' => $organizationId,
                 ]);
             }
 
@@ -779,6 +816,7 @@ class ImportExcel extends ComponentBase
                     'unit' => $unit,
                     'inv_number' => $invNumber,
                     'price' => $excelPrice,
+                    'organization_id' => $organizationId,
                 ]);
 
                 if (abs($excelQuantity) > self::EPSILON || abs($excelSum) > self::EPSILON) {
@@ -793,6 +831,7 @@ class ImportExcel extends ComponentBase
                         'quantity' => $excelQuantity,
                         'sum' => $excelSum,
                         'counteragent' => $counteragent,
+                        'organization_id' => $organizationId,
                     ]);
                 }
             }
@@ -1184,6 +1223,7 @@ class ImportExcel extends ComponentBase
                         ->join('samvol_inventory_operations as o', 'o.id', '=', 'op.operation_id')
                         ->join('samvol_inventory_operation_types as t', 't.id', '=', 'o.type_id')
                         ->whereIn('op.product_id', $missingProductIds)
+                        ->where('o.organization_id', $this->organizationId())
                         ->whereRaw('LOWER(TRIM(t.name)) IN (?, ?, ?, ?)', ['расход', 'передача', 'списание', 'импорт расход'])
                         ->select('op.product_id', DB::raw('COUNT(*) as cnt'))
                         ->groupBy('op.product_id')
@@ -1331,6 +1371,11 @@ class ImportExcel extends ComponentBase
     // -----------------------------
     public function onImportExcel()
     {
+        $organizationId = $this->organizationId();
+        if ($organizationId <= 0) {
+            return ['toast'=>['message'=>'Користувач не прив\'язаний до організації','type'=>'error']];
+        }
+
         function parseExcelNumber($value) {
             if (!$value) return 0;
             $clean = preg_replace('/[\s\x{00A0}\x{202F}]+/u', '', $value);
@@ -1504,6 +1549,7 @@ class ImportExcel extends ComponentBase
 
                         continue;
                     }
+
                 }
 
                 if (!$product) {
@@ -1980,5 +2026,34 @@ class ImportExcel extends ComponentBase
         } catch (\Exception $e) {
             return ['toast'=>['message'=>'Ошибка: '.$e->getMessage(),'type'=>'error']];
         }
+    }
+
+    protected function resolveCurrentUser()
+    {
+        try {
+            $frontendUser = \Auth::getUser();
+            if ($frontendUser) {
+                return $frontendUser;
+            }
+        } catch (\Throwable $e) {
+        }
+
+        try {
+            if (class_exists(\Backend\Facades\BackendAuth::class)) {
+                $backendUser = \Backend\Facades\BackendAuth::getUser();
+                if ($backendUser) {
+                    return $backendUser;
+                }
+            }
+        } catch (\Throwable $e) {
+        }
+
+        return null;
+    }
+
+    protected function organizationId(): int
+    {
+        $user = $this->resolveCurrentUser();
+        return (int) ($user->organization_id ?? 0);
     }
 }

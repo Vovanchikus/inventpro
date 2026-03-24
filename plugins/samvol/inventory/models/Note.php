@@ -5,19 +5,24 @@ use Model;
 class Note extends Model
 {
     use \Winter\Storm\Database\Traits\Validation;
+    use \Samvol\Inventory\Classes\Concerns\HasOrganizationScope;
 
     public $table = 'samvol_inventory_notes';
 
-    protected $fillable = ['title', 'description', 'due_date', 'status'];
+    protected $fillable = ['organization_id', 'title', 'description', 'due_date', 'status'];
     public $jsonable = [];
 
     public $belongsToMany = [
         'products' => [
             'Samvol\Inventory\Models\Product',
             'table' => 'samvol_inventory_note_products',
-            'pivot' => ['quantity','sum','counteragent'],
+            'pivot' => ['organization_id', 'quantity','sum','counteragent'],
             'timestamps' => true
         ]
+    ];
+
+    public $belongsTo = [
+        'organization' => ['Samvol\\Inventory\\Models\\Organization', 'key' => 'organization_id'],
     ];
 
     public static $statusLabels = [

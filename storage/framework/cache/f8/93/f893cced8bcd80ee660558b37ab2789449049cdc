@@ -1,11 +1,13 @@
-1772666960a:1:{s:18:"edit-operation.htm";a:9:{s:8:"fileName";s:18:"edit-operation.htm";s:7:"content";s:11180:"title = "Редактировать операцию"
+1774350080a:1:{s:18:"edit-operation.htm";a:9:{s:8:"fileName";s:18:"edit-operation.htm";s:7:"content";s:11275:"title = "Редактировать операцию"
 url = "/edit-operation"
 layout = "default"
 
 [editOperation]
 ==
 
-{% if user and ((user.organization_status == 'approved' and user.organization_role == 'admin') or user.isInGroup('admin')) %}
+{% set orgRole = (user.organization_role ?? '')|lower %}
+{% set orgStatus = (user.organization_status ?? '')|lower %}
+{% if user and ((orgStatus == 'approved' and orgRole == 'admin') or (user.is_superuser ?? false)) %}
 
 <div class="container--sm box--light">
 
@@ -193,7 +195,9 @@ layout = "default"
 {% else %}
     <p>У вас нет прав для редактирования операций.</p>
 {% endif %}
-";s:5:"mtime";i:1772408223;s:6:"markup";s:11053:"{% if user and ((user.organization_status == 'approved' and user.organization_role == 'admin') or user.isInGroup('admin')) %}
+";s:5:"mtime";i:1772675022;s:6:"markup";s:11148:"{% set orgRole = (user.organization_role ?? '')|lower %}
+{% set orgStatus = (user.organization_status ?? '')|lower %}
+{% if user and ((orgStatus == 'approved' and orgRole == 'admin') or (user.is_superuser ?? false)) %}
 
 <div class="container--sm box--light">
 

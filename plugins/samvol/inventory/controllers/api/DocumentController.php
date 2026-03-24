@@ -16,16 +16,34 @@ class DocumentController extends BaseApiController
 
     public function index(Request $request)
     {
-        $perPage = max(1, min(100, (int) $request->input('per_page', 20)));
+        $maxPerPage = max(1, (int) config('samvol.inventory::api.max_per_page', 100));
+        $validator = Validator::make($request->query(), [
+            'updated_since' => 'sometimes|date',
+            'page' => 'sometimes|integer|min:1',
+            'per_page' => 'sometimes|integer|min:1|max:' . $maxPerPage,
+            'sort_by' => 'sometimes|string|in:id,doc_date,updated_at,operation_id',
+            'sort_dir' => 'sometimes|string|in:asc,desc',
+            'date_from' => 'sometimes|date',
+            'date_to' => 'sometimes|date',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->fail('Validation failed', 422, $validator->errors()->toArray());
+        }
+
+        $perPage = (int) $request->input('per_page', 20);
+        $page = (int) $request->input('page', 1);
+        $updatedSince = $this->resolveUpdatedSince($request);
+
         $sort = $this->normalizeSort(
-            (string) $request->input('sort_by', 'id'),
-            (string) $request->input('sort_dir', 'desc'),
+            (string) $request->input('sort_by', $updatedSince ? 'updated_at' : 'id'),
+            (string) $request->input('sort_dir', $updatedSince ? 'asc' : 'desc'),
             ['id', 'doc_date', 'updated_at', 'operation_id'],
-            'id',
-            'desc'
+            $updatedSince ? 'updated_at' : 'id',
+            $updatedSince ? 'asc' : 'desc'
         );
 
-        $query = Document::query()->apiList()->with(['operation.type', 'doc_file']);
+        $query = Document::query()->apiList()->with(['doc_file']);
         $query = $this->apiPolicy->constrainByOrganization($query, $request);
 
         if ($operationId = (int) $request->input('operation_id', 0)) {
@@ -47,20 +65,16 @@ class DocumentController extends BaseApiController
             });
         }
 
-        $query->orderBy($sort['field'], $sort['dir']);
-        $queryData = [
-            'organization_id' => $this->apiPolicy->organizationId($request),
-            'page' => (int) $request->input('page', 1),
-            'per_page' => $perPage,
-            'operation_id' => (int) $request->input('operation_id', 0),
-            'date_from' => (string) $request->input('date_from', ''),
-            'date_to' => (string) $request->input('date_to', ''),
-            'q' => (string) $request->input('q', ''),
-            'sort_by' => $sort['field'],
-            'sort_dir' => $sort['dir'],
-        ];
+        if ($updatedSince) {
+            $query->where('updated_at', '>', $updatedSince->toDateTimeString());
+        }
 
-        $paginator = $this->cached('documents.index', $queryData, fn() => $query->paginate($perPage));
+        $query->orderBy($sort['field'], $sort['dir']);
+        if ($sort['field'] !== 'id') {
+            $query->orderBy('id', 'asc');
+        }
+
+        $paginator = $query->paginate($perPage, ['*'], 'page', $page);
 
         return $this->paginated($paginator, fn(Document $document) => $this->mapDocument($document));
     }
@@ -103,24 +117,27 @@ class DocumentController extends BaseApiController
             return $this->fail('Operation not found', 404);
         }
 
-        $document = new Document();
-        $document->operation_id = (int) $request->input('operation_id');
-        $document->doc_name = (string) $request->input('doc_name');
-        $document->doc_num = (string) $request->input('doc_num', '');
-        $document->doc_date = $request->input('doc_date');
-        $document->doc_purpose = (string) $request->input('doc_purpose', '');
-        $document->mime_type = (string) $request->input('mime_type', '');
-        $document->file_size = (int) $request->input('file_size', 0);
-        $document->organization_id = $operation->organization_id;
-        $document->save();
+        return $this->withIdempotency($request, 'documents.store', function () use ($request, $operation) {
+            $document = new Document();
+            $document->operation_id = (int) $request->input('operation_id');
+            $document->doc_name = (string) $request->input('doc_name');
+            $document->doc_num = (string) $request->input('doc_num', '');
+            $document->doc_date = $request->input('doc_date');
+            $document->doc_purpose = (string) $request->input('doc_purpose', '');
+            $document->mime_type = (string) $request->input('mime_type', '');
+            $document->file_size = (int) $request->input('file_size', 0);
+            $document->organization_id = $operation->organization_id;
+            $document->save();
 
-        $document->load(['operation.type', 'doc_file']);
-        $this->bumpCacheVersion('documents.index');
-        $this->bumpCacheVersion('documents.show');
-        if ($document->organization_id) {
-            event(new InventoryEntityChanged((int) $document->organization_id, 'document', 'created', (int) $document->id, optional($document->updated_at)->toIso8601String()));
-        }
-        return $this->ok($this->mapDocument($document), 201);
+            $document->load(['operation.type', 'doc_file']);
+            $this->bumpCacheVersion('documents.index');
+            $this->bumpCacheVersion('documents.show');
+            if ($document->organization_id) {
+                event(new InventoryEntityChanged((int) $document->organization_id, 'document', 'created', (int) $document->id, optional($document->updated_at)->toIso8601String()));
+            }
+
+            return $this->ok($this->mapDocument($document), 201);
+        });
     }
 
     public function update(Request $request, int $id)
@@ -150,16 +167,18 @@ class DocumentController extends BaseApiController
             }
         }
 
-        $document->save();
-        $document->load(['operation.type', 'doc_file']);
-        $this->bumpCacheVersion('documents.index');
-        $this->bumpCacheVersion('documents.show');
+        return $this->withIdempotency($request, 'documents.update.' . $id, function () use ($document) {
+            $document->save();
+            $document->load(['operation.type', 'doc_file']);
+            $this->bumpCacheVersion('documents.index');
+            $this->bumpCacheVersion('documents.show');
 
-        if ($document->organization_id) {
-            event(new InventoryEntityChanged((int) $document->organization_id, 'document', 'updated', (int) $document->id, optional($document->updated_at)->toIso8601String()));
-        }
+            if ($document->organization_id) {
+                event(new InventoryEntityChanged((int) $document->organization_id, 'document', 'updated', (int) $document->id, optional($document->updated_at)->toIso8601String()));
+            }
 
-        return $this->ok($this->mapDocument($document));
+            return $this->ok($this->mapDocument($document));
+        });
     }
 
     public function destroy(Request $request, int $id)
@@ -170,17 +189,19 @@ class DocumentController extends BaseApiController
             return $this->fail('Document not found', 404);
         }
 
-        $organizationId = (int) ($document->organization_id ?? 0);
-        $deletedId = (int) $document->id;
-        $document->delete();
-        $this->bumpCacheVersion('documents.index');
-        $this->bumpCacheVersion('documents.show');
+        return $this->withIdempotency($request, 'documents.destroy.' . $id, function () use ($document) {
+            $organizationId = (int) ($document->organization_id ?? 0);
+            $deletedId = (int) $document->id;
+            $document->delete();
+            $this->bumpCacheVersion('documents.index');
+            $this->bumpCacheVersion('documents.show');
 
-        if ($organizationId > 0) {
-            event(new InventoryEntityChanged($organizationId, 'document', 'deleted', $deletedId, now()->toIso8601String()));
-        }
+            if ($organizationId > 0) {
+                event(new InventoryEntityChanged($organizationId, 'document', 'deleted', $deletedId, now()->toIso8601String()));
+            }
 
-        return $this->ok(['deleted' => true]);
+            return $this->ok(['deleted' => true]);
+        });
     }
 
     private function mapDocument(Document $document): array

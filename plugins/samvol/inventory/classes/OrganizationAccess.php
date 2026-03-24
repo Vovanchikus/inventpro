@@ -62,4 +62,31 @@ class OrganizationAccess
     {
         return self::hasAtLeastRole($user, self::ROLE_ADMIN);
     }
+
+    public static function isProjectAdmin($user): bool
+    {
+        if (!$user) {
+            return false;
+        }
+
+        try {
+            if (method_exists($user, 'isSuperUser') && $user->isSuperUser()) {
+                return true;
+            }
+        } catch (\Throwable $e) {
+        }
+
+        if ((bool) ($user->is_superuser ?? false) || (bool) ($user->is_super_user ?? false)) {
+            return true;
+        }
+
+        try {
+            if (method_exists($user, 'hasAccess') && ($user->hasAccess('backend.*') || $user->hasAccess('samvol.inventory.*'))) {
+                return true;
+            }
+        } catch (\Throwable $e) {
+        }
+
+        return false;
+    }
 }

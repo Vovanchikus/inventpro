@@ -16,9 +16,23 @@
 
 ## API Conventions
 
-- All responses are JSON with `success`, `data`, `error`.
-- Resource endpoints support `page`, `per_page`, filters and search.
+- All responses use a single envelope: `success`, `data`, `meta`, `error`.
+- `meta.request_id` is always present and mirrored as `X-Request-Id` response header.
+- Errors use deterministic codes: `AUTH_BEARER_REQUIRED`, `AUTH_TOKEN_INVALID`, `AUTH_TOKEN_EXPIRED`, `VALIDATION_ERROR`, `RESOURCE_UNAVAILABLE`, `SERVER_ERROR`.
+- Resource endpoints support `page`, `per_page`, `sort_by`, `sort_dir`, `updated_since` (ISO 8601 UTC, exclusive cursor).
 - Eager loading is enabled for related entities.
+
+## Sync Contract
+
+- Pull cursor: `updated_since` with exclusive semantics (`updated_at > updated_since`).
+- Stable ordering for incremental sync: sorted by requested column plus `id` tie-breaker.
+- Write idempotency: send `X-Client-Request-Id`; backend returns replay marker in `meta.idempotency`.
+- Partial sync warnings are returned through `meta.partial` / `meta.warnings`.
+
+## Observability
+
+- Every API request logs structured record with `request_id`, path, method, status, duration.
+- Middleware and unhandled exceptions are logged with request correlation.
 
 ## Performance
 

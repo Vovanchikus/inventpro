@@ -1,0 +1,54 @@
+fields:
+    email:
+        label: Email
+        type: text
+        disabled: true
+    name:
+        label: First Name
+        type: text
+        disabled: true
+    surname:
+        label: Last Name
+        type: text
+        disabled: true
+
+tabs:
+    fields:
+        organization:
+            tab: Organization
+            label: Organization
+            type: relation
+            span: auto
+            nameFrom: name
+        organization_role:
+            tab: Organization
+            label: Role
+            type: dropdown
+            span: auto
+            options:
+                reader: Reader
+                responsible: Responsible
+                inventorizer: Inventorizer
+                admin: Admin
+        organization_status:
+            tab: Organization
+            label: Status
+            type: dropdown
+            span: auto
+            options:
+                pending: Pending
+                approved: Approved
+                rejected: Rejected
+        organization_approved_at:
+            tab: Organization
+            label: Approved At
+            type: datepicker
+            mode: datetime
+            disabled: true
+            span: auto
+        organization_approved_by:
+            tab: Organization
+            label: Approved By (user ID)
+            type: number
+            disabled: true
+            span: auto

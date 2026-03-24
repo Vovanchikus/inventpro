@@ -143,6 +143,7 @@ class DocumentTemplateSettings
             ->max('sort_order');
 
         $person = new DocTemplatePerson();
+        $person->organization_id = self::organizationIdFromScopeKey($scopeKey);
         $person->scope_key = $scopeKey;
         $person->role_key = $roleKey;
         $person->name = $name;
@@ -306,6 +307,7 @@ class DocumentTemplateSettings
 
         if (!$record) {
             $record = new DocTemplateSetting();
+            $record->organization_id = self::organizationIdFromScopeKey($scopeKey);
             $record->scope_key = $scopeKey;
             $record->key = $key;
         }
@@ -334,6 +336,7 @@ class DocumentTemplateSettings
             }
 
             $row = new DocTemplatePerson();
+            $row->organization_id = self::organizationIdFromScopeKey($scopeKey);
             $row->scope_key = $scopeKey;
             $row->role_key = $roleKey;
             $row->name = $name;
@@ -346,6 +349,17 @@ class DocumentTemplateSettings
     private static function selectedSettingKey(string $roleKey): string
     {
         return 'selected.' . $roleKey;
+    }
+
+    private static function organizationIdFromScopeKey(string $scopeKey): ?int
+    {
+        if (preg_match('/^org:(\d+)$/', $scopeKey, $match) !== 1) {
+            return null;
+        }
+
+        $organizationId = (int) ($match[1] ?? 0);
+
+        return $organizationId > 0 ? $organizationId : null;
     }
 
     private static function selectedPersonForRole(array $settings, string $roleKey): ?array

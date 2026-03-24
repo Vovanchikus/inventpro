@@ -1,0 +1,7 @@
+name: Organization User
+form: $/samvol/inventory/models/user/fields.yaml
+modelClass: Winter\User\Models\User
+defaultRedirect: samvol/inventory/organizationusers
+update:
+    redirect: samvol/inventory/organizationusers
+    redirectClose: samvol/inventory/organizationusers
